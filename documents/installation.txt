@@ -1,0 +1,29 @@
+Installation instructions
+
+First install Eclipse and Java 8.
+https://wpilib.screenstepslive.com/s/4485/m/13503/l/599679-installing-eclipse-c-java
+Even if you have Eclipse or Java already installed, read all the directions and make sure you don't miss anything. Installing the plugins is especially important.
+Ignore anything that mentions C/C++.
+Set the workspace to wherever you keep your GRT code.
+
+Next you must install the CTRE library in order to use the CAN talons.
+https://wpilib.screenstepslive.com/s/currentCS/m/getting_started/l/682619-3rd-party-libraries
+Click on CTRE Toolsuite. The I would recommend downloading the file that says "(No Installer)" under "Stable Installer".
+You can then follow the pdf guide or the guide on the page I linked before, or you can use my instructions:
+Extract the zip file (to downloads or whatever).
+Copy the java folder and paste it into /wpilib/user (look at the link to find that folder).
+It might ask you to replace an existing folder, click yes.
+
+Next, clone the repository into your workspace.
+Open eclipse.
+File->import…
+Choose Git:Projects from Git
+Next>
+Existing local repository
+Next>
+GRTJava
+Next>
+Next>
+Finish
+
+Now start a new branch and start coding!
