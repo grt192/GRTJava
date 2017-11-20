@@ -1,4 +1,4 @@
-package org.usfirst.frc.team192.robot.Autonomous;
+package org.usfirst.frc.team192.robot;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class Commands extends Command {

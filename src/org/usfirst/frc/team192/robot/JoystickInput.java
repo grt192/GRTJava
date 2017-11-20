@@ -1,4 +1,4 @@
-package org.usfirst.frc.team192.robot.Teleop;
+package org.usfirst.frc.team192.robot;
 /* THIS COULD BE USEFUL
 boolean exampleBool;
 exampleBool = DriverStation.getInstance().isDSAttached();
