@@ -1,5 +1,8 @@
 package org.usfirst.frc.team192.swerve;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Talon;
 
 public class Wheel
 {
@@ -9,27 +12,41 @@ public class Wheel
 	private int positiveX;
 	private int positiveY;
 	
-	public Wheel(double robotWidth, double robotHeight, int positiveX, int positiveY)
+	private Talon drive;
+	private Talon turn;
+	private Encoder enc;
+	private DigitalInput limitSwitch;
+	
+	public Wheel(double robotWidth, double robotHeight, int positiveX, int positiveY, Talon drive, Talon turn, Encoder enc, DigitalInput limitSwitch)
 	{
 		this.robotWidth = robotWidth;
 		this.robotHeight = robotHeight;
 		this.deltaTheta = Math.atan(robotHeight / robotWidth);
 		this.positiveX = positiveX; // 1 or -1
 		this.positiveY = positiveY; // 1 or -1
+		// (positiveX, positiveY)	= (1, 1) => upper right
+		// 							= (-1, 1) => upper left
+		//							= (1, -1) => lower right
+		//							= (-1, -1) => lower left
+		
+		this.drive = drive;
+		this.turn = turn;
+		this.enc = enc;
+		this.limitSwitch = limitSwitch;
 	}
 	
 	public double realAtan(double x, double y)
 	{
-		double first = Math.atan(y / x);
+		double first = Math.atan(y / x); // tentative result
 		// int xNorm = (int) (x / Math.abs(x));
 		int yNorm = (int) (y / Math.abs(y));
 		if (x >= 0)
 		{
-			return first + Math.PI + (-1 * Math.PI) * yNorm;
+			return first + Math.PI + (Math.PI / -2) * yNorm;
 		}
 		else
 		{
-			return first + Math.PI;
+			return first + (3 * Math.PI / 4) + (Math.PI / -4) * yNorm;
 		}
 	}
 	
