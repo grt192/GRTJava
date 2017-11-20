@@ -28,5 +28,4 @@ public class Commands extends Command {
     protected boolean isFinished() {
         return false;
     }
-    
 }
