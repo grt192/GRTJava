@@ -7,38 +7,34 @@ public class Swerve
 	/*
 	Layout of robot:
 	
-	upperLeft --> 	+-----------------+  <-- upperRight
+	frontLeft --> 	+-----------------+  <-- frontRight
+					|                 |
+					|                 |
+					|                 |___
+					|                 |   |
+					|                 |   | <-- climber
+					|                 |   |
+					|                 |   |
+					|                 |___|
 					|                 |
 					|                 |
 					|                 |
 					|                 |
-					|                 |
-					|                 |
-					|                 |
-					|                 |
-					|                 |
-					|                 |
-					|                 |
-					|                 |
-	lowerLeft -->	+-----------------+  <-- lowerRight
+	backLeft -->	+-----------------+  <-- backRight
 	
 	 */
 	
-	private Wheel upperRight;
-	private Wheel upperLeft;
-	private Wheel lowerRight;
-	private Wheel lowerLeft;
-	private double width;
-	private double height;
+	private Wheel frontRight;
+	private Wheel frontLeft;
+	private Wheel backRight;
+	private Wheel backLeft;
 	
-	public Swerve(Wheel upperRight, Wheel upperLeft, Wheel lowerRight, Wheel lowerLeft, double width, double height)
+	public Swerve(Wheel frontRight, Wheel frontLeft, Wheel backRight, Wheel backLeft)
 	{
-		this.upperRight = upperRight;
-		this.upperLeft = upperLeft;
-		this.lowerRight = lowerRight;
-		this.lowerLeft = lowerLeft;
-		this.width = width;
-		this.height = height;
+		this.frontRight = frontRight;
+		this.frontLeft = frontLeft;
+		this.backRight = backRight;
+		this.backLeft = backLeft;
 	}
 	
 	public Swerve()
