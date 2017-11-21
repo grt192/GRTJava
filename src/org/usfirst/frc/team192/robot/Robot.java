@@ -1,6 +1,9 @@
 package org.usfirst.frc.team192.robot;
 
+import com.ctre.CANTalon;
+
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -17,6 +20,9 @@ public class Robot extends IterativeRobot {
 	String autoSelected;
 	SendableChooser<String> chooser = new SendableChooser<>();
 
+	private CANTalon[] talons;
+	private XboxController joystick;
+
 	/**
 	 * This function is run when the robot is first started up and should be used
 	 * for any initialization code.
@@ -26,6 +32,12 @@ public class Robot extends IterativeRobot {
 		chooser.addDefault("Default Auto", defaultAuto);
 		chooser.addObject("My Auto", customAuto);
 		SmartDashboard.putData("Auto choices", chooser);
+
+		joystick = new XboxController(1);
+
+		talons = new CANTalon[16];
+		for (int i = 0; i < 16; i++)
+			talons[i] = new CANTalon(i + 1);
 	}
 
 	/**
@@ -63,11 +75,20 @@ public class Robot extends IterativeRobot {
 		}
 	}
 
+	@Override
+	public void teleopInit() {
+	}
+
 	/**
 	 * This function is called periodically during operator control
 	 */
 	@Override
 	public void teleopPeriodic() {
+		CANTalon talon = talons[6];
+		if (joystick.getRawButton(1))
+			talon.set(0.25);
+		if (joystick.getRawButton(2))
+			talon.set(0);
 	}
 
 	/**
@@ -75,5 +96,17 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void testPeriodic() {
+		if (joystick.getRawButton(1)) {
+			for (int i = 0; i < 16; i++) {
+				System.out.println(i + 1);
+				talons[i].set(0.5);
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				talons[i].set(0);
+			}
+		}
 	}
 }

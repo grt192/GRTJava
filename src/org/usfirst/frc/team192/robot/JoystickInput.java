@@ -5,6 +5,10 @@ exampleBool = DriverStation.getInstance().isDSAttached();
 exampleBool = DriverStation.getInstance().isFMSAttached();
 exampleBool = DriverStation.getInstance().isSysActive();
 exampleBool = DriverStation.getInstance().isSysBrownedOut();
+<<<<<<< HEAD
+=======
+
+>>>>>>> chela
 double time;
 time = DriverStation.getInstance().getMatchTime();
 */
