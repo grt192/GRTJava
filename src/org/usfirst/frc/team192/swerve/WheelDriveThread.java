@@ -5,13 +5,11 @@ import edu.wpi.first.wpilibj.Talon;
 
 public class WheelDriveThread extends Thread
 {
-	private Wheel wheel;
-	private double speed;
+	private WheelReadThread wheelRead;
 	
 	public WheelDriveThread(Wheel wheel, double speed)
 	{
-		this.wheel = wheel;
-		this.speed = speed;
+		this.wheelRead = wheelRead;
 	}
 	
 	public void run()
