@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.Talon;
 
 public class WheelReadThread extends Thread
 {
-	private Talon turnMotor;
 	private DigitalInput limitSwitch;
 	private Encoder enc;
 	
@@ -16,9 +15,8 @@ public class WheelReadThread extends Thread
 	
 	private double TO_RADIANS;
 	
-	public WheelReadThread(Talon turnMotor, DigitalInput limitSwitch, Encoder enc)
+	public WheelReadThread(DigitalInput limitSwitch, Encoder enc)
 	{
-		this.turnMotor = turnMotor;
 		this.limitSwitch = limitSwitch;
 		this.enc = enc;
 		theta = 0;
