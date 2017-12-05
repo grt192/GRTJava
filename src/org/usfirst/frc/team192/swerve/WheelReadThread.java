@@ -1,13 +1,13 @@
 package org.usfirst.frc.team192.swerve;
 
+import com.ctre.CANTalon;
+
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.Talon;
 
 public class WheelReadThread extends Thread
 {
+	private CANTalon turnMotor;
 	private DigitalInput limitSwitch;
-	private Encoder enc;
 	
 	private double theta;
 	private int lastUpdated;
@@ -15,10 +15,10 @@ public class WheelReadThread extends Thread
 	
 	private double TO_RADIANS;
 	
-	public WheelReadThread(DigitalInput limitSwitch, Encoder enc)
+	public WheelReadThread(CANTalon turnMotor, DigitalInput limitSwitch)
 	{
+		this.turnMotor = turnMotor;
 		this.limitSwitch = limitSwitch;
-		this.enc = enc;
 		theta = 0;
 		lastUpdated = 0;
 		limitActivated = false;
@@ -33,12 +33,12 @@ public class WheelReadThread extends Thread
 			if (limitSwitch.get() && !limitActivated)
 			{
 				theta = 0;
-				lastUpdated = enc.get();
+				lastUpdated = turnMotor.getEncPosition();
 				limitActivated = true;
 			}
 			else if (!limitSwitch.get())
 			{
-				int moddedEncoderValue = enc.get() - lastUpdated;
+				int moddedEncoderValue = turnMotor.getEncPosition() - lastUpdated;
 				double toBeTheta = moddedEncoderValue * TO_RADIANS;
 				if (toBeTheta < 0)
 				{

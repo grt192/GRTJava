@@ -14,10 +14,9 @@ public class Wheel
 	
 	private Talon drive;
 	private Talon turn;
-	private Encoder enc;
 	private DigitalInput limitSwitch;
 	
-	public Wheel(double robotWidth, double robotHeight, int positiveX, int positiveY, Talon drive, Talon turn, Encoder enc, DigitalInput limitSwitch)
+	public Wheel(double robotWidth, double robotHeight, int positiveX, int positiveY, Talon drive, Talon turn, DigitalInput limitSwitch)
 	{
 		this.robotWidth = robotWidth;
 		this.robotHeight = robotHeight;
@@ -31,7 +30,6 @@ public class Wheel
 		
 		this.drive = drive;
 		this.turn = turn;
-		this.enc = enc;
 		this.limitSwitch = limitSwitch;
 	}
 	
