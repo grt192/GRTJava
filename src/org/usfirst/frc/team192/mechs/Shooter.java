@@ -1,4 +1,4 @@
-package org.usfirst.frc.team192.mechs.gperiod;
+package org.usfirst.frc.team192.mechs;
 
 import com.ctre.CANTalon;
 
