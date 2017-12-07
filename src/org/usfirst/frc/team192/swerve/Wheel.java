@@ -1,8 +1,8 @@
 package org.usfirst.frc.team192.swerve;
 
+import com.ctre.CANTalon;
+
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.Talon;
 
 public class Wheel
 {
@@ -12,11 +12,11 @@ public class Wheel
 	private int positiveX;
 	private int positiveY;
 	
-	private Talon drive;
-	private Talon turn;
+	private CANTalon drive;
+	private CANTalon turn;
 	private DigitalInput limitSwitch;
 	
-	public Wheel(double robotWidth, double robotHeight, int positiveX, int positiveY, Talon drive, Talon turn, DigitalInput limitSwitch)
+	public Wheel(double robotWidth, double robotHeight, int positiveX, int positiveY, CANTalon drive, CANTalon turn, DigitalInput limitSwitch)
 	{
 		this.robotWidth = robotWidth;
 		this.robotHeight = robotHeight;
