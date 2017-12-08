@@ -1,11 +1,6 @@
 package org.usfirst.frc.team192.robot;
 
-import com.ctre.CANTalon;
-
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -15,13 +10,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * directory.
  */
 public class Robot extends IterativeRobot {
-	final String defaultAuto = "Default";
-	final String customAuto = "My Auto";
-	String autoSelected;
-	SendableChooser<String> chooser = new SendableChooser<>();
 
-	private CANTalon[] talons;
-	private XboxController joystick;
+	private Teleop teleop;
 
 	/**
 	 * This function is run when the robot is first started up and should be used
@@ -29,15 +19,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		chooser.addDefault("Default Auto", defaultAuto);
-		chooser.addObject("My Auto", customAuto);
-		SmartDashboard.putData("Auto choices", chooser);
-
-		joystick = new XboxController(1);
-
-		talons = new CANTalon[16];
-		for (int i = 0; i < 16; i++)
-			talons[i] = new CANTalon(i + 1);
+		teleop = new Teleop();
 	}
 
 	/**
@@ -53,10 +35,6 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		autoSelected = chooser.getSelected();
-		// autoSelected = SmartDashboard.getString("Auto Selector",
-		// defaultAuto);
-		System.out.println("Auto selected: " + autoSelected);
 	}
 
 	/**
@@ -64,19 +42,11 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		switch (autoSelected) {
-		case customAuto:
-			// Put custom auto code here
-			break;
-		case defaultAuto:
-		default:
-			// Put default auto code here
-			break;
-		}
 	}
 
 	@Override
 	public void teleopInit() {
+		teleop.init();
 	}
 
 	/**
@@ -84,11 +54,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		CANTalon talon = talons[6];
-		if (joystick.getRawButton(1))
-			talon.set(0.25);
-		if (joystick.getRawButton(2))
-			talon.set(0);
+		teleop.periodic();
 	}
 
 	/**
@@ -96,17 +62,5 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-		if (joystick.getRawButton(1)) {
-			for (int i = 0; i < 16; i++) {
-				System.out.println(i + 1);
-				talons[i].set(0.5);
-				try {
-					Thread.sleep(2000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				talons[i].set(0);
-			}
-		}
 	}
 }

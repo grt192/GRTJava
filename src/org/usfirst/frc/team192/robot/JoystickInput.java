@@ -13,42 +13,66 @@ double time;
 time = DriverStation.getInstance().getMatchTime();
 */
 
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
 
 public class JoystickInput {
-	public Joystick turnStick;
-	public Joystick xbox;
-	
-	public JoystickInput() {
-		turnStick = new Joystick(0);
-		xbox = new Joystick(1);
+	private Joystick turnStick;
+	private XboxController xbox;
+
+	public JoystickInput(int turnStickPort, int xboxPort) {
+		turnStick = new Joystick(turnStickPort);
+		xbox = new XboxController(xboxPort);
 	}
-	
-	//get button pressing info
+
+	// get button pressing info
 	public boolean getShooterButton() {
-		return xbox.getRawButton(1);
+		return xbox.getAButton();
 	}
-	
+
 	public boolean getLeverButton() {
-		return xbox.getRawButton(2);
+		return xbox.getBButton();
 	}
-	
-	//gets driver axis info
+
+	public boolean getChalupaButton() {
+		return xbox.getXButton();
+	}
+
+	public boolean getCollectionButton() {
+		return xbox.getYButton();
+	}
+
+	public XboxController getXboxController() {
+		return xbox;
+	}
+
+	public double getClippedX(Hand hand) {
+		double val = xbox.getX(hand);
+		return Math.abs(val) > 0.1 ? val : 0;
+	}
+
+	public double getClippedY(Hand hand) {
+		double val = xbox.getY(hand);
+		return Math.abs(val) > 0.1 ? val : 0;
+	}
+
+	// gets driver axis info
 	public double getTurnStickX() {
 		return turnStick.getX();
 	}
-	
+
 	public double getTurnStickY() {
 		return turnStick.getY();
 	}
-	
-	//gets polar coordinates info
+
+	// gets polar coordinates info
 	public double getPolarRadius() {
 		return Math.sqrt(Math.pow(getTurnStickX(), 2) + Math.pow(getTurnStickY(), 2));
 	}
-	
+
 	public double getPolarAngle() {
-		return Math.toDegrees(Math.atan(getTurnStickY())/getTurnStickX());
+		return Math.toDegrees(Math.atan(getTurnStickY()) / getTurnStickX());
 	}
 
 }
