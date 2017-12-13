@@ -1,8 +1,6 @@
 package org.usfirst.frc.team192.robot;
 
-<<<<<<< HEAD
 import edu.wpi.first.wpilibj.IterativeRobot;
-=======
 import org.usfirst.frc.team192.strafe.Strafe;
 import org.usfirst.frc.team192.swerve.WheelDriveThread;
 import org.usfirst.frc.team192.swerve.WheelReadThread;
@@ -15,7 +13,6 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
->>>>>>> strafe
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -26,9 +23,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends IterativeRobot {
 
-<<<<<<< HEAD
 	private Teleop teleop;
-=======
 	private CANTalon[] talons;
 	private Joystick joystick;
 	
@@ -38,7 +33,6 @@ public class Robot extends IterativeRobot {
 	private double[] switchLocs = new double[4];
 	
 	private Strafe strafe;
->>>>>>> strafe
 
 	/**
 	 * This function is run when the robot is first started up and should be used
@@ -46,9 +40,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-<<<<<<< HEAD
 		teleop = new Teleop();
-=======
 		chooser.addDefault("Default Auto", defaultAuto);
 		chooser.addObject("My Auto", customAuto);
 		SmartDashboard.putData("Auto choices", chooser);
@@ -87,7 +79,7 @@ public class Robot extends IterativeRobot {
 		// wheelRotates[3].start();
 		
 		strafe = new Strafe(wheelDrives[0], wheelRotates[0], wheelDrives[1], wheelRotates[1], wheelDrives[2], wheelRotates[2], wheelDrives[3], wheelRotates[3]);
->>>>>>> strafe
+
 	}
 
 	/**
@@ -122,9 +114,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-<<<<<<< HEAD
 		teleop.periodic();
-=======
 		/*
 		CANTalon talon = talons[6];
 		if (joystick.getRawButton(2)) {
@@ -138,11 +128,10 @@ public class Robot extends IterativeRobot {
 		System.out.println(wheelRead1.getTheta() + " " + talons[6].getEncPosition());
 		*/
 		
-		JoystickInput input = new JoystickInput();
+		JoystickInput input = new JoystickInput(1, 2);
 		strafe.updateWithJoystickInput(input);
 		
 		
->>>>>>> strafe
 	}
 
 	/**
