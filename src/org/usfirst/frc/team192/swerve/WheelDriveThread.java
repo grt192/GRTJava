@@ -1,21 +1,28 @@
 package org.usfirst.frc.team192.swerve;
 
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Talon;
+import com.ctre.CANTalon;
 
 public class WheelDriveThread extends Thread
 {
-	private Wheel wheel;
+	private CANTalon motor;
 	private double speed;
 	
-	public WheelDriveThread(Wheel wheel, double speed)
+	public WheelDriveThread(CANTalon motor)
 	{
-		this.wheel = wheel;
+		this.motor = motor;
+		this.speed = 0;
+	}
+	
+	public void setSpeed(double speed)
+	{
 		this.speed = speed;
 	}
 	
 	public void run()
 	{
-		// TODO: put stuff in here
+		while (true)
+		{
+			motor.set(speed);
+		}
 	}
 }

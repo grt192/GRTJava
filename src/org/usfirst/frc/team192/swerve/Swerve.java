@@ -37,25 +37,25 @@ public class Swerve
 		this.backLeft = backLeft;
 	}
 	
-	public int updateWheelsUsingJoystickInputs(JoystickInput joyLeft, JoystickInput joyRight)
+	public int updateWheelsUsingJoystickInputs(JoystickValue joyLeft, JoystickValue joyRight)
 	{
 		// TODO: put stuff in here
 		return 0;
 	}
 	
-	public double calcvx(JoystickInput joyLeft, JoystickInput joyRight)
+	public double calcvx(JoystickValue joyLeft, JoystickValue joyRight)
 	{
 		// TODO: put stuff in here
 		return 0.0;
 	}
 	
-	public double calcvy(JoystickInput joyLeft, JoystickInput joyRight)
+	public double calcvy(JoystickValue joyLeft, JoystickValue joyRight)
 	{
 		// TODO: put stuff in here
 		return 0.0;
 	}
 	
-	public double calcRotationalVelocity(JoystickInput joyLeft, JoystickInput joyRight)
+	public double calcRotationalVelocity(JoystickValue joyLeft, JoystickValue joyRight)
 	{
 		// TODO: put stuff in here
 		return 0.0;

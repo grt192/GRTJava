@@ -1,11 +1,11 @@
 package org.usfirst.frc.team192.swerve;
 
-public class JoystickInput
+public class JoystickValue
 {
 	private double x;
 	private double y;
 	
-	public JoystickInput(double x, double y)
+	public JoystickValue(double x, double y)
 	{
 		this.x = x;
 		this.y = y;
