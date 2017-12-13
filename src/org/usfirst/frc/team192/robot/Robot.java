@@ -22,6 +22,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * directory.
  */
 public class Robot extends IterativeRobot {
+	final String defaultAuto = "Default";
+	final String customAuto = "My Auto";
+	String autoSelected;
+	SendableChooser<String> chooser = new SendableChooser<>();
 
 	private Teleop teleop;
 	private CANTalon[] talons;
@@ -31,6 +35,11 @@ public class Robot extends IterativeRobot {
 	private WheelDriveThread[] wheelDrives = new WheelDriveThread[4];
 	private WheelRotateThread[] wheelRotates = new WheelRotateThread[4];
 	private double[] switchLocs = new double[4];
+	private double[] zeroedValue;
+	private boolean settingZeros;
+	
+	private double WIDTH = 0.7112;
+	private double HEIGHT = 0.8128;
 	
 	private Strafe strafe;
 
@@ -51,35 +60,56 @@ public class Robot extends IterativeRobot {
 		for (int i = 0; i < 16; i++)
 			talons[i] = new CANTalon(i + 1);
 
-		wheelReads[0] = null; // new WheelReadThread(talons[6], new DigitalInput(3));
-		// wheelReads[0].start();
+
+
+		joystick = new Joystick(0);
+
+		talons = new CANTalon[16];
+		for (int i = 0; i < 16; i++)
+			talons[i] = new CANTalon(i + 1);
+
+		wheelReads[0] = new WheelReadThread(talons[6], new DigitalInput(3));
+		wheelReads[0].start();
 		wheelReads[1] = new WheelReadThread(talons[0], new DigitalInput(1));
 		wheelReads[1].start();
-		wheelReads[2] = null; // new WheelReadThread(talons[8], new DigitalInput(0));
-		// wheelReads[2].start();
-		wheelReads[3] = null; // new WheelReadThread(talons[14], new DigitalInput(2));
-		// wheelReads[3].start();
+		wheelReads[2] = new WheelReadThread(talons[8], new DigitalInput(0));
+		wheelReads[2].start();
+		wheelReads[3] = new WheelReadThread(talons[14], new DigitalInput(2));
+		wheelReads[3].start();
 
-		wheelDrives[0] = null; // new WheelDriveThread(talons[7]);
-		// wheelDrives[0].start();
+		wheelDrives[0] = new WheelDriveThread(talons[7]);
+		wheelDrives[0].start();
 		wheelDrives[1] = new WheelDriveThread(talons[1]);
 		wheelDrives[1].start();
 		wheelDrives[2] = new WheelDriveThread(talons[9]);
-		// wheelDrives[2].start();
+		wheelDrives[2].start();
 		wheelDrives[3] = new WheelDriveThread(talons[15]);
-		// wheelDrives[3].start();
-
-		wheelRotates[0] = null; // new WheelRotateThread(talons[6], wheelReads[0]);
-		// wheelRotates[0].start();
-		wheelRotates[1] = new WheelRotateThread(talons[0], wheelReads[1]);
-		wheelRotates[1].start();
-		wheelRotates[2] = null; // new WheelRotateThread(talons[8], wheelReads[2]);
-		// wheelRotates[2].start();
-		wheelRotates[3] = null; // new WheelRotateThread(talons[14], wheelReads[3]);
-		// wheelRotates[3].start();
+		wheelDrives[3].start();
 		
-		strafe = new Strafe(wheelDrives[0], wheelRotates[0], wheelDrives[1], wheelRotates[1], wheelDrives[2], wheelRotates[2], wheelDrives[3], wheelRotates[3]);
-
+		zeroedValue = new double[] {0, 0, 0, 0};
+		
+		wheelRotates[0] = new WheelRotateThread(talons[6], wheelReads[0], zeroedValue[0]);
+		wheelRotates[0].start();
+		wheelRotates[1] = new WheelRotateThread(talons[0], wheelReads[1], zeroedValue[1]);
+		wheelRotates[1].start();
+		wheelRotates[2] = new WheelRotateThread(talons[8], wheelReads[2], zeroedValue[2]);
+		wheelRotates[2].start();
+		wheelRotates[3] = new WheelRotateThread(talons[14], wheelReads[3], zeroedValue[3]);
+		wheelRotates[3].start();
+		
+		strafe = new Strafe(wheelDrives[0], wheelRotates[0], wheelDrives[1], wheelRotates[1], wheelDrives[2], wheelRotates[2], wheelDrives[3], wheelRotates[3], WIDTH, HEIGHT);
+		
+		System.out.println("zeroing all wheels");
+		
+		for (int i = 0; i < wheelReads.length; i++)
+		{
+			wheelReads[i].zeroing = true;
+		}
+		
+		for (int i = 0; i < wheelRotates.length; i++)
+		{
+			wheelRotates[i].setTargetTheta(0);
+		}
 	}
 
 	/**
