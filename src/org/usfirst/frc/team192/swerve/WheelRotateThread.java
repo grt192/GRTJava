@@ -9,15 +9,24 @@ public class WheelRotateThread extends Thread
 	private CANTalon motor;
 	private WheelReadThread wheelRead;
 	private double targetTheta;
+	public boolean shouldStillRun;
+	private double readingWhenZeroed;
 	
 	public double TOLERANCE; // radians
 	
-	public WheelRotateThread(CANTalon motor, WheelReadThread wheelRead)
+	public WheelRotateThread(CANTalon motor, WheelReadThread wheelRead, double readingWhenZeroed)
 	{
 		this.motor = motor;
 		this.wheelRead = wheelRead;
 		this.targetTheta = 0;
 		TOLERANCE = 0.02;
+		shouldStillRun = true;
+		this.readingWhenZeroed = readingWhenZeroed;
+	}
+	
+	public void setReadingWhenZeroed(double readingWhenZeroed)
+	{
+		this.readingWhenZeroed = readingWhenZeroed;
 	}
 	
 	public void setTargetTheta(double targetTheta)
@@ -30,26 +39,33 @@ public class WheelRotateThread extends Thread
 	{
 		while (true)
 		{
-			double current = wheelRead.getTheta();
-			double forwardChange = (targetTheta - current + 2 * Math.PI) % (2 * Math.PI);
-			double backwardChange = (-forwardChange + 2 * Math.PI) % (2 * Math.PI);
-			// System.out.println(targetTheta);
-			if (Math.min(forwardChange, backwardChange) < TOLERANCE) // kind of a waste to keep changing if it's about right already
+			if (shouldStillRun && !wheelRead.isZeroing())
 			{
-				// System.out.println("not moving motor");
-				motor.set(0);
-			}
-			else if (forwardChange < backwardChange) // if it would be shorter to move forward than backward, move forward
-			{
-				motor.set(forwardChange / Math.PI);
+				double current = wheelRead.getTheta() - readingWhenZeroed;
+				double forwardChange = (targetTheta - current + 2 * Math.PI) % (2 * Math.PI);
+				double backwardChange = (-forwardChange + 2 * Math.PI) % (2 * Math.PI);
+				// System.out.println(targetTheta);
+				if (Math.min(forwardChange, backwardChange) < TOLERANCE) // kind of a waste to keep changing if it's about right already
+				{
+					// System.out.println("not moving motor");
+					motor.set(0);
+				}
+				else if (forwardChange < backwardChange) // if it would be shorter to move forward than backward, move forward
+				{
+					motor.set(forwardChange / Math.PI);
+				}
+				else
+				{
+					motor.set(-backwardChange / Math.PI);
+				}
+				
+				// System.out.println("target: " + targetTheta);
+				System.out.println("right now: " + current);
 			}
 			else
 			{
-				motor.set(-backwardChange / Math.PI);
+				motor.set(0);
 			}
-			
-			// System.out.println("target: " + targetTheta);
-			System.out.println("right now: " + current);
 		}
 	}
 }

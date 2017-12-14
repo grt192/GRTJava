@@ -19,8 +19,16 @@ public class Strafe {
 	private WheelDriveThread[] drives;
 	private WheelRotateThread[] rotates;
 	private double DRIVE_SCALE;
+	private double robotWidth;
+	private double robotHeight;
 	
-	public Strafe(WheelDriveThread frontRightDrive, WheelRotateThread frontRightRotate, WheelDriveThread frontLeftDrive, WheelRotateThread frontLeftRotate, WheelDriveThread backRightDrive, WheelRotateThread backRightRotate, WheelDriveThread backLeftDrive, WheelRotateThread backLeftRotate) {
+	private enum DriveMode {
+		STRAFE, ROTATE
+	}
+	
+	private DriveMode mode;
+	
+	public Strafe(WheelDriveThread frontRightDrive, WheelRotateThread frontRightRotate, WheelDriveThread frontLeftDrive, WheelRotateThread frontLeftRotate, WheelDriveThread backRightDrive, WheelRotateThread backRightRotate, WheelDriveThread backLeftDrive, WheelRotateThread backLeftRotate, double robotWidth, double robotHeight) {
 		/*
 		this.frontRightDrive = frontRightDrive;
 		this.frontRightRotate = frontRightRotate;
@@ -45,18 +53,42 @@ public class Strafe {
 		rotates[3] = backLeftRotate;
 		
 		DRIVE_SCALE = 1 / Math.sqrt(2);
+		mode = DriveMode.STRAFE;
+		this.robotWidth = robotWidth;
+		this.robotHeight = robotHeight;
+	}
+	
+	public void changeModeToRotate() {
+		mode = DriveMode.ROTATE;
+		double initialTheta = Math.atan2(robotHeight, robotWidth);
+		rotates[2].setTargetTheta(initialTheta);
+		rotates[0].setTargetTheta(initialTheta + Math.PI / 2);
+		rotates[1].setTargetTheta(initialTheta + Math.PI);
+		rotates[3].setTargetTheta(initialTheta + 3 * Math.PI / 2);
+	}
+	
+	public void changeModeToStrafe() {
+		mode = DriveMode.STRAFE;
 	}
 	
 	public void updateWithJoystickInput(JoystickInput input) {
 		double inputDrive = input.getPolarRadius() * DRIVE_SCALE;
-		double inputRotate = input.getPolarAngle();
-		for (int i = 0; i < rotates.length; i++) {
-			if (rotates[i] != null && inputDrive >= 0.2) {
-				rotates[i].setTargetTheta((Math.toRadians(inputRotate) + 2 * Math.PI) % (2 * Math.PI));
+		double inputRotate = Math.toRadians(input.getPolarAngle());
+		if (mode == DriveMode.STRAFE) {
+			for (int i = 0; i < rotates.length; i++) {
+				if (rotates[i] != null && inputDrive >= 0.1) {
+					rotates[i].setTargetTheta((inputRotate + 2 * Math.PI) % (2 * Math.PI));
+				}
+				if (drives[i] != null) {
+					drives[i].setSpeed(inputDrive);
+				}
 			}
-			if (drives[i] != null) {
-				drives[i].setSpeed(inputDrive);
+		} else if (mode == DriveMode.ROTATE) {
+			for (int i = 0; i < drives.length; i++) {
+				drives[i].setSpeed(Math.cos(inputRotate) * inputDrive);
 			}
+		} else {
+			System.out.println("something has gone terribly wrong");
 		}
 	}
 }
