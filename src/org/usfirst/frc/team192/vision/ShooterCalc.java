@@ -95,7 +95,7 @@ public class ShooterCalc {
 	
 	//calculates the velocity needed to hit the hole - math is still wrong
 	public double velCalculated(double shooter_h, double distance, double theta_cam, double theta_board) {
-		return (Math.sqrt(-1 * (4.9*base_d_straight*base_d_straight + 9.8*base_d_straight*x + 4.9*x*x) / (y - shooter_h - base_d_straight*Math.tan(a))))
+		return 0.0; // return (Math.sqrt(-1 * (4.9*base_d_straight*base_d_straight + 9.8*base_d_straight*x + 4.9*x*x) / (y - shooter_h - base_d_straight*Math.tan(a))))
 	}
 	
 	//simulating throw and landing

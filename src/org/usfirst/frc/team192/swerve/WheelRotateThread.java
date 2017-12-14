@@ -60,7 +60,7 @@ public class WheelRotateThread extends Thread
 				}
 				
 				// System.out.println("target: " + targetTheta);
-				System.out.println("right now: " + current);
+				// System.out.println("right now: " + current);
 			}
 			else
 			{

@@ -41,9 +41,6 @@ public class Teleop {
 	public Teleop() {
 		joysticks = new JoystickInput(0, 1);
 		motor = new CANTalon(12); //it might be 11
-	}
-
-	public void init() {
 		chooser.addDefault("Default Auto", defaultAuto);
 		chooser.addObject("My Auto", customAuto);
 		SmartDashboard.putData("Auto choices", chooser);
@@ -96,6 +93,9 @@ public class Teleop {
 		{
 			wheelRotates[i].setTargetTheta(0);
 		}
+	}
+
+	public void init() {
 
 	}
 
