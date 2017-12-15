@@ -74,7 +74,11 @@ public class Strafe {
 		double inputDrive = input.getPolarRadius() * DRIVE_SCALE;
 		double inputRotate = Math.toRadians(input.getPolarAngle());
 		if (mode == DriveMode.STRAFE) {
-			rotates.setTargetTheta((inputRotate + 2 * Math.PI) % (2 * Math.PI));
+			if (inputDrive > 0.2)
+			{
+				rotates.setTargetTheta((inputRotate + 2 * Math.PI) % (2 * Math.PI));
+				
+			}
 			for (int i = 0; i < drives.length; i++) {
 				if (drives[i] != null) {
 					drives[i].setSpeed(inputDrive);

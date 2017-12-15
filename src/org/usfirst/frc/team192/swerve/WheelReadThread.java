@@ -52,11 +52,7 @@ public class WheelReadThread extends Thread
 			{
 				int moddedEncoderValue = turnMotor.getEncPosition() - deltaEnc - lastUpdated;
 				double toBeTheta = moddedEncoderValue * TO_RADIANS;
-				if (toBeTheta < 0)
-				{
-					toBeTheta += 2 * Math.PI;
-				}
-				theta = toBeTheta;
+				theta = ((toBeTheta % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
 				limitSwitchIsInTheMidstOfBeingActivated = false;
 			}
 		}
