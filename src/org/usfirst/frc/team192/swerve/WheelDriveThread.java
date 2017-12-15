@@ -6,11 +6,13 @@ public class WheelDriveThread extends Thread
 {
 	private CANTalon motor;
 	private double speed;
+	public boolean shouldStillRun;
 	
 	public WheelDriveThread(CANTalon motor)
 	{
 		this.motor = motor;
-		this.speed = 0;
+		speed = 0;
+		shouldStillRun = true;
 	}
 	
 	public void setSpeed(double speed)
@@ -22,7 +24,8 @@ public class WheelDriveThread extends Thread
 	{
 		while (true)
 		{
-			motor.set(speed);
+			if (shouldStillRun)
+				motor.set(speed);
 		}
 	}
 }

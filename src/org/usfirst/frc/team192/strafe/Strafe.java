@@ -82,6 +82,10 @@ public class Strafe {
 				if (drives[i] != null) {
 					drives[i].setSpeed(inputDrive);
 				}
+				if (rotates[i] == null || drives[i] == null)
+				{
+					System.out.println(i + " is null");
+				}
 			}
 		} else if (mode == DriveMode.ROTATE) {
 			for (int i = 0; i < drives.length; i++) {

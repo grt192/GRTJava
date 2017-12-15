@@ -12,7 +12,6 @@ public class WheelReadThread extends Thread
 	private double theta;
 	private int lastUpdated;
 	private boolean limitSwitchIsInTheMidstOfBeingActivated;
-	private int deltaEnc;
 	public boolean zeroing;
 	
 	private double TO_RADIANS;
@@ -24,7 +23,6 @@ public class WheelReadThread extends Thread
 		theta = 0;
 		lastUpdated = 0;
 		limitSwitchIsInTheMidstOfBeingActivated = false;
-		deltaEnc = turnMotor.getEncPosition();
 		
 		TO_RADIANS = 0.0008359831298535551;
 		
@@ -37,18 +35,20 @@ public class WheelReadThread extends Thread
 		{
 			if (zeroing && limitSwitch.get())
 			{
+				System.out.println("stopping it from zeroing");
 				turnMotor.set(0);
 				zeroing = false;
+				lastUpdated = turnMotor.getEncPosition();
 			}
 			else if (limitSwitch.get() && !limitSwitchIsInTheMidstOfBeingActivated)
 			{
 				theta = 0;
-				lastUpdated = turnMotor.getEncPosition() - deltaEnc;
+				lastUpdated = turnMotor.getEncPosition();
 				limitSwitchIsInTheMidstOfBeingActivated = true;
 			}
 			else if (!limitSwitch.get())
 			{
-				int moddedEncoderValue = turnMotor.getEncPosition() - deltaEnc - lastUpdated;
+				int moddedEncoderValue = turnMotor.getEncPosition() - lastUpdated;
 				double toBeTheta = moddedEncoderValue * TO_RADIANS;
 				if (toBeTheta < 0)
 				{

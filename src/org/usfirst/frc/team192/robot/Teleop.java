@@ -32,6 +32,7 @@ public class Teleop {
 	// private double[] switchLocs = new double[4];
 	private double[] zeroedValue;
 	private boolean settingZeros;
+	boolean pressingButtonFour = false;
 	
 	private double WIDTH = 0.7112;
 	private double HEIGHT = 0.8128;
@@ -83,20 +84,22 @@ public class Teleop {
 		strafe = new Strafe(wheelDrives[0], wheelRotates[0], wheelDrives[1], wheelRotates[1], wheelDrives[2], wheelRotates[2], wheelDrives[3], wheelRotates[3], WIDTH, HEIGHT);
 		
 		System.out.println("zeroing all wheels");
-		
-		for (int i = 0; i < wheelReads.length; i++)
-		{
-			wheelReads[i].zero();
-		}
-		
-		for (int i = 0; i < wheelRotates.length; i++)
-		{
-			wheelRotates[i].setTargetTheta(0);
-		}
 	}
 
 	public void init() {
-
+		
+		for (int i = 0; i < wheelRotates.length; i++) {
+			wheelRotates[i].shouldStillRun = false;
+			wheelDrives[i].shouldStillRun = false;
+		}
+		
+		for (int i = 0; i < wheelRotates.length; i++) {
+			wheelRotates[i].setTargetTheta(0);
+			System.out.println(i + ": " + wheelReads[i].getTheta());
+			wheelRotates[i].setReadingWhenZeroed(wheelReads[i].getTheta());
+			wheelRotates[i].shouldStillRun = true;
+			wheelDrives[i].shouldStillRun = true;
+		}
 	}
 
 	public void periodic() {
@@ -112,21 +115,31 @@ public class Teleop {
 		if (joystick.getRawButton(3)) {
 			strafe.changeModeToStrafe();
 		}
+		/*
 		if (joystick.getRawButton(4)) {
+			pressingButtonFour = true;
+		} else if (pressingButtonFour) {
 			if (settingZeros) {
 				for (int i = 0; i < wheelRotates.length; i++) {
 					wheelRotates[i].setTargetTheta(0);
+					System.out.println(i + ": " + wheelReads[i].getTheta());
 					wheelRotates[i].setReadingWhenZeroed(wheelReads[i].getTheta());
 					wheelRotates[i].shouldStillRun = true;
+					wheelDrives[i].shouldStillRun = true;
 				}
 				settingZeros = false;
 			} else {
 				for (int i = 0; i < wheelRotates.length; i++) {
 					wheelRotates[i].shouldStillRun = false;
+					wheelDrives[i].shouldStillRun = false;
 				}
 				settingZeros = true;
 			}
+			pressingButtonFour = false;
+			
 		}
+		*/
+		
 		strafe.updateWithJoystickInput(joysticks);
 	}
 }

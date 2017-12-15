@@ -39,10 +39,11 @@ public class WheelRotateThread extends Thread
 	{
 		while (true)
 		{
-			if (shouldStillRun && !wheelRead.isZeroing())
+			if (shouldStillRun)
 			{
+				System.out.println("reading when zeroed: " + readingWhenZeroed);
 				double current = wheelRead.getTheta() - readingWhenZeroed;
-				double forwardChange = (targetTheta - current + 2 * Math.PI) % (2 * Math.PI);
+				double forwardChange = ((targetTheta - current) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
 				double backwardChange = (-forwardChange + 2 * Math.PI) % (2 * Math.PI);
 				// System.out.println(targetTheta);
 				if (Math.min(forwardChange, backwardChange) < TOLERANCE) // kind of a waste to keep changing if it's about right already
@@ -60,7 +61,7 @@ public class WheelRotateThread extends Thread
 				}
 				
 				// System.out.println("target: " + targetTheta);
-				// System.out.println("right now: " + current);
+				// System.out.println(motor.getDeviceID() + " encoder value: " + current);
 			}
 			else
 			{
