@@ -30,8 +30,8 @@ public class Teleop {
 	private WheelDriveThread[] wheelDrives = new WheelDriveThread[4];
 	private WheelRotateThread wheelRotates;
 	// private double[] switchLocs = new double[4];
-	private double[] zeroedValue;
-	private boolean settingZeros;
+	// private double[] zeroedValue;
+	// private boolean settingZeros;
 	boolean pressingButtonFour = false;
 	
 	private double WIDTH = 0.7112;
@@ -53,6 +53,7 @@ public class Teleop {
 			talons[i] = new CANTalon(i + 1);
 
 		wheelReads = new WheelReadThread(talons[6], new DigitalInput(3));
+		wheelReads.start();
 
 		wheelDrives[0] = new WheelDriveThread(talons[7]);
 		wheelDrives[0].start();
@@ -63,13 +64,14 @@ public class Teleop {
 		wheelDrives[3] = new WheelDriveThread(talons[15]);
 		wheelDrives[3].start();
 		
-		zeroedValue = new double[] {0, 0, 0, 0};
+		// zeroedValue = new double[] {0, 0, 0, 0};
 		
 		wheelRotates = new WheelRotateThread(talons[6], talons[0], talons[8], talons[14], wheelReads);
+		wheelRotates.start();
 		
 		strafe = new Strafe(wheelRotates, wheelDrives[0], wheelDrives[1], wheelDrives[2], wheelDrives[3], WIDTH, HEIGHT);
 		
-		System.out.println("zeroing all wheels");
+		// System.out.println("zeroing all wheels");
 	}
 
 	public void init() {

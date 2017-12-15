@@ -78,9 +78,7 @@ public class Strafe {
 			for (int i = 0; i < drives.length; i++) {
 				if (drives[i] != null) {
 					drives[i].setSpeed(inputDrive);
-				}
-				if (drives[i] == null)
-				{
+				} else {
 					System.out.println(i + " is null");
 				}
 			}
