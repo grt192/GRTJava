@@ -26,9 +26,9 @@ public class Teleop {
 	private CANTalon[] talons;
 	private Joystick joystick;
 	
-	private WheelReadThread[] wheelReads = new WheelReadThread[4];
+	private WheelReadThread wheelReads;
 	private WheelDriveThread[] wheelDrives = new WheelDriveThread[4];
-	private WheelRotateThread[] wheelRotates = new WheelRotateThread[4];
+	private WheelRotateThread wheelRotates;
 	// private double[] switchLocs = new double[4];
 	private double[] zeroedValue;
 	private boolean settingZeros;
@@ -52,14 +52,7 @@ public class Teleop {
 		for (int i = 0; i < 16; i++)
 			talons[i] = new CANTalon(i + 1);
 
-		wheelReads[0] = new WheelReadThread(talons[6], new DigitalInput(3));
-		wheelReads[0].start();
-		wheelReads[1] = new WheelReadThread(talons[0], new DigitalInput(1));
-		wheelReads[1].start();
-		wheelReads[2] = new WheelReadThread(talons[8], new DigitalInput(0));
-		wheelReads[2].start();
-		wheelReads[3] = new WheelReadThread(talons[14], new DigitalInput(2));
-		wheelReads[3].start();
+		wheelReads = new WheelReadThread(talons[6], new DigitalInput(3));
 
 		wheelDrives[0] = new WheelDriveThread(talons[7]);
 		wheelDrives[0].start();
@@ -72,22 +65,19 @@ public class Teleop {
 		
 		zeroedValue = new double[] {0, 0, 0, 0};
 		
-		wheelRotates[0] = new WheelRotateThread(talons[6], wheelReads[0], zeroedValue[0]);
-		wheelRotates[0].start();
-		wheelRotates[1] = new WheelRotateThread(talons[0], wheelReads[1], zeroedValue[1]);
-		wheelRotates[1].start();
-		wheelRotates[2] = new WheelRotateThread(talons[8], wheelReads[2], zeroedValue[2]);
-		wheelRotates[2].start();
-		wheelRotates[3] = new WheelRotateThread(talons[14], wheelReads[3], zeroedValue[3]);
-		wheelRotates[3].start();
+		wheelRotates = new WheelRotateThread(talons[6], talons[0], talons[8], talons[14], wheelReads);
 		
-		strafe = new Strafe(wheelDrives[0], wheelRotates[0], wheelDrives[1], wheelRotates[1], wheelDrives[2], wheelRotates[2], wheelDrives[3], wheelRotates[3], WIDTH, HEIGHT);
+		strafe = new Strafe(wheelRotates, wheelDrives[0], wheelDrives[1], wheelDrives[2], wheelDrives[3], WIDTH, HEIGHT);
 		
 		System.out.println("zeroing all wheels");
 	}
 
 	public void init() {
 		
+		wheelRotates.setTargetTheta(0);
+		wheelReads.zero();
+		
+		/*
 		for (int i = 0; i < wheelRotates.length; i++) {
 			wheelRotates[i].shouldStillRun = false;
 			wheelDrives[i].shouldStillRun = false;
@@ -100,6 +90,7 @@ public class Teleop {
 			wheelRotates[i].shouldStillRun = true;
 			wheelDrives[i].shouldStillRun = true;
 		}
+		*/
 	}
 
 	public void periodic() {
