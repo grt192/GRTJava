@@ -51,8 +51,16 @@ public class Teleop {
 		talons = new CANTalon[16];
 		for (int i = 0; i < 16; i++)
 			talons[i] = new CANTalon(i + 1);
-
+		
+		/*
+		
+		// F period
 		wheelReads = new WheelReadThread(talons[6], new DigitalInput(3));
+		
+		*/
+		
+		// G period
+		wheelReads = new WheelReadThread(talons[6], new DigitalInput(1));
 		wheelReads.start();
 
 		wheelDrives[0] = new WheelDriveThread(talons[7]);

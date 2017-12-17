@@ -112,12 +112,12 @@ public class WheelRotateThread extends Thread
 				}
 				else if (forwardChange < backwardChange) // if it would be shorter to move forward than backward, move forward
 				{
-					setAllMotors(forwardChange / Math.PI / 2);
+					setAllMotors(forwardChange / Math.PI);
 					moving = true;
 				}
 				else
 				{
-					setAllMotors(-backwardChange / Math.PI / 2);
+					setAllMotors(-backwardChange / Math.PI);
 					moving = true;
 				}
 				

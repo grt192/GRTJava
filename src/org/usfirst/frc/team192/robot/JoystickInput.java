@@ -72,7 +72,7 @@ public class JoystickInput {
 	}
 
 	public double getPolarAngle() {
-		return Math.toDegrees(-1*Math.atan2(getTurnStickX(),getTurnStickY()));
+		return Math.toDegrees(Math.atan2(getTurnStickX(),getTurnStickY()));
 	}
 
 }
