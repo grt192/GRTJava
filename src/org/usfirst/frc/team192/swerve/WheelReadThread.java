@@ -65,6 +65,7 @@ public class WheelReadThread extends Thread
 		// zeroing = true;
 		theta = 0;
 		startPos = turnMotor.getEncPosition();
+		deltaEnc = startPos;
 		limitSwitchIsInTheMidstOfBeingActivated = true;
 	}
 	
