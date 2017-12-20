@@ -60,7 +60,7 @@ public class Teleop {
 		*/
 		
 		// G period
-		wheelReads = new WheelReadThread(talons[6], new DigitalInput(1));
+		wheelReads = new WheelReadThread(talons[0], new DigitalInput(1));
 		wheelReads.start();
 
 		wheelDrives[0] = new WheelDriveThread(talons[7]);

@@ -51,7 +51,7 @@ public class WheelReadThread extends Thread
 			}
 			else if (!limitSwitch.get())
 			{
-				int moddedEncoderValue = turnMotor.getEncPosition() - deltaEnc;
+				int moddedEncoderValue = turnMotor.getEncPosition() - deltaEnc - startPos;
 				double toBeTheta = moddedEncoderValue * TO_RADIANS;
 				theta = ((toBeTheta % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
 				limitSwitchIsInTheMidstOfBeingActivated = false;
@@ -65,7 +65,7 @@ public class WheelReadThread extends Thread
 		// zeroing = true;
 		theta = 0;
 		startPos = turnMotor.getEncPosition();
-		deltaEnc = startPos;
+		deltaEnc = 0;
 		limitSwitchIsInTheMidstOfBeingActivated = true;
 	}
 	
