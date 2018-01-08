@@ -12,7 +12,6 @@ public class Collection {
 	public Collection(CANTalon motor1, CANTalon motor2) {
 		motor = motor1;
 		motor2.changeControlMode(TalonControlMode.Follower);
-		motor2.set(motor1.getDeviceID());
 		on = false;
 	}
 

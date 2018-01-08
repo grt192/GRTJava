@@ -58,7 +58,9 @@ public class Wheel extends Thread {
 	}
 
 	public Wheel copy() {
-		return new Wheel(rotateMotor, driveMotor, limitSwitch);
+		Wheel wheel = new Wheel(rotateMotor, driveMotor, limitSwitch);
+		wheel.offset = offset;
+		return wheel;
 	}
 
 	@Override
