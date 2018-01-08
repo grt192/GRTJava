@@ -1,18 +1,13 @@
 package org.usfirst.frc.team192.robot;
 
-import edu.wpi.first.wpilibj.IterativeRobot;
-import org.usfirst.frc.team192.strafe.Strafe;
-import org.usfirst.frc.team192.swerve.WheelDriveThread;
-import org.usfirst.frc.team192.swerve.WheelReadThread;
-import org.usfirst.frc.team192.swerve.WheelRotateThread;
+import org.usfirst.frc.team192.swerve.experimental.Strafe;
 
-import com.ctre.CANTalon;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -29,13 +24,19 @@ public class Robot extends IterativeRobot {
 
 	private Teleop teleop;
 
+	private TalonSRX testTalon;
+	private JoystickInput input;
+
+	private Strafe strafe;
+
 	/**
 	 * This function is run when the robot is first started up and should be used
 	 * for any initialization code.
 	 */
 	@Override
 	public void robotInit() {
-		teleop = new Teleop();
+		strafe = new Strafe();
+		input = new JoystickInput(0, 1);
 	}
 
 	/**
@@ -62,7 +63,7 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void teleopInit() {
-		teleop.init();
+		strafe.enable();
 	}
 
 	/**
@@ -70,9 +71,19 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		teleop.periodic();
-		
-		
+		strafe.update(input.getPolarAngle(), input.getPolarRadius());
+
+	}
+
+	@Override
+	public void disabledInit() {
+		strafe.disable();
+	}
+
+	@Override
+	public void testInit() {
+		testTalon = new TalonSRX(15);
+		testTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
 	}
 
 	/**
@@ -80,5 +91,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void testPeriodic() {
+		testTalon.set(ControlMode.PercentOutput, -input.getTurnStickY());
+		System.out.println(testTalon.getSelectedSensorPosition(0));
 	}
 }

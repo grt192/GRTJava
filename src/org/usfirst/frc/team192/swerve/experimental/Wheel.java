@@ -1,8 +1,8 @@
 package org.usfirst.frc.team192.swerve.experimental;
 
-import com.ctre.CANTalon;
-import com.ctre.CANTalon.FeedbackDevice;
-import com.ctre.CANTalon.TalonControlMode;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
@@ -16,8 +16,8 @@ public class Wheel extends Thread {
 	private final double MIN_ANGLE_CHANGE = 0.005;
 	private final double MIN_SPEED_CHANGE = 0.05;
 
-	private CANTalon rotateMotor;
-	private CANTalon driveMotor;
+	private TalonSRX rotateMotor;
+	private TalonSRX driveMotor;
 	private DigitalInput limitSwitch;
 	private boolean useLimitSwitch;
 
@@ -28,16 +28,19 @@ public class Wheel extends Thread {
 	private double driveSpeed;
 	private double offset;
 
-	public Wheel(CANTalon rotateMotor, CANTalon driveMotor, DigitalInput limitSwitch) {
+	public Wheel(TalonSRX rotateMotor, TalonSRX driveMotor, DigitalInput limitSwitch) {
 		this.rotateMotor = rotateMotor;
 		this.driveMotor = driveMotor;
 		this.limitSwitch = limitSwitch;
 
 		useLimitSwitch = (limitSwitch != null);
+	}
 
-		rotateMotor.setFeedbackDevice(FeedbackDevice.QuadEncoder);
-		rotateMotor.configEncoderCodesPerRev(TICKS_PER_ROTATION / 4);
-		rotateMotor.changeControlMode(TalonControlMode.Position);
+	public void initialize() {
+		rotateMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
+		rotateMotor.config_kP(0, 1.0, 0);
+		rotateMotor.config_kI(0, 0.0, 0);
+		rotateMotor.config_kD(0, 0.0, 0);
 	}
 
 	public void enable() {
@@ -50,7 +53,7 @@ public class Wheel extends Thread {
 	}
 
 	public void zero() {
-		offset = rotateMotor.getEncPosition() / TICKS_PER_ROTATION;
+		offset = rotateMotor.getSelectedSensorPosition(0) / TICKS_PER_ROTATION;
 	}
 
 	public void disable() {
@@ -72,18 +75,17 @@ public class Wheel extends Thread {
 			if (useLimitSwitch) {
 				boolean newSwitchValue = limitSwitch.get();
 				if (newSwitchValue != switchValue) {
-					boolean forward = (Math.signum(rotateMotor.getEncVelocity()) == 1.0f);
+					boolean forward = (Math.signum(rotateMotor.getSelectedSensorVelocity(0)) == 1.0f);
 					if (forward != switchValue) {
-						rotateMotor.setEncPosition(0);
+						rotateMotor.getSensorCollection().setQuadraturePosition(0, 0);
 					}
 					switchValue = newSwitchValue;
 				}
 			} else {
-				int position = rotateMotor.getEncPosition();
-				System.out.println(position);
+				int position = rotateMotor.getSelectedSensorPosition(0);
 				if (position > TICKS_PER_ROTATION || position < -TICKS_PER_ROTATION) {
 					System.out.println(position + ", " + position % TICKS_PER_ROTATION);
-					rotateMotor.setEncPosition(position % TICKS_PER_ROTATION);
+					rotateMotor.getSensorCollection().setQuadraturePosition(position % TICKS_PER_ROTATION, 0);
 				}
 			}
 			Timer.delay(LIMIT_SWITCH_READ_DELAY);
@@ -98,7 +100,7 @@ public class Wheel extends Thread {
 		while (targetPosition > 0.5)
 			targetPosition--;
 
-		double currentPosition = (double) rotateMotor.getEncPosition() / TICKS_PER_ROTATION;
+		double currentPosition = (double) rotateMotor.getSelectedSensorPosition(0) / TICKS_PER_ROTATION;
 		boolean positionChanged = false;
 		double delta = targetPosition - currentPosition;
 		if (Math.abs(delta) > 0.5) {
@@ -113,16 +115,18 @@ public class Wheel extends Thread {
 		}
 		if (Math.abs(targetPosition - targetAngle) > MIN_ANGLE_CHANGE) {
 			if (positionChanged)
-				rotateMotor.setEncPosition((int) (currentPosition * TICKS_PER_ROTATION));
+				rotateMotor.getSensorCollection().setQuadraturePosition((int) (currentPosition * TICKS_PER_ROTATION),
+						0);
 			reversed = newReverse;
-			rotateMotor.set(targetPosition);
+			targetAngle = targetPosition;
+			rotateMotor.set(ControlMode.Position, targetPosition * TICKS_PER_ROTATION);
 		}
 	}
 
 	public void setDriveSpeed(double speed) {
 		speed *= (reversed ? -1 : 1);
 		if ((speed == 0.0 && driveSpeed != 0.0) || Math.abs(driveSpeed - speed) > MIN_SPEED_CHANGE) {
-			driveMotor.set(speed);
+			driveMotor.set(ControlMode.PercentOutput, speed);
 			driveSpeed = speed;
 		}
 	}
