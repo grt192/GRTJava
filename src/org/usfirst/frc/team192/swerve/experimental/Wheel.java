@@ -19,17 +19,21 @@ public class Wheel extends Thread {
 	private CANTalon rotateMotor;
 	private CANTalon driveMotor;
 	private DigitalInput limitSwitch;
+	private boolean useLimitSwitch;
 
 	private boolean running;
 	private boolean reversed;
 
 	private double targetAngle;
 	private double driveSpeed;
+	private double offset;
 
 	public Wheel(CANTalon rotateMotor, CANTalon driveMotor, DigitalInput limitSwitch) {
 		this.rotateMotor = rotateMotor;
 		this.driveMotor = driveMotor;
 		this.limitSwitch = limitSwitch;
+
+		useLimitSwitch = (limitSwitch != null);
 
 		rotateMotor.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 		rotateMotor.configEncoderCodesPerRev(TICKS_PER_ROTATION / 4);
@@ -45,6 +49,10 @@ public class Wheel extends Thread {
 		start();
 	}
 
+	public void zero() {
+		offset = rotateMotor.getEncPosition() / TICKS_PER_ROTATION;
+	}
+
 	public void disable() {
 		running = false;
 	}
@@ -55,25 +63,38 @@ public class Wheel extends Thread {
 
 	@Override
 	public void run() {
-		System.out.println("enabled");
-		boolean switchValue = limitSwitch.get();
+		boolean switchValue = false;
+		if (useLimitSwitch)
+			switchValue = limitSwitch.get();
 		while (running) {
-			boolean newSwitchValue = limitSwitch.get();
-			if (newSwitchValue != switchValue) {
-				boolean forward = (Math.signum(rotateMotor.getEncVelocity()) == 1.0f);
-				if (forward != switchValue) {
-					rotateMotor.setEncPosition(0);
+			if (useLimitSwitch) {
+				boolean newSwitchValue = limitSwitch.get();
+				if (newSwitchValue != switchValue) {
+					boolean forward = (Math.signum(rotateMotor.getEncVelocity()) == 1.0f);
+					if (forward != switchValue) {
+						rotateMotor.setEncPosition(0);
+					}
+					switchValue = newSwitchValue;
 				}
-				switchValue = newSwitchValue;
+			} else {
+				int position = rotateMotor.getEncPosition();
+				System.out.println(position);
+				if (position > TICKS_PER_ROTATION || position < -TICKS_PER_ROTATION) {
+					System.out.println(position + ", " + position % TICKS_PER_ROTATION);
+					rotateMotor.setEncPosition(position % TICKS_PER_ROTATION);
+				}
 			}
 			Timer.delay(LIMIT_SWITCH_READ_DELAY);
 		}
-		System.out.println("disabled");
 	}
 
 	public void setTargetPosition(double radians) {
 		double targetPosition = radians / TWO_PI;
-		assert (targetPosition >= -0.5 && targetPosition <= 0.5);
+		targetPosition += offset;
+		while (targetPosition < -0.5)
+			targetPosition++;
+		while (targetPosition > 0.5)
+			targetPosition--;
 
 		double currentPosition = (double) rotateMotor.getEncPosition() / TICKS_PER_ROTATION;
 		boolean positionChanged = false;
@@ -98,7 +119,7 @@ public class Wheel extends Thread {
 
 	public void setDriveSpeed(double speed) {
 		speed *= (reversed ? -1 : 1);
-		if (speed == 0 || Math.abs(driveSpeed - speed) > MIN_SPEED_CHANGE) {
+		if ((speed == 0.0 && driveSpeed != 0.0) || Math.abs(driveSpeed - speed) > MIN_SPEED_CHANGE) {
 			driveMotor.set(speed);
 			driveSpeed = speed;
 		}
