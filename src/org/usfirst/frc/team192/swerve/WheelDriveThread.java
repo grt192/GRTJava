@@ -1,31 +1,28 @@
 package org.usfirst.frc.team192.swerve;
 
-import com.ctre.CANTalon;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-public class WheelDriveThread extends Thread
-{
-	private CANTalon motor;
+public class WheelDriveThread extends Thread {
+	private TalonSRX motor;
 	private double speed;
 	public boolean shouldStillRun;
-	
-	public WheelDriveThread(CANTalon motor)
-	{
+
+	public WheelDriveThread(TalonSRX motor) {
 		this.motor = motor;
 		speed = 0;
 		shouldStillRun = true;
 	}
-	
-	public void setSpeed(double speed)
-	{
+
+	public void setSpeed(double speed) {
 		this.speed = speed;
 	}
-	
-	public void run()
-	{
-		while (true)
-		{
+
+	@Override
+	public void run() {
+		while (true) {
 			if (shouldStillRun)
-				motor.set(speed);
+				motor.set(ControlMode.PercentOutput, speed);
 		}
 	}
 }
