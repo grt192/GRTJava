@@ -82,7 +82,7 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void testInit() {
-		testTalon = new TalonSRX(15);
+		testTalon = new TalonSRX(16);
 		testTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
 	}
 

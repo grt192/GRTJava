@@ -9,9 +9,9 @@ public class Strafe {
 	public Strafe() {
 		wheels = new Wheel[4];
 		wheels[0] = new Wheel(new TalonSRX(1), new TalonSRX(2), null);// new DigitalInput(2));
-		// wheels[1] = new Wheel(new TalonSRX(7), new TalonSRX(8), new DigitalInput(3));
+		wheels[1] = new Wheel(new TalonSRX(8), new TalonSRX(7), null); // new DigitalInput(3));
 		wheels[2] = new Wheel(new TalonSRX(9), new TalonSRX(10), null);// new DigitalInput(0));
-		// wheels[3] = new Wheel(new TalonSRX(15), new TalonSRX(16), null);// new
+		wheels[3] = new Wheel(new TalonSRX(14), new TalonSRX(16), null);// new
 		// DigitalInput(1));
 		for (Wheel wheel : wheels)
 			if (wheel != null)
@@ -37,9 +37,9 @@ public class Strafe {
 		for (Wheel wheel : wheels) {
 			if (wheel == null)
 				continue;
-			if (speed > 0.1)
+			if (speed > 0.2)
 				wheel.setTargetPosition(angle);
-			if (speed < 0.1)
+			if (speed < 0.2)
 				wheel.setDriveSpeed(0.0);
 			else
 				wheel.setDriveSpeed(speed);

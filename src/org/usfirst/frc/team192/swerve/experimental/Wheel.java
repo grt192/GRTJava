@@ -45,6 +45,7 @@ public class Wheel extends Thread {
 
 	public void enable() {
 		running = true;
+		zero();
 		setDriveSpeed(0);
 		setTargetPosition(0);
 		targetAngle = 0;
@@ -53,7 +54,8 @@ public class Wheel extends Thread {
 	}
 
 	public void zero() {
-		offset = rotateMotor.getSelectedSensorPosition(0) / TICKS_PER_ROTATION;
+		offset = (double) rotateMotor.getSelectedSensorPosition(0) / TICKS_PER_ROTATION;
+		// System.out.println("zeroing at " + rotateMotor.getSelectedSensorPosition(0));
 	}
 
 	public void disable() {
@@ -84,7 +86,7 @@ public class Wheel extends Thread {
 			} else {
 				int position = rotateMotor.getSelectedSensorPosition(0);
 				if (position > TICKS_PER_ROTATION || position < -TICKS_PER_ROTATION) {
-					System.out.println(position + ", " + position % TICKS_PER_ROTATION);
+					// System.out.println(position + ", " + position % TICKS_PER_ROTATION);
 					rotateMotor.getSensorCollection().setQuadraturePosition(position % TICKS_PER_ROTATION, 0);
 				}
 			}
@@ -95,6 +97,7 @@ public class Wheel extends Thread {
 	public void setTargetPosition(double radians) {
 		double targetPosition = radians / TWO_PI;
 		targetPosition += offset;
+		// System.out.println(rotateMotor.getSelectedSensorPosition(0) / TICKS_PER_ROTATION + ", " + targetPosition);
 		while (targetPosition < -0.5)
 			targetPosition++;
 		while (targetPosition > 0.5)
@@ -114,12 +117,14 @@ public class Wheel extends Thread {
 			newReverse = true;
 		}
 		if (Math.abs(targetPosition - targetAngle) > MIN_ANGLE_CHANGE) {
+			// System.out.println("changing " + Math.abs(targetPosition - targetAngle));
 			if (positionChanged)
-				rotateMotor.getSensorCollection().setQuadraturePosition((int) (currentPosition * TICKS_PER_ROTATION),
-						0);
+				rotateMotor.getSensorCollection().setQuadraturePosition((int) (currentPosition * TICKS_PER_ROTATION), 0);
 			reversed = newReverse;
 			targetAngle = targetPosition;
-			rotateMotor.set(ControlMode.Position, targetPosition * TICKS_PER_ROTATION);
+			double encoderPos = (targetPosition) * TICKS_PER_ROTATION;
+			// System.out.println("going to " + encoderPos);
+			rotateMotor.set(ControlMode.Position, encoderPos);
 		}
 	}
 
