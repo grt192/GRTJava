@@ -26,6 +26,9 @@ public class Robot extends IterativeRobot {
 
 	private TalonSRX testTalon;
 	private JoystickInput input;
+	
+	private double ROBOT_WIDTH = 0.8128;
+	private double ROBOT_HEIGHT = 0.7112;
 
 	private Strafe strafe;
 
@@ -35,7 +38,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		strafe = new Strafe();
+		strafe = new Strafe(ROBOT_WIDTH, ROBOT_HEIGHT);
 		input = new JoystickInput(0, 1);
 	}
 
@@ -71,7 +74,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		strafe.update(input.getPolarAngle(), input.getPolarRadius());
+		strafe.update(input);
 
 	}
 

@@ -22,7 +22,7 @@ public class Wheel extends Thread {
 	private boolean useLimitSwitch;
 
 	private boolean running;
-	private boolean reversed;
+	public boolean reversed;
 
 	private double targetAngle;
 	private double driveSpeed;
