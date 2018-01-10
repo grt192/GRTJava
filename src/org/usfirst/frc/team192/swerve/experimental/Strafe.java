@@ -4,6 +4,7 @@ import org.usfirst.frc.team192.robot.JoystickInput;
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
 
 public class Strafe {
@@ -22,8 +23,8 @@ public class Strafe {
 	public Strafe(double robotWidth, double robotHeight) {
 		wheels = new Wheel[4];
 		wheels[2] = new Wheel(new TalonSRX(1), new TalonSRX(2), null);// new DigitalInput(2));
-		wheels[3] = new Wheel(new TalonSRX(8), new TalonSRX(7), null); // new DigitalInput(3));
-		wheels[1] = new Wheel(new TalonSRX(9), new TalonSRX(10), null);// new DigitalInput(0));
+		wheels[3] = new Wheel(new TalonSRX(8), new TalonSRX(7), new DigitalInput(3));
+		wheels[1] = new Wheel(new TalonSRX(9), new TalonSRX(10), new DigitalInput(0));
 		wheels[0] = new Wheel(new TalonSRX(14), new TalonSRX(16), null);// new
 		// DigitalInput(1));
 		for (Wheel wheel : wheels)
@@ -82,10 +83,16 @@ public class Strafe {
 				if (speed < 0.2)
 					wheel.setDriveSpeed(0.0);
 				else
-					wheel.setDriveSpeed(speed);
+					wheel.setDriveSpeed(speed / 3);
 			}
 		} else if (currentMode == Mode.ROTATE) {
 			double speed = input.getJoystick().getX();
+			/*
+			wheels[0].setDriveSpeed(speed);
+			wheels[1].setDriveSpeed(-speed);
+			wheels[2].setDriveSpeed(speed);
+			wheels[3].setDriveSpeed(-speed);
+			*/
 			for (Wheel wheel : wheels) {
 				wheel.setDriveSpeed(speed);
 			}
