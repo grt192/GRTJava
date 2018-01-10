@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class Wheel extends Thread {
 
-	private final int TICKS_PER_ROTATION = 8192; // should be 4096. check gearing.
+	private final int TICKS_PER_ROTATION = 8533;
 	private final double LIMIT_SWITCH_READ_DELAY = 0.05;
 	private final double TWO_PI = Math.PI * 2;
 
