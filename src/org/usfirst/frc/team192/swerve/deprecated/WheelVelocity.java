@@ -1,4 +1,4 @@
-package org.usfirst.frc.team192.swerve;
+package org.usfirst.frc.team192.swerve.deprecated;
 
 public class WheelVelocity 
 {

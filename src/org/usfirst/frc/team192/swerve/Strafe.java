@@ -1,66 +1,40 @@
-package org.usfirst.frc.team192.swerve.experimental;
+package org.usfirst.frc.team192.swerve;
 
 import org.usfirst.frc.team192.robot.JoystickInput;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
 
-public class Strafe {
+public class Strafe extends SwerveBase {
 
-	private Wheel[] wheels;
+	protected Mode currentMode;
 
-	private Mode currentMode;
-	
-	private double robotWidth;
-	private double robotHeight;
-	
-	private enum Mode {
+	protected final double SPEED_SCALE = 1.0 / 3;
+
+	protected enum Mode {
 		STRAFE, ROTATE
 	}
-	
+
 	public Strafe(double robotWidth, double robotHeight) {
-		wheels = new Wheel[4];
-		wheels[2] = new Wheel(new TalonSRX(1), new TalonSRX(2), null);// new DigitalInput(2));
-		wheels[3] = new Wheel(new TalonSRX(8), new TalonSRX(7), null); // new DigitalInput(3));
-		wheels[1] = new Wheel(new TalonSRX(9), new TalonSRX(10), null); // new DigitalInput(0));
-		wheels[0] = new Wheel(new TalonSRX(14), new TalonSRX(16), null);// new
-		// DigitalInput(1));
-		for (Wheel wheel : wheels)
-			if (wheel != null)
-				wheel.initialize();
-		
+		super(robotWidth, robotHeight);
+
 		currentMode = Mode.STRAFE;
-		this.robotWidth = robotWidth;
-		this.robotHeight = robotHeight;
+
 	}
 
-	public void enable() {
-		for (Wheel wheel : wheels)
-			if (wheel != null)
-				wheel.enable();
-	}
-
-	public void disable() {
-		for (int i = 0; i < wheels.length; i++) {
-			if (wheels[i] == null)
-				continue;
-			wheels[i].disable();
-			wheels[i] = wheels[i].copy();
-		}
-	}
-	
-	private void changeMode(JoystickInput input) {
+	protected void changeMode(JoystickInput input) {
 		Joystick joystick = input.getJoystick();
 		Mode lastMode = currentMode;
-		
+		if (joystick.getRawButton(6) && joystick.getRawButton(11) && currentMode == Mode.STRAFE)
+			for (Wheel wheel : wheels)
+				if (wheel != null)
+					wheel.zero();
+
 		if (joystick.getRawButton(2)) {
 			currentMode = Mode.STRAFE;
 		} else if (joystick.getRawButton(3)) {
 			currentMode = Mode.ROTATE;
 		}
-		
+
 		if (lastMode != currentMode && currentMode == Mode.ROTATE) {
 			double robotAngle = Math.atan2(robotHeight, robotWidth);
 			wheels[0].setTargetPosition(robotAngle);
@@ -70,11 +44,13 @@ public class Strafe {
 		}
 	}
 
+	@Override
 	public void update(JoystickInput input) {
 		changeMode(input);
 		if (currentMode == Mode.STRAFE) {
 			double speed = input.getPolarRadius();
 			double angle = input.getPolarAngle();
+			speed *= SPEED_SCALE;
 			for (Wheel wheel : wheels) {
 				if (wheel == null)
 					continue;
@@ -83,16 +59,11 @@ public class Strafe {
 				if (speed < 0.2)
 					wheel.setDriveSpeed(0.0);
 				else
-					wheel.setDriveSpeed(speed / 3);
+					wheel.setDriveSpeed(speed);
 			}
 		} else if (currentMode == Mode.ROTATE) {
 			double speed = input.getJoystick().getX();
-			/*
-			wheels[0].setDriveSpeed(speed);
-			wheels[1].setDriveSpeed(-speed);
-			wheels[2].setDriveSpeed(speed);
-			wheels[3].setDriveSpeed(-speed);
-			*/
+			speed *= SPEED_SCALE;
 			for (Wheel wheel : wheels) {
 				wheel.setDriveSpeed(speed);
 			}
@@ -101,6 +72,4 @@ public class Strafe {
 		}
 	}
 
-	
-	
 }

@@ -1,4 +1,4 @@
-package org.usfirst.frc.team192.swerve;
+package org.usfirst.frc.team192.swerve.deprecated;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;

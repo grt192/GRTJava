@@ -1,11 +1,12 @@
 package org.usfirst.frc.team192.robot;
 
-import org.usfirst.frc.team192.swerve.experimental.Strafe;
+import org.usfirst.frc.team192.swerve.FullSwerve;
+import org.usfirst.frc.team192.swerve.Strafe;
+import org.usfirst.frc.team192.swerve.SwerveBase;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.ADXL345_I2C;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
@@ -26,11 +27,13 @@ public class Robot extends IterativeRobot {
 
 	private TalonSRX testTalon;
 	private JoystickInput input;
-	
+	private ADXL345_I2C gyro;
+
 	private double ROBOT_WIDTH = 0.8128;
 	private double ROBOT_HEIGHT = 0.7112;
 
 	private Strafe strafe;
+	private SwerveBase swerve;
 
 	/**
 	 * This function is run when the robot is first started up and should be used
@@ -38,7 +41,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		strafe = new Strafe(ROBOT_WIDTH, ROBOT_HEIGHT);
+		swerve = new FullSwerve(ROBOT_WIDTH, ROBOT_HEIGHT);
 		input = new JoystickInput(0, 1);
 	}
 
@@ -66,7 +69,7 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void teleopInit() {
-		strafe.enable();
+		swerve.enable();
 	}
 
 	/**
@@ -74,19 +77,18 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		strafe.update(input);
+		swerve.update(input);
 
 	}
 
 	@Override
 	public void disabledInit() {
-		strafe.disable();
+		swerve.disable();
 	}
 
 	@Override
 	public void testInit() {
-		testTalon = new TalonSRX(16);
-		testTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
+
 	}
 
 	/**
@@ -94,7 +96,6 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-		testTalon.set(ControlMode.PercentOutput, -input.getTurnStickY());
-		System.out.println(testTalon.getSelectedSensorPosition(0));
+
 	}
 }

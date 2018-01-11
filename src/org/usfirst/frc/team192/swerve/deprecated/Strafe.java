@@ -1,8 +1,6 @@
-package org.usfirst.frc.team192.strafe;
+package org.usfirst.frc.team192.swerve.deprecated;
 
 import org.usfirst.frc.team192.robot.JoystickInput;
-import org.usfirst.frc.team192.swerve.WheelDriveThread;
-import org.usfirst.frc.team192.swerve.WheelRotateThread;
 
 public class Strafe {
 	/*

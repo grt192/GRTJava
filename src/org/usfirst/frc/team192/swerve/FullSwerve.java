@@ -1,83 +1,49 @@
 package org.usfirst.frc.team192.swerve;
 
 import org.usfirst.frc.team192.robot.JoystickInput;
-import org.usfirst.frc.team192.swerve.experimental.Wheel;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.Joystick;
 
-public class FullSwerve
-{
-	private Wheel[] wheels;
-	private double robotWidth;
-	private double robotHeight;
-	
-	public FullSwerve(double robotWidth, double robotHeight)
-	{
-		wheels = new Wheel[4];
-		wheels[2] = new Wheel(new TalonSRX(1), new TalonSRX(2), null);// new DigitalInput(2));
-		wheels[3] = new Wheel(new TalonSRX(8), new TalonSRX(7), null); // new DigitalInput(3));
-		wheels[1] = new Wheel(new TalonSRX(9), new TalonSRX(10), null); // new DigitalInput(0));
-		wheels[0] = new Wheel(new TalonSRX(14), new TalonSRX(16), null);// new
-		this.robotWidth = robotWidth;
-		this.robotHeight = robotHeight;
+public class FullSwerve extends SwerveBase {
+
+	public FullSwerve(double robotWidth, double robotHeight) {
+		super(robotWidth, robotHeight);
 	}
-	
-	private double calcrv(JoystickInput input)
-	{
-		return 0.0;
+
+	private double calcrv(JoystickInput input) {
+		return input.getClippedX(Hand.kLeft);
 	}
-	
-	private double calcvx(JoystickInput input)
-	{
-		return 0.0;
+
+	private double calcvx(JoystickInput input) {
+		return -input.getClippedY(Hand.kLeft);
 	}
-	
-	private double calcvy(JoystickInput input)
-	{
-		return 0.0;
+
+	private double calcvy(JoystickInput input) {
+		return input.getClippedX(Hand.kRight);
 	}
-	
-	public double realAtan(double x, double y)
-	{
-		return (Math.atan2(y, x) + 2 * Math.PI) % (2 * Math.PI);
-	}
-	
-	private void changeMotors(double rv, double vx, double vy)
-	{
-		for (int i = 0; i < 4; i++)
-		{
+
+	private void changeMotors(double rv, double vx, double vy) {
+		for (int i = 0; i < 4; i++) {
 			double dx = robotWidth / 2 * (((i % 2) * 2) - 1);
 			double dy = robotHeight / 2 * (((i / 2) * 2) - 1);
 			double actualvx = vx + rv * dy;
 			double actualvy = vy - rv * dx;
 			double wheelTheta = realAtan(actualvx, -actualvy); // haha
 			double speed = Math.sqrt(actualvx * actualvx + actualvy * actualvy);
-			wheels[i].setDriveSpeed(speed);
+			wheels[i].setDriveSpeed(speed / 2);
 			wheels[i].setTargetPosition(wheelTheta);
 		}
 	}
-	
-	public void updateWithJoystickInput(JoystickInput input)
-	{
+
+	@Override
+	public void update(JoystickInput input) {
+		Joystick joystick = input.getJoystick();
+		if (joystick.getRawButton(6) && joystick.getRawButton(11))
+			for (Wheel wheel : wheels)
+				if (wheel != null)
+					wheel.zero();
 		changeMotors(calcrv(input), calcvx(input), calcvy(input));
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
