@@ -7,7 +7,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 
-public class Wheel extends Thread {
+class Wheel extends Thread {
 
 	private final int TICKS_PER_ROTATION = 8533;
 	private final double LIMIT_SWITCH_READ_DELAY = 0.05;
