@@ -49,7 +49,7 @@ public abstract class SwerveBase {
 	}
 
 	public double realAtan(double x, double y) {
-		return (Math.atan2(y, x) + 2 * Math.PI) % (2 * Math.PI);
+		return (Math.atan2(x, -y) + 2 * Math.PI) % (2 * Math.PI);
 	}
 
 	public abstract void update(JoystickInput input);

@@ -3,12 +3,17 @@ package org.usfirst.frc.team192.swerve;
 import org.usfirst.frc.team192.robot.JoystickInput;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Joystick;
 
 public class FullSwerve extends SwerveBase {
+	private ADXRS450_Gyro gyro;
+	
+	private final double DRIVE_RATIO = 1.0 / 2;
 
-	public FullSwerve(double robotWidth, double robotHeight) {
+	public FullSwerve(double robotWidth, double robotHeight, ADXRS450_Gyro gyro) {
 		super(robotWidth, robotHeight);
+		this.gyro = gyro;
 	}
 
 	private double calcrv(JoystickInput input) {
@@ -24,14 +29,24 @@ public class FullSwerve extends SwerveBase {
 	}
 
 	private void changeMotors(double rv, double vx, double vy) {
+		double currentAngle = Math.toRadians(gyro.getAngle());
 		for (int i = 0; i < 4; i++) {
-			double dx = robotWidth / 2 * (((i % 2) * 2) - 1);
-			double dy = robotHeight / 2 * (((i / 2) * 2) - 1);
+			double r = Math.sqrt(robotWidth * robotWidth + robotHeight * robotHeight) / 2;
+			double wheelAngle = Math.atan2(robotWidth, -robotHeight);
+			if (i == 0 || i == 3) {
+				wheelAngle *= -1;
+			}
+			if (i == 2 || i == 3) {
+				wheelAngle += Math.PI;
+			}
+			wheelAngle -= currentAngle;
+			double dx = r * Math.cos(Math.PI / 2 - wheelAngle);
+			double dy = r * Math.sin(Math.PI / 2 - wheelAngle);
 			double actualvx = vx + rv * dy;
 			double actualvy = vy - rv * dx;
-			double wheelTheta = realAtan(actualvx, -actualvy); // haha
+			double wheelTheta = realAtan(actualvx, actualvy); // haha
 			double speed = Math.sqrt(actualvx * actualvx + actualvy * actualvy);
-			wheels[i].setDriveSpeed(speed / 2);
+			wheels[i].setDriveSpeed(speed * DRIVE_RATIO);
 			wheels[i].setTargetPosition(wheelTheta);
 		}
 	}

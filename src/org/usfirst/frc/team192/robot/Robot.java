@@ -6,7 +6,7 @@ import org.usfirst.frc.team192.swerve.SwerveBase;
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-import edu.wpi.first.wpilibj.ADXL345_I2C;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
@@ -27,7 +27,7 @@ public class Robot extends IterativeRobot {
 
 	private TalonSRX testTalon;
 	private JoystickInput input;
-	private ADXL345_I2C gyro;
+	private ADXRS450_Gyro gyro;
 
 	private double ROBOT_WIDTH = 0.8128;
 	private double ROBOT_HEIGHT = 0.7112;
@@ -41,7 +41,8 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		swerve = new FullSwerve(ROBOT_WIDTH, ROBOT_HEIGHT);
+		gyro = new ADXRS450_Gyro();
+		swerve = new FullSwerve(ROBOT_WIDTH, ROBOT_HEIGHT, gyro);
 		input = new JoystickInput(0, 1);
 	}
 
