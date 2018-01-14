@@ -15,6 +15,13 @@ public class FieldCentricStrafe extends Strafe {
 
 		this.gyro = gyro;
 	}
+	
+	@Override
+	public void zero() {
+		super.zero();
+		gyro.calibrate();
+		gyro.reset();
+	}
 
 	@Override
 	public void update(JoystickInput input) {

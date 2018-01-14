@@ -2,13 +2,13 @@ package org.usfirst.frc.team192.swerve;
 
 import org.usfirst.frc.team192.robot.JoystickInput;
 
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
 
 public class FullSwerve extends SwerveBase {
 	private ADXRS450_Gyro gyro;
-	
+
 	private final double DRIVE_RATIO = 1.0 / 2;
 
 	public FullSwerve(double robotWidth, double robotHeight, ADXRS450_Gyro gyro) {

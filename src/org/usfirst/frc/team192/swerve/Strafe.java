@@ -25,9 +25,7 @@ public class Strafe extends SwerveBase {
 		Joystick joystick = input.getJoystick();
 		Mode lastMode = currentMode;
 		if (joystick.getRawButton(6) && joystick.getRawButton(11) && currentMode == Mode.STRAFE)
-			for (Wheel wheel : wheels)
-				if (wheel != null)
-					wheel.zero();
+			zero();
 
 		if (joystick.getRawButton(2)) {
 			currentMode = Mode.STRAFE;
