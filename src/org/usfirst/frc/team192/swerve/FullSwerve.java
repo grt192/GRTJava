@@ -32,22 +32,22 @@ public class FullSwerve extends SwerveBase {
 		double currentAngle = Math.toRadians(gyro.getAngle());
 		for (int i = 0; i < 4; i++) {
 			double r = Math.sqrt(robotWidth * robotWidth + robotHeight * robotHeight) / 2;
-			double wheelAngle = Math.atan2(robotWidth, -robotHeight);
+			double wheelAngle = Math.atan2(robotWidth, robotHeight);
 			if (i == 0 || i == 3) {
 				wheelAngle *= -1;
 			}
 			if (i == 2 || i == 3) {
 				wheelAngle += Math.PI;
 			}
-			wheelAngle -= currentAngle;
-			double dx = r * Math.cos(Math.PI / 2 - wheelAngle);
-			double dy = r * Math.sin(Math.PI / 2 - wheelAngle);
+			wheelAngle += currentAngle;
+			double dx = r * Math.cos(wheelAngle);
+			double dy = r * Math.sin(wheelAngle);
 			double actualvx = vx + rv * dy;
 			double actualvy = vy - rv * dx;
-			double wheelTheta = realAtan(actualvx, actualvy); // haha
+			double wheelTheta = Math.atan2(actualvy, actualvx); // haha
 			double speed = Math.sqrt(actualvx * actualvx + actualvy * actualvy);
 			wheels[i].setDriveSpeed(speed * DRIVE_RATIO);
-			wheels[i].setTargetPosition(wheelTheta);
+			wheels[i].setTargetPosition(wheelTheta - currentAngle);
 		}
 	}
 
