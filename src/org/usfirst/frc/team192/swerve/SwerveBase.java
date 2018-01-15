@@ -12,8 +12,15 @@ public abstract class SwerveBase {
 	protected double robotHeight;
 
 	protected final double SPEED_SCALE = 1.0;
+	private boolean zeroOnEnable;
 
 	public SwerveBase(double robotWidth, double robotHeight) {
+		this(robotWidth, robotHeight, false);
+	}
+
+	public SwerveBase(double robotWidth, double robotHeight, boolean zeroOnEnable) {
+		this.zeroOnEnable = zeroOnEnable;
+
 		wheels = new Wheel[4];
 		wheels[2] = new Wheel(new TalonSRX(1), new TalonSRX(2));
 		wheels[3] = new Wheel(new TalonSRX(8), new TalonSRX(7));
@@ -31,6 +38,8 @@ public abstract class SwerveBase {
 		for (Wheel wheel : wheels)
 			if (wheel != null)
 				wheel.enable();
+		if (zeroOnEnable)
+			zero();
 	}
 
 	public void disable() {
@@ -46,6 +55,7 @@ public abstract class SwerveBase {
 		for (Wheel wheel : wheels)
 			if (wheel != null)
 				wheel.zero();
+		System.out.println("Done zeroing");
 	}
 
 	public double realAtan(double x, double y) {
