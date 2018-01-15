@@ -9,8 +9,6 @@ import edu.wpi.first.wpilibj.XboxController;
 public class FullSwerve extends SwerveBase {
 	private ADXRS450_Gyro gyro;
 
-	private final double DRIVE_RATIO = 1.0 / 2;
-
 	public FullSwerve(double robotWidth, double robotHeight, ADXRS450_Gyro gyro) {
 		super(robotWidth, robotHeight);
 		this.gyro = gyro;
@@ -39,6 +37,8 @@ public class FullSwerve extends SwerveBase {
 		double currentAngle = Math.toRadians(gyro.getAngle());
 		if (Math.sqrt(vx * vx + vy * vy + rv * rv) > 0.3) {
 			double r = Math.sqrt(robotWidth * robotWidth + robotHeight * robotHeight) / 2;
+			double[] driveSpeeds = new double[4];
+			double maxDriveSpeed = 0;
 			for (int i = 0; i < 4; i++) {
 				double wheelAngle = Math.atan2(robotWidth, robotHeight);
 				if (i == 0 || i == 3) {
@@ -54,8 +54,13 @@ public class FullSwerve extends SwerveBase {
 				double actualvy = vy - rv * dx;
 				double wheelTheta = Math.atan2(actualvy, actualvx);
 				double speed = Math.sqrt(actualvx * actualvx + actualvy * actualvy);
-				wheels[i].setDriveSpeed(speed * DRIVE_RATIO);
+				driveSpeeds[i] = speed;
+				maxDriveSpeed = Math.max(maxDriveSpeed, Math.abs(speed));
 				wheels[i].setTargetPosition(wheelTheta - currentAngle);
+			}
+			double driveRatio = Math.min(1, 1 / maxDriveSpeed); // should only scale down if the wheels should go really fast
+			for (int i = 0; i < 4; i++) {
+				wheels[i].setDriveSpeed(driveSpeeds[i] * driveRatio);
 			}
 		} else {
 			for (Wheel wheel : wheels) {
