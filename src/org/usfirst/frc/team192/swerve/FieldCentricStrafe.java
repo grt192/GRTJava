@@ -18,9 +18,9 @@ public class FieldCentricStrafe extends Strafe {
 	
 	@Override
 	public void zero() {
-		super.zero();
 		gyro.calibrate();
 		gyro.reset();
+		super.zero();
 	}
 
 	@Override

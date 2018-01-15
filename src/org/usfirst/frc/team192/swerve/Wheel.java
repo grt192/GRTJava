@@ -75,6 +75,7 @@ class Wheel extends Thread {
 			offset = (double) rotateMotor.getSelectedSensorPosition(0) / TICKS_PER_ROTATION;
 		else
 			setSelectedSensorPosition(0);
+		setTargetPosition(0);
 	}
 
 	public void disable() {
