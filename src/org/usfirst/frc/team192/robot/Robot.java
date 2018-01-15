@@ -1,6 +1,6 @@
 package org.usfirst.frc.team192.robot;
 
-import org.usfirst.frc.team192.swerve.FieldCentricStrafe;
+import org.usfirst.frc.team192.swerve.FullSwerve;
 import org.usfirst.frc.team192.swerve.Strafe;
 import org.usfirst.frc.team192.swerve.SwerveBase;
 
@@ -32,7 +32,6 @@ public class Robot extends IterativeRobot {
 	private double ROBOT_WIDTH = 0.8128;
 	private double ROBOT_HEIGHT = 0.7112;
 
-	private Strafe strafe;
 	private SwerveBase swerve;
 
 	/**
@@ -42,7 +41,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		gyro = new ADXRS450_Gyro();
-		swerve = new FieldCentricStrafe(ROBOT_WIDTH, ROBOT_HEIGHT, gyro);
+		swerve = new FullSwerve(ROBOT_WIDTH, ROBOT_HEIGHT, gyro);
 		input = new JoystickInput(0, 1);
 	}
 
