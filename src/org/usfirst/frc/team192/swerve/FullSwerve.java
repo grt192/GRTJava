@@ -4,7 +4,7 @@ import org.usfirst.frc.team192.robot.JoystickInput;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
-import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
 
 public class FullSwerve extends SwerveBase {
 	private ADXRS450_Gyro gyro;
@@ -27,6 +27,13 @@ public class FullSwerve extends SwerveBase {
 	private double calcvy(JoystickInput input) {
 		return input.getClippedX(Hand.kRight);
 	}
+	
+	@Override
+	public void zero() {
+		gyro.calibrate();
+		gyro.reset();
+		super.zero();
+	}
 
 	private void changeMotors(double rv, double vx, double vy) {
 		double currentAngle = Math.toRadians(gyro.getAngle());
@@ -44,7 +51,7 @@ public class FullSwerve extends SwerveBase {
 			double dy = r * Math.sin(wheelAngle);
 			double actualvx = vx + rv * dy;
 			double actualvy = vy - rv * dx;
-			double wheelTheta = Math.atan2(actualvy, actualvx); // haha
+			double wheelTheta = Math.atan2(actualvy, actualvx);
 			double speed = Math.sqrt(actualvx * actualvx + actualvy * actualvy);
 			wheels[i].setDriveSpeed(speed * DRIVE_RATIO);
 			wheels[i].setTargetPosition(wheelTheta - currentAngle);
@@ -53,11 +60,9 @@ public class FullSwerve extends SwerveBase {
 
 	@Override
 	public void update(JoystickInput input) {
-		Joystick joystick = input.getJoystick();
-		if (joystick.getRawButton(6) && joystick.getRawButton(11))
-			for (Wheel wheel : wheels)
-				if (wheel != null)
-					wheel.zero();
+		XboxController xbox = input.getXboxController();
+		if (xbox.getAButton() && xbox.getYButton())
+			zero();
 		changeMotors(calcrv(input), calcvx(input), calcvy(input));
 	}
 
