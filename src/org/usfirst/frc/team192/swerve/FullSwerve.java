@@ -17,7 +17,7 @@ public class FullSwerve extends SwerveBase {
 	}
 
 	private double calcrv(JoystickInput input) {
-		return input.getClippedX(Hand.kLeft);
+		return input.getClippedX(Hand.kRight);
 	}
 
 	private double calcvx(JoystickInput input) {
@@ -25,7 +25,7 @@ public class FullSwerve extends SwerveBase {
 	}
 
 	private double calcvy(JoystickInput input) {
-		return input.getClippedX(Hand.kRight);
+		return input.getClippedX(Hand.kLeft);
 	}
 	
 	@Override
@@ -37,25 +37,32 @@ public class FullSwerve extends SwerveBase {
 
 	private void changeMotors(double rv, double vx, double vy) {
 		double currentAngle = Math.toRadians(gyro.getAngle());
-		for (int i = 0; i < 4; i++) {
+		if (Math.sqrt(vx * vx + vy * vy + rv * rv) > 0.3) {
 			double r = Math.sqrt(robotWidth * robotWidth + robotHeight * robotHeight) / 2;
-			double wheelAngle = Math.atan2(robotWidth, robotHeight);
-			if (i == 0 || i == 3) {
-				wheelAngle *= -1;
+			for (int i = 0; i < 4; i++) {
+				double wheelAngle = Math.atan2(robotWidth, robotHeight);
+				if (i == 0 || i == 3) {
+					wheelAngle *= -1;
+				}
+				if (i == 2 || i == 3) {
+					wheelAngle += Math.PI;
+				}
+				wheelAngle += currentAngle;
+				double dx = r * Math.cos(wheelAngle);
+				double dy = r * Math.sin(wheelAngle);
+				double actualvx = vx + rv * dy;
+				double actualvy = vy - rv * dx;
+				double wheelTheta = Math.atan2(actualvy, actualvx);
+				double speed = Math.sqrt(actualvx * actualvx + actualvy * actualvy);
+				wheels[i].setDriveSpeed(speed * DRIVE_RATIO);
+				wheels[i].setTargetPosition(wheelTheta - currentAngle);
 			}
-			if (i == 2 || i == 3) {
-				wheelAngle += Math.PI;
+		} else {
+			for (Wheel wheel : wheels) {
+				wheel.setDriveSpeed(0);
 			}
-			wheelAngle += currentAngle;
-			double dx = r * Math.cos(wheelAngle);
-			double dy = r * Math.sin(wheelAngle);
-			double actualvx = vx + rv * dy;
-			double actualvy = vy - rv * dx;
-			double wheelTheta = Math.atan2(actualvy, actualvx);
-			double speed = Math.sqrt(actualvx * actualvx + actualvy * actualvy);
-			wheels[i].setDriveSpeed(speed * DRIVE_RATIO);
-			wheels[i].setTargetPosition(wheelTheta - currentAngle);
 		}
+		System.out.println(currentAngle);
 	}
 
 	@Override
