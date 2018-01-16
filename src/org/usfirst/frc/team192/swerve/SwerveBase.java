@@ -11,7 +11,7 @@ public abstract class SwerveBase {
 	protected double robotWidth;
 	protected double robotHeight;
 
-	protected final double SPEED_SCALE = 1.0;
+	protected final double SPEED_SCALE = 1.0 / 3;
 	private boolean zeroOnEnable;
 
 	public SwerveBase(double robotWidth, double robotHeight) {

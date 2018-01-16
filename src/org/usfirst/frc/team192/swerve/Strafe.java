@@ -8,8 +8,6 @@ public class Strafe extends SwerveBase {
 
 	protected Mode currentMode;
 
-	protected final double SPEED_SCALE = 1.0 / 3;
-
 	protected enum Mode {
 		STRAFE, ROTATE
 	}
