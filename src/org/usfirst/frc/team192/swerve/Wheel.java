@@ -55,6 +55,7 @@ class Wheel extends Thread {
 
 	public void initialize() {
 		rotateMotor.setNeutralMode(NeutralMode.Brake);
+
 		driveMotor.setNeutralMode(NeutralMode.Brake);
 		rotateMotor.configSelectedFeedbackSensor(sensor, 0, 0);
 		rotateMotor.config_kP(0, 1.0, 0);
