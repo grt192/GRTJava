@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.XboxController;
 
-public class FullSwerveAbsolute extends SwerveBase {
+public class FullSwerveAbsolute extends FullSwerve {
 	private ADXRS450_Gyro gyro;
 	private long lastUpdated;
 	
@@ -22,9 +22,7 @@ public class FullSwerveAbsolute extends SwerveBase {
 	private final double TOLERANCE = 0.05;
 
 	public FullSwerveAbsolute(double robotWidth, double robotHeight, ADXRS450_Gyro gyro) {
-		super(robotWidth, robotHeight, true);
-		this.gyro = gyro;
-		this.lastUpdated = System.currentTimeMillis();
+		super(robotWidth, robotHeight, gyro);
 		this.integral = 0;
 		this.p = 1.0;
 		this.i = 0.01;
@@ -37,13 +35,6 @@ public class FullSwerveAbsolute extends SwerveBase {
 	}
 	
 	@Override
-	public void zero() {
-		gyro.calibrate();
-		gyro.reset();
-		super.zero();
-	}
-	
-	@Override
 	public void enable() {
 		super.enable();
 		p = SmartDashboard.getNumber("p", 3.0);
@@ -51,52 +42,7 @@ public class FullSwerveAbsolute extends SwerveBase {
 		d = SmartDashboard.getNumber("d", 0.01);
 		f = SmartDashboard.getNumber("f", 1.0);
 	}
-
-	private void changeMotors(double rv, double vx, double vy) {
-		double currentAngle = Math.toRadians(gyro.getAngle());
-		SmartDashboard.putNumber("rv", rv);
-		SmartDashboard.putNumber("vx", 0);
-		SmartDashboard.putNumber("vy", 0);
-		double r = Math.sqrt(robotWidth * robotWidth + robotHeight * robotHeight) / 2;
-		double[] driveSpeeds = new double[4];
-		double[] targetPositions = new double[4];
-		double maxDriveSpeed = 0;
-		for (int i = 0; i < 4; i++) {
-			double wheelAngle = Math.atan2(robotWidth, robotHeight);
-			if (i == 0 || i == 3) {
-				wheelAngle *= -1;
-			}
-			if (i == 2 || i == 3) {
-				wheelAngle += Math.PI;
-			}
-			wheelAngle += currentAngle;
-			double dx = r * Math.cos(wheelAngle);
-			double dy = r * Math.sin(wheelAngle);
-			double actualvx = vx + rv * dy;
-			double actualvy = vy - rv * dx;
-			double wheelTheta = Math.atan2(actualvy, actualvx);
-			double speed = Math.sqrt(actualvx * actualvx + actualvy * actualvy);
-			driveSpeeds[i] = speed;
-			maxDriveSpeed = Math.max(maxDriveSpeed, Math.abs(speed));
-			targetPositions[i] = wheelTheta - currentAngle;
-			SmartDashboard.putNumber("target position " + i, wheelTheta - currentAngle);
-		}
-		if (maxDriveSpeed > 0.1) {
-			double driveRatio = Math.min(1, 1 / maxDriveSpeed) / 3; // should only scale down if the wheels should go really fast
-			for (int i = 0; i < 4; i++) {
-				wheels[i].setDriveSpeed(driveSpeeds[i] * driveRatio);
-				wheels[i].setTargetPosition(targetPositions[i]);
-				SmartDashboard.putNumber("drive speed " + i, driveSpeeds[i] * driveRatio);
-			}
-		} else {
-			for (int i = 0; i < 4; i++) {
-				wheels[i].setDriveSpeed(0);
-				SmartDashboard.putNumber("drive speed " + i, 0);
-			}
-		}
-		System.out.println(currentAngle);
-	}
-
+	
 	@Override
 	public void update(JoystickInput input) {
 		XboxController xbox = input.getXboxController();

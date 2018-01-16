@@ -34,7 +34,7 @@ public class FullSwerve extends SwerveBase {
 		super.zero();
 	}
 
-	private void changeMotors(double rv, double vx, double vy) {
+	protected void changeMotors(double rv, double vx, double vy) {
 		double currentAngle = Math.toRadians(gyro.getAngle());
 		SmartDashboard.putNumber("rv", rv);
 		if (Math.sqrt(vx * vx + vy * vy + rv * rv) > 0.3) {
