@@ -22,9 +22,9 @@ public class FullSwerve extends SwerveBase {
 		this.gyro = gyro;
 		this.lastUpdated = System.currentTimeMillis();
 		this.integral = 0;
-		this.p = 0;
-		this.i = 0;
-		this.d = 0;
+		this.p = 1.0;
+		this.i = 1.0;
+		this.d = 1.0;
 	}
 	
 	@Override
