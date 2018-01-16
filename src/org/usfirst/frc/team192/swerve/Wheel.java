@@ -30,7 +30,7 @@ class Wheel extends Thread {
 
 	private FeedbackDevice sensor;
 
-	private static final FeedbackDevice defaultSensor = FeedbackDevice.QuadEncoder;
+	private static final FeedbackDevice defaultSensor = FeedbackDevice.PulseWidthEncodedPosition;
 	private static final boolean defaultUseLimitSwitch = false;
 
 	public Wheel(TalonSRX rotateMotor, TalonSRX driveMotor) {

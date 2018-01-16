@@ -9,22 +9,22 @@ import edu.wpi.first.wpilibj.XboxController;
 
 public class FullSwerve extends SwerveBase {
 	private ADXRS450_Gyro gyro;
+	private long lastUpdated;
+	
+	// for PID loop
+	private double integral;
+	private double p;
+	private double i;
+	private double d;
 
 	public FullSwerve(double robotWidth, double robotHeight, ADXRS450_Gyro gyro) {
 		super(robotWidth, robotHeight);
 		this.gyro = gyro;
-	}
-
-	private double calcrv(JoystickInput input) {
-		return -input.getClippedX(Hand.kRight);
-	}
-
-	private double calcvx(JoystickInput input) {
-		return -input.getClippedY(Hand.kLeft);
-	}
-
-	private double calcvy(JoystickInput input) {
-		return input.getClippedX(Hand.kLeft);
+		this.lastUpdated = System.currentTimeMillis();
+		this.integral = 0;
+		this.p = 0;
+		this.i = 0;
+		this.d = 0;
 	}
 	
 	@Override
@@ -61,7 +61,7 @@ public class FullSwerve extends SwerveBase {
 				wheels[i].setTargetPosition(wheelTheta - currentAngle);
 				SmartDashboard.putNumber("target position " + i, wheelTheta - currentAngle);
 			}
-			double driveRatio = Math.min(1, 1 / maxDriveSpeed) / 2; // should only scale down if the wheels should go really fast
+			double driveRatio = Math.min(1, 1 / maxDriveSpeed) / 3; // should only scale down if the wheels should go really fast
 			for (int i = 0; i < 4; i++) {
 				wheels[i].setDriveSpeed(driveSpeeds[i] * driveRatio);
 				SmartDashboard.putNumber("drive speed " + i, driveSpeeds[i] * driveRatio);
@@ -79,7 +79,18 @@ public class FullSwerve extends SwerveBase {
 		XboxController xbox = input.getXboxController();
 		if (xbox.getAButton() && xbox.getYButton())
 			zero();
-		changeMotors(calcrv(input), calcvx(input), calcvy(input));
+		double targetAngle = (Math.atan2(input.getClippedX(Hand.kRight), input.getClippedY(Hand.kRight)) + 2 * Math.PI) % (2 * Math.PI);
+		double currentAngle = ((Math.toRadians(gyro.getAngle()) % 2 * Math.PI) + 2 * Math.PI) % 2 * Math.PI;
+		double error = targetAngle - currentAngle;
+		if (Math.abs(error) > Math.PI) {
+			error -= Math.PI * 2 * Math.signum(error);
+		}
+		long newTime = System.currentTimeMillis();
+		double dt = (newTime - lastUpdated) / 1000.0;
+		lastUpdated = newTime;
+		integral += dt * error;
+		double rv = (error * p + Math.toRadians(gyro.getRate()) * d + integral * i) / Math.PI;
+		changeMotors(-input.getClippedX(Hand.kRight), -input.getClippedY(Hand.kLeft), -rv);
 	}
 
 }
