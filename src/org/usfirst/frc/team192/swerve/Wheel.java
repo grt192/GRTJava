@@ -129,7 +129,7 @@ class Wheel extends Thread {
 			targetPosition -= Math.signum(delta) * 0.5;
 			newReverse = true;
 		}
-		if (Math.abs(targetPosition - targetAngle) > MIN_ANGLE_CHANGE) {
+		if (Math.abs(targetPosition - targetAngle) > MIN_ANGLE_CHANGE || newReverse != reversed) {
 			// System.out.println("changing " + Math.abs(targetPosition - targetAngle));
 			if (positionChanged)
 				setSelectedSensorPosition((int) (currentPosition * TICKS_PER_ROTATION));

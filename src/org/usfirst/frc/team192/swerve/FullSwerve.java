@@ -4,6 +4,7 @@ import org.usfirst.frc.team192.robot.JoystickInput;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.XboxController;
 
 public class FullSwerve extends SwerveBase {
@@ -15,7 +16,7 @@ public class FullSwerve extends SwerveBase {
 	}
 
 	private double calcrv(JoystickInput input) {
-		return input.getClippedX(Hand.kRight);
+		return -input.getClippedX(Hand.kRight);
 	}
 
 	private double calcvx(JoystickInput input) {
@@ -35,6 +36,7 @@ public class FullSwerve extends SwerveBase {
 
 	private void changeMotors(double rv, double vx, double vy) {
 		double currentAngle = Math.toRadians(gyro.getAngle());
+		SmartDashboard.putNumber("rv", rv);
 		if (Math.sqrt(vx * vx + vy * vy + rv * rv) > 0.3) {
 			double r = Math.sqrt(robotWidth * robotWidth + robotHeight * robotHeight) / 2;
 			double[] driveSpeeds = new double[4];
@@ -57,10 +59,12 @@ public class FullSwerve extends SwerveBase {
 				driveSpeeds[i] = speed;
 				maxDriveSpeed = Math.max(maxDriveSpeed, Math.abs(speed));
 				wheels[i].setTargetPosition(wheelTheta - currentAngle);
+				SmartDashboard.putNumber("target position " + i, wheelTheta - currentAngle);
 			}
-			double driveRatio = Math.min(1, 1 / maxDriveSpeed); // should only scale down if the wheels should go really fast
+			double driveRatio = Math.min(1, 1 / maxDriveSpeed) / 2; // should only scale down if the wheels should go really fast
 			for (int i = 0; i < 4; i++) {
 				wheels[i].setDriveSpeed(driveSpeeds[i] * driveRatio);
+				SmartDashboard.putNumber("drive speed " + i, driveSpeeds[i] * driveRatio);
 			}
 		} else {
 			for (Wheel wheel : wheels) {
