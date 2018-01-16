@@ -46,7 +46,7 @@ public class FullSwerve extends SwerveBase {
 	@Override
 	public void enable() {
 		super.enable();
-		p = SmartDashboard.getNumber("p", 3.0);
+		p = SmartDashboard.getNumber("p", 1.0);
 		i = SmartDashboard.getNumber("i", 0.001);
 		d = SmartDashboard.getNumber("d", 0.01);
 		f = SmartDashboard.getNumber("f", 1.0);
