@@ -2,6 +2,7 @@ package org.usfirst.frc.team192.swerve;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -53,6 +54,8 @@ class Wheel extends Thread {
 	}
 
 	public void initialize() {
+		rotateMotor.setNeutralMode(NeutralMode.Brake);
+		driveMotor.setNeutralMode(NeutralMode.Brake);
 		rotateMotor.configSelectedFeedbackSensor(sensor, 0, 0);
 		rotateMotor.config_kP(0, 1.0, 0);
 		rotateMotor.config_kI(0, 0.0, 0);
