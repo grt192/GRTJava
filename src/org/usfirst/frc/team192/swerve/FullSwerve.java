@@ -19,7 +19,7 @@ public class FullSwerve extends SwerveBase {
 	private double f;
 	private double lastError;
 	private double lastTargetAngle;
-	private final double TOLERANCE = 0.01;
+	private final double TOLERANCE = 0.05;
 
 	public FullSwerve(double robotWidth, double robotHeight, ADXRS450_Gyro gyro) {
 		super(robotWidth, robotHeight, true);
@@ -46,7 +46,7 @@ public class FullSwerve extends SwerveBase {
 	@Override
 	public void enable() {
 		super.enable();
-		p = SmartDashboard.getNumber("p", 1.0);
+		p = SmartDashboard.getNumber("p", 3.0);
 		i = SmartDashboard.getNumber("i", 0.001);
 		d = SmartDashboard.getNumber("d", 0.01);
 		f = SmartDashboard.getNumber("f", 1.0);
@@ -129,7 +129,7 @@ public class FullSwerve extends SwerveBase {
 		} else {
 			rv = 0;
 		}
-		changeMotors(-rv, input.getClippedX(Hand.kLeft), -input.getClippedY(Hand.kLeft));
+		changeMotors(-rv, -input.getClippedY(Hand.kLeft), input.getClippedX(Hand.kLeft));
 	}
 
 }
