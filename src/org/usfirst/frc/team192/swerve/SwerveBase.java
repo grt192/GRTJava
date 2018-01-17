@@ -13,6 +13,9 @@ public abstract class SwerveBase {
 
 	protected final double SPEED_SCALE = 1.0 / 3;
 	private boolean zeroOnEnable;
+	
+	protected TalonSRX[] rotates;
+	protected TalonSRX[] drives;
 
 	public SwerveBase(double robotWidth, double robotHeight) {
 		this(robotWidth, robotHeight, false);
@@ -20,12 +23,14 @@ public abstract class SwerveBase {
 
 	public SwerveBase(double robotWidth, double robotHeight, boolean zeroOnEnable) {
 		this.zeroOnEnable = zeroOnEnable;
+		this.rotates = new TalonSRX[] {new TalonSRX(14), new TalonSRX(9), new TalonSRX(1), new TalonSRX(8)};
+		this.drives  = new TalonSRX[] {new TalonSRX(16), new TalonSRX(10), new TalonSRX(2), new TalonSRX(7)};
 
 		wheels = new Wheel[4];
-		wheels[2] = new Wheel(new TalonSRX(1), new TalonSRX(2));
-		wheels[3] = new Wheel(new TalonSRX(8), new TalonSRX(7));
-		wheels[1] = new Wheel(new TalonSRX(9), new TalonSRX(10));
-		wheels[0] = new Wheel(new TalonSRX(14), new TalonSRX(16));
+		wheels[2] = new Wheel(rotates[2], drives[2]);
+		wheels[3] = new Wheel(rotates[3], drives[3]);
+		wheels[1] = new Wheel(rotates[1], drives[1]);
+		wheels[0] = new Wheel(rotates[0], drives[0]);
 		for (Wheel wheel : wheels)
 			if (wheel != null)
 				wheel.initialize();

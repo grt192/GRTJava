@@ -2,6 +2,8 @@ package org.usfirst.frc.team192.swerve;
 
 import org.usfirst.frc.team192.robot.JoystickInput;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.XboxController;
@@ -12,21 +14,28 @@ public class FullSwerve extends SwerveBase {
 	private final double MAX_JOYSTICK_VALUE = Math.sqrt(2);
 	private final double MAX_ROTATE_VALUE = 1;
 	private double ROTATE_SCALE;
+	private Mode mode;
+	
+	// for zero mode
+	private int wheelIndex;
+	private boolean pressingAButton;
+	
+	private enum Mode {
+		SWERVE, ZERO
+	}
 
 	public FullSwerve(double robotWidth, double robotHeight, ADXRS450_Gyro gyro) {
 		super(robotWidth, robotHeight, true);
 		this.gyro = gyro;
 		double r = Math.sqrt(robotWidth * robotWidth + robotHeight * robotHeight);
 		ROTATE_SCALE = (1 - SPEED_SCALE * MAX_JOYSTICK_VALUE) / (MAX_ROTATE_VALUE * r);
+		this.mode = Mode.SWERVE;
 	}
 
 	@Override
 	public void zero() {
-		for (Wheel wheel : wheels)
-			wheel.disable();
 		gyro.calibrate();
 		gyro.reset();
-		super.zero();
 	}
 
 	protected void changeMotors(double rv, double vx, double vy) {
@@ -68,13 +77,47 @@ public class FullSwerve extends SwerveBase {
 			SmartDashboard.putNumber("gyro", currentAngle);
 		}
 	}
+	
+	private void changeMode(JoystickInput input) {
+		XboxController xbox = input.getXboxController();
+		if (xbox.getAButton() && xbox.getYButton()) {
+			mode = Mode.ZERO;
+			wheelIndex = 0;
+			for (Wheel wheel : wheels) {
+				wheel.disable();
+			}
+		}
+	}
 
+	private void performSwerve(JoystickInput input) {
+		changeMotors(input.getClippedX(Hand.kRight), -input.getClippedY(Hand.kLeft), input.getClippedX(Hand.kLeft));
+	}
+	
 	@Override
 	public void update(JoystickInput input) {
-		XboxController xbox = input.getXboxController();
-		if (xbox.getAButton() && xbox.getYButton())
-			zero();
-		changeMotors(input.getClippedX(Hand.kRight), -input.getClippedY(Hand.kLeft), input.getClippedX(Hand.kLeft));
+		changeMode(input);
+		if (mode == Mode.SWERVE) {
+			performSwerve(input);
+		} else if (mode == Mode.ZERO) {
+			if (input.getXboxController().getAButton() && !pressingAButton) {
+				if (wheelIndex == 3) {
+					mode = Mode.SWERVE;
+					zero();
+				} else {
+					wheels[wheelIndex++].zero();
+				}
+				pressingAButton = true;
+			} else {
+				rotates[wheelIndex].set(ControlMode.PercentOutput, input.getClippedX(Hand.kLeft));
+			}
+		} else {
+			System.out.println("unidentified mode");
+		}
 	}
 
 }
+
+
+
+
+
