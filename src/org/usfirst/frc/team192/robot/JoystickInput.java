@@ -75,7 +75,7 @@ public class JoystickInput {
 		// Returns (-pi:pi), positive in clockwise direction, 0 at forward
 		return Math.atan2(getTurnStickX(), -getTurnStickY());
 	}
-	
+
 	public Joystick getJoystick() {
 		return turnStick;
 	}
