@@ -61,6 +61,8 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 		double y = xbox.getY(Hand.kRight);
 		if (Math.sqrt(x * x + y * y) > 0.7)
 			pid.setSetpoint(Math.toDegrees(Math.atan2(y, x)));
+		SmartDashboard.putNumber("PID Setpoint", pid.getSetpoint());
+		SmartDashboard.putNumber("PID Error", pid.getError());
 		changeMotors(rotateInput, -input.getClippedY(Hand.kLeft), input.getClippedX(Hand.kLeft));
 	}
 
