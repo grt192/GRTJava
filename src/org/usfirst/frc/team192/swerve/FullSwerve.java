@@ -9,14 +9,19 @@ import edu.wpi.first.wpilibj.XboxController;
 
 public class FullSwerve extends SwerveBase {
 	private ADXRS450_Gyro gyro;
+	private final double MAX_JOYSTICK_VALUE = Math.sqrt(2);
+	private final double MAX_ROTATE_VALUE = 1;
+	private final double ROTATE_SCALE;
 
 	public FullSwerve(double robotWidth, double robotHeight, ADXRS450_Gyro gyro) {
 		super(robotWidth, robotHeight);
 		this.gyro = gyro;
+		double r = Math.sqrt(robotWidth * robotWidth + robotHeight * robotHeight);
+		ROTATE_SCALE = (1 - SPEED_SCALE * MAX_JOYSTICK_VALUE) / (MAX_ROTATE_VALUE * r);
 	}
 
 	private double calcrv(JoystickInput input) {
-		return -input.getClippedX(Hand.kRight);
+		return input.getClippedX(Hand.kRight);
 	}
 
 	private double calcvx(JoystickInput input) {
@@ -36,6 +41,7 @@ public class FullSwerve extends SwerveBase {
 
 	protected void changeMotors(double rv, double vx, double vy) {
 		double currentAngle = Math.toRadians(gyro.getAngle());
+		rv *= ROTATE_SCALE * -1;
 		SmartDashboard.putNumber("rv", rv);
 		if (Math.sqrt(vx * vx + vy * vy + rv * rv) > 0.3) {
 			double r = Math.sqrt(robotWidth * robotWidth + robotHeight * robotHeight) / 2;
