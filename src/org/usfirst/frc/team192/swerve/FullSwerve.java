@@ -19,18 +19,6 @@ public class FullSwerve extends SwerveBase {
 		double r = Math.sqrt(robotWidth * robotWidth + robotHeight * robotHeight);
 		ROTATE_SCALE = (1 - SPEED_SCALE * MAX_JOYSTICK_VALUE) / (MAX_ROTATE_VALUE * r);
 	}
-
-	private double calcrv(JoystickInput input) {
-		return input.getClippedX(Hand.kRight);
-	}
-
-	private double calcvx(JoystickInput input) {
-		return -input.getClippedY(Hand.kLeft);
-	}
-
-	private double calcvy(JoystickInput input) {
-		return input.getClippedX(Hand.kLeft);
-	}
 	
 	@Override
 	public void zero() {
@@ -84,7 +72,7 @@ public class FullSwerve extends SwerveBase {
 		XboxController xbox = input.getXboxController();
 		if (xbox.getAButton() && xbox.getYButton())
 			zero();
-		changeMotors(calcrv(input), calcvx(input), calcvy(input));
+		changeMotors(input.getClippedX(Hand.kRight), -input.getClippedY(Hand.kLeft), input.getClippedX(Hand.kLeft));
 	}
 
 }
