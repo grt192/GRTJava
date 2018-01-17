@@ -82,6 +82,8 @@ class Wheel extends Thread {
 	}
 
 	public void disable() {
+		rotateMotor.set(ControlMode.Disabled, 0);
+		driveMotor.set(ControlMode.Disabled, 0);
 		running = false;
 	}
 

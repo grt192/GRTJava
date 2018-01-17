@@ -16,17 +16,18 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 
 	public FullSwervePID(double robotWidth, double robotHeight, ADXRS450_Gyro gyro) {
 		super(robotWidth, robotHeight, gyro);
-		double p = 1.0;
-		double i = 0.01;
-		double d = 0.1;
-		double f = 1.0;
+		double p = 0.02;
+		double i = 0.0001;
+		double d = 0.5;
+		double f = 0.0;
+		SmartDashboard.putNumber("p", p);
 		SmartDashboard.putNumber("i", i);
 		SmartDashboard.putNumber("d", d);
 		SmartDashboard.putNumber("f", f);
 		pid = new PIDController(p, i, d, f, gyro, this);
 		pid.setContinuous();
 		pid.setInputRange(0.0, 360.0);
-		pid.setAbsoluteTolerance(2.0);
+		pid.setAbsoluteTolerance(3.0);
 		pid.setOutputRange(-1.0, 1.0);
 		pid.reset();
 		pid.setSetpoint(0.0);
@@ -35,14 +36,17 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 	@Override
 	public void enable() {
 		super.enable();
+		pid.setSetpoint(0.0);
+		pid.reset();
+		pid.enable();
+	}
+
+	private void updatePID() {
 		double p = SmartDashboard.getNumber("p", 1.0);
 		double i = SmartDashboard.getNumber("i", 0.01);
 		double d = SmartDashboard.getNumber("d", 0.1);
 		double f = SmartDashboard.getNumber("f", 1.0);
 		pid.setPID(p, i, d, f);
-		pid.setSetpoint(0.0);
-		pid.reset();
-		pid.enable();
 	}
 
 	@Override
@@ -57,12 +61,14 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 		XboxController xbox = input.getXboxController();
 		if (xbox.getAButton() && xbox.getYButton())
 			zero();
-		double x = xbox.getX(Hand.kRight);
-		double y = xbox.getY(Hand.kRight);
+		double y = xbox.getX(Hand.kRight);
+		double x = -xbox.getY(Hand.kRight);
 		if (Math.sqrt(x * x + y * y) > 0.7)
-			pid.setSetpoint(Math.toDegrees(Math.atan2(y, x)));
+			pid.setSetpoint((Math.toDegrees(Math.atan2(y, x)) + 360.0) % 360.0);
+		updatePID();
 		SmartDashboard.putNumber("PID Setpoint", pid.getSetpoint());
 		SmartDashboard.putNumber("PID Error", pid.getError());
+		SmartDashboard.putNumber("PID Output", pid.get());
 		changeMotors(rotateInput, -input.getClippedY(Hand.kLeft), input.getClippedX(Hand.kLeft));
 	}
 

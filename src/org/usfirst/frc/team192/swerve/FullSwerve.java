@@ -4,8 +4,8 @@ import org.usfirst.frc.team192.robot.JoystickInput;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class FullSwerve extends SwerveBase {
 	private ADXRS450_Gyro gyro;
@@ -14,14 +14,16 @@ public class FullSwerve extends SwerveBase {
 	private double ROTATE_SCALE;
 
 	public FullSwerve(double robotWidth, double robotHeight, ADXRS450_Gyro gyro) {
-		super(robotWidth, robotHeight);
+		super(robotWidth, robotHeight, true);
 		this.gyro = gyro;
 		double r = Math.sqrt(robotWidth * robotWidth + robotHeight * robotHeight);
 		ROTATE_SCALE = (1 - SPEED_SCALE * MAX_JOYSTICK_VALUE) / (MAX_ROTATE_VALUE * r);
 	}
-	
+
 	@Override
 	public void zero() {
+		for (Wheel wheel : wheels)
+			wheel.disable();
 		gyro.calibrate();
 		gyro.reset();
 		super.zero();
@@ -56,7 +58,7 @@ public class FullSwerve extends SwerveBase {
 			double targetPosition = wheelTheta - currentAngle;
 			if (speed > 0.1) {
 				wheels[i].setDriveSpeed(speed);
-				SmartDashboard.putNumber("speed " + i, speed);
+				SmartDashboard.putNumber("drive speed " + i, speed);
 				wheels[i].setTargetPosition(targetPosition);
 				SmartDashboard.putNumber("target position " + i, targetPosition);
 			} else {
