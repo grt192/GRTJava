@@ -45,6 +45,8 @@ public class FullSwerve extends SwerveBase {
 		vx *= SPEED_SCALE;
 		vy *= SPEED_SCALE;
 		SmartDashboard.putNumber("rv", rv);
+		SmartDashboard.putNumber("vx", vx);
+		SmartDashboard.putNumber("vy", vy);
 		double r = Math.sqrt(robotWidth * robotWidth + robotHeight * robotHeight) / 2;
 		double maxDriveSpeed = 0;
 		for (int i = 0; i < 4; i++) {
