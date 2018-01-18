@@ -6,9 +6,8 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Timer;
 
-class Wheel extends Thread {
+class Wheel {
 
 	private final int TICKS_PER_ROTATION = 8533;
 	private final double LIMIT_SWITCH_READ_DELAY = 0.05;
@@ -73,16 +72,10 @@ class Wheel extends Thread {
 		setDriveSpeed(0);
 		targetAngle = rotateMotor.getSelectedSensorPosition(0);
 		driveSpeed = 0;
-		if (useLimitSwitch)
-			start();
 	}
 
 	public void zero() {
-		if (useLimitSwitch)
-			offset = (double) rotateMotor.getSelectedSensorPosition(0) / TICKS_PER_ROTATION;
-		else
-			setSelectedSensorPosition(0);
-		setTargetPosition(0);
+		rotateMotor.getSensorCollection().setQuadraturePosition(0, 0);
 	}
 
 	public void disable() {
@@ -97,35 +90,16 @@ class Wheel extends Thread {
 		return wheel;
 	}
 
-	@Override
-	public void run() {
-		boolean switchValue = false;
-		switchValue = limitSwitch.get();
-		while (running) {
-			boolean newSwitchValue = limitSwitch.get();
-			if (newSwitchValue != switchValue) {
-				boolean forward = (Math.signum(rotateMotor.getSelectedSensorVelocity(0)) == 1.0f);
-				if (forward != switchValue) {
-					setSelectedSensorPosition(0);
-				}
-				switchValue = newSwitchValue;
-			}
-			Timer.delay(LIMIT_SWITCH_READ_DELAY);
-		}
-	}
-
 	public void setTargetPosition(double radians) {
 		double targetPosition = radians / TWO_PI;
 		if (useLimitSwitch)
 			targetPosition += offset;
-		// System.out.println(rotateMotor.getSelectedSensorPosition(0) /
-		// TICKS_PER_ROTATION + ", " + targetPosition);
 		targetPosition = ((targetPosition % 1.0) + 1.0) % 1.0;
 		if (targetPosition > 0.5)
 			targetPosition--;
 
-		double currentPosition = (double) (rotateMotor.getSelectedSensorPosition(0) % TICKS_PER_ROTATION)
-				/ TICKS_PER_ROTATION;
+		int encoderPosition = rotateMotor.getSelectedSensorPosition(0);
+		double currentPosition = encoderPosition;
 		boolean positionChanged = false;
 		double delta = targetPosition - currentPosition;
 		if (Math.abs(delta) > 0.5) {
@@ -139,23 +113,12 @@ class Wheel extends Thread {
 			newReverse = true;
 		}
 		if (Math.abs(targetPosition - targetAngle) > MIN_ANGLE_CHANGE || newReverse != reversed) {
-			// System.out.println("changing " + Math.abs(targetPosition - targetAngle));
-			if (positionChanged)
-				setSelectedSensorPosition((int) (currentPosition * TICKS_PER_ROTATION));
 			reversed = newReverse;
 			targetAngle = targetPosition;
 			double encoderPos = (targetPosition) * TICKS_PER_ROTATION;
-			// System.out.println("going to " + encoderPos);
 			rotateMotor.set(ControlMode.Position, encoderPos);
 		}
 
-	}
-
-	private void setSelectedSensorPosition(int pos) {
-		if (sensor == FeedbackDevice.PulseWidthEncodedPosition)
-			rotateMotor.getSensorCollection().setPulseWidthPosition(pos, 0);
-		else if (sensor == FeedbackDevice.QuadEncoder)
-			rotateMotor.getSensorCollection().setQuadraturePosition(pos, 0);
 	}
 
 	public void setDriveSpeed(double speed) {
