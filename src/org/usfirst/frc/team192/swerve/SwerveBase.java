@@ -31,6 +31,7 @@ public abstract class SwerveBase {
 		wheels[3] = new Wheel(rotates[3], drives[3]);
 		wheels[1] = new Wheel(rotates[1], drives[1]);
 		wheels[0] = new Wheel(rotates[0], drives[0]);
+
 		for (Wheel wheel : wheels)
 			if (wheel != null)
 				wheel.initialize();
