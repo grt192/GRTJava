@@ -62,7 +62,7 @@ public class FullSwerve extends SwerveBase {
 				SmartDashboard.putNumber("target position " + i, targetPosition);
 			} else {
 				wheels[i].setDriveSpeed(0);
-				SmartDashboard.putNumber(" drive speed " + i, 0);
+				SmartDashboard.putNumber("drive speed " + i, 0);
 			}
 		}
 	}
