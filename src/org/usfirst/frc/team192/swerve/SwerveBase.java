@@ -22,7 +22,7 @@ public abstract class SwerveBase {
 		this.zeroOnEnable = zeroOnEnable;
 
 		wheels = new Wheel[4];
-		wheels[2] = new Wheel(new TalonSRX(1), new TalonSRX(2));
+		wheels[2] = new Wheel(new TalonSRX(3), new TalonSRX(2));
 		wheels[3] = new Wheel(new TalonSRX(8), new TalonSRX(7));
 		wheels[1] = new Wheel(new TalonSRX(9), new TalonSRX(10));
 		wheels[0] = new Wheel(new TalonSRX(14), new TalonSRX(16));
