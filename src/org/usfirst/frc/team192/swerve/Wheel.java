@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.Timer;
 
 class Wheel extends Thread {
 
-	private final int TICKS_PER_ROTATION = 8192;
+	private final int TICKS_PER_ROTATION = 8533;
 	private final double LIMIT_SWITCH_READ_DELAY = 0.05;
 	private final double TWO_PI = Math.PI * 2;
 
@@ -31,7 +31,7 @@ class Wheel extends Thread {
 
 	private FeedbackDevice sensor;
 
-	private static final FeedbackDevice defaultSensor = FeedbackDevice.QuadEncoder;
+	private static final FeedbackDevice defaultSensor = FeedbackDevice.PulseWidthEncodedPosition;
 	private static final boolean defaultUseLimitSwitch = false;
 
 	public Wheel(TalonSRX rotateMotor, TalonSRX driveMotor) {
@@ -60,6 +60,10 @@ class Wheel extends Thread {
 		rotateMotor.config_kP(0, 1.0, 0);
 		rotateMotor.config_kI(0, 0.0, 0);
 		rotateMotor.config_kD(0, 0.0, 0);
+
+		rotateMotor.config_kP(1, 0.0, 0);
+		rotateMotor.config_kI(1, 0.0, 0);
+		rotateMotor.config_kD(1, 0.0, 0);
 		zero();
 	}
 
