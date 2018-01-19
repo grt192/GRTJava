@@ -36,7 +36,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		gyro = new ADXRS450_Gyro();
-		config = new Config("/home/lvuser/robot.conf");
+		config = new Config("/home/lvuser/robot.192");
 		swerve = new FullSwerve(gyro, config);
 		input = new JoystickInput(0, 1);
 	}
