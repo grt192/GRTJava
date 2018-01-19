@@ -87,7 +87,7 @@ public class FullSwerve extends SwerveBase {
 		}
 	}
 
-	private void performSwerve(JoystickInput input) {
+	protected void performSwerve(JoystickInput input) {
 		changeMotors(input.getClippedX(Hand.kRight), -input.getClippedY(Hand.kLeft), input.getClippedX(Hand.kLeft));
 	}
 	
@@ -98,15 +98,16 @@ public class FullSwerve extends SwerveBase {
 			performSwerve(input);
 		} else if (mode == Mode.ZERO) {
 			if (input.getXboxController().getAButton() && !pressingAButton) {
-				if (wheelIndex == 3) {
+				wheels[wheelIndex++].zero();
+				SmartDashboard.putNumber("wheelIndex", wheelIndex);
+				if (wheelIndex == 4) {
 					mode = Mode.SWERVE;
 					zero();
-				} else {
-					wheels[wheelIndex++].zero();
 				}
 				pressingAButton = true;
-			} else {
-				rotates[wheelIndex].set(ControlMode.PercentOutput, input.getClippedX(Hand.kLeft));
+			} else if (!input.getXboxController().getAButton()) {
+				rotates[wheelIndex].set(ControlMode.PercentOutput, input.getClippedX(Hand.kLeft) / 3);
+				pressingAButton = false;
 			}
 		} else {
 			System.out.println("unidentified mode");

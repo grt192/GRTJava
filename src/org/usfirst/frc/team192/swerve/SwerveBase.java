@@ -23,7 +23,7 @@ public abstract class SwerveBase {
 
 	public SwerveBase(double robotWidth, double robotHeight, boolean zeroOnEnable) {
 		this.zeroOnEnable = zeroOnEnable;
-		this.rotates = new TalonSRX[] {new TalonSRX(14), new TalonSRX(9), new TalonSRX(1), new TalonSRX(8)};
+		this.rotates = new TalonSRX[] {new TalonSRX(14), new TalonSRX(9), new TalonSRX(3), new TalonSRX(8)};
 		this.drives  = new TalonSRX[] {new TalonSRX(16), new TalonSRX(10), new TalonSRX(2), new TalonSRX(7)};
 
 		wheels = new Wheel[4];

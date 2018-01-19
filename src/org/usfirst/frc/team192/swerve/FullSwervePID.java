@@ -55,12 +55,10 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 		pid.disable();
 		rotateInput = 0.0;
 	}
-
+	
 	@Override
-	public void update(JoystickInput input) {
+	protected void performSwerve(JoystickInput input) {
 		XboxController xbox = input.getXboxController();
-		if (xbox.getAButton() && xbox.getYButton())
-			zero();
 		double y = xbox.getX(Hand.kRight);
 		double x = -xbox.getY(Hand.kRight);
 		if (Math.sqrt(x * x + y * y) > 0.7)
