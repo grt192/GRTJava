@@ -49,7 +49,6 @@ public abstract class SwerveBase {
 			if (wheels[i] == null)
 				continue;
 			wheels[i].disable();
-			wheels[i] = wheels[i].copy();
 		}
 	}
 
