@@ -14,8 +14,8 @@ public class FullSwerve extends SwerveBase {
 	private final double MAX_ROTATE_VALUE = 1;
 	private double ROTATE_SCALE;
 
-	public FullSwerve(Config config, ADXRS450_Gyro gyro) {
-		super(config, true);
+	public FullSwerve(ADXRS450_Gyro gyro, Config config) {
+		super(true, config);
 		this.gyro = gyro;
 		double r = Math.sqrt(robotWidth * robotWidth + robotHeight * robotHeight);
 		ROTATE_SCALE = (1 - SPEED_SCALE * MAX_JOYSTICK_VALUE) / (MAX_ROTATE_VALUE * r);

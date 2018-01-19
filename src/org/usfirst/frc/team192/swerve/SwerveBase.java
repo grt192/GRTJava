@@ -3,8 +3,6 @@ package org.usfirst.frc.team192.swerve;
 import org.usfirst.frc.team192.config.Config;
 import org.usfirst.frc.team192.robot.JoystickInput;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-
 public abstract class SwerveBase {
 
 	protected Wheel[] wheels;
@@ -16,17 +14,17 @@ public abstract class SwerveBase {
 	private boolean zeroOnEnable;
 
 	public SwerveBase(Config config) {
-		this(config, false);
+		this(false, config);
 	}
 
-	public SwerveBase(Config config, boolean zeroOnEnable) {
+	public SwerveBase(boolean zeroOnEnable, Config config) {
 		this.zeroOnEnable = zeroOnEnable;
 
 		wheels = new Wheel[4];
-		wheels[2] = new Wheel(new TalonSRX(3), new TalonSRX(2));
-		wheels[3] = new Wheel(new TalonSRX(8), new TalonSRX(7));
-		wheels[1] = new Wheel(new TalonSRX(9), new TalonSRX(10));
-		wheels[0] = new Wheel(new TalonSRX(14), new TalonSRX(16));
+		wheels[0] = new Wheel("tl", config);
+		wheels[1] = new Wheel("tr", config);
+		wheels[2] = new Wheel("bl", config);
+		wheels[0] = new Wheel("br", config);
 		for (Wheel wheel : wheels)
 			if (wheel != null)
 				wheel.initialize();

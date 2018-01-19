@@ -15,8 +15,8 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 	private PIDController pid;
 	private double rotateInput;
 
-	public FullSwervePID(Config config, ADXRS450_Gyro gyro) {
-		super(config, gyro);
+	public FullSwervePID(ADXRS450_Gyro gyro, Config config) {
+		super(gyro, config);
 		double p = config.getDouble("swervepid_p");
 		p = 0.02;
 		double i = config.getDouble("swervepid_i");

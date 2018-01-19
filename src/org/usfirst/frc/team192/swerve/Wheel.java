@@ -1,5 +1,7 @@
 package org.usfirst.frc.team192.swerve;
 
+import org.usfirst.frc.team192.config.Config;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -24,14 +26,14 @@ class Wheel {
 	private double targetAngle;
 	private double driveSpeed;
 
-	public Wheel(TalonSRX rotateMotor, TalonSRX driveMotor) {
-		this(rotateMotor, driveMotor, null);
-	}
-
-	public Wheel(TalonSRX rotateMotor, TalonSRX driveMotor, DigitalInput limitSwitch) {
-		this.rotateMotor = rotateMotor;
-		this.driveMotor = driveMotor;
-		this.limitSwitch = limitSwitch;
+	public Wheel(String name, Config config) {
+		rotateMotor = new TalonSRX(config.getInt(name + "_rotate_port"));
+		driveMotor = new TalonSRX(config.getInt(name + "_drive_port"));
+		int dioPort = config.getInt(name + "_dio_port");
+		if (dioPort != -1)
+			limitSwitch = new DigitalInput(dioPort);
+		else
+			limitSwitch = null;
 	}
 
 	public void initialize() {
