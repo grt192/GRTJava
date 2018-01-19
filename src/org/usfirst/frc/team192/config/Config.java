@@ -40,7 +40,7 @@ public class Config {
 		try {
 			List<String> lines = Files.readAllLines(Paths.get(fileName));
 			for (String line : lines) {
-				if (line != null && line.charAt(0) != '#') {
+				if (line != null && line.length() > 0 && line.charAt(0) != '#') {
 					String[] splitted = line.split("=");
 					map.put(splitted[0], splitted[1]);
 				}
