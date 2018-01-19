@@ -3,29 +3,42 @@ package org.usfirst.frc.team192.config;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Config {
+	private Map<String, String> map;
+	
 	public int getInt(String key) {
-		return 0;
+		return Integer.parseInt(map.get(key));
 	}
 	
 	public boolean getBoolean(String key) {
-		return false;
+		return Boolean.parseBoolean(map.get(key));
 	}
 	
 	public String getString(String key) {
-		return "";
+		return map.get(key);
 	}
 	
 	public double getDouble(String key) {
-		return 0.0;
+		return Double.parseDouble(map.get(key));
 	}
 	
 	public Config(String fileName) {
+		map = new HashMap<String, String>();
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(fileName));
-			
+			String line = br.readLine();
+			while (line != null) {
+				String[] splitted = line.split("=");
+				map.put(splitted[0], splitted[1]);
+			}
+			br.close();
 		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
