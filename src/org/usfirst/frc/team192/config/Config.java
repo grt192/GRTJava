@@ -11,7 +11,11 @@ public class Config {
 	private Map<String, String> map;
 	
 	public int getInt(String key) {
-		return Integer.parseInt(map.get(key));
+		try {
+			return Integer.parseInt(map.get(key));
+		} catch (NumberFormatException e) {
+			return -1;
+		}
 	}
 	
 	public boolean getBoolean(String key) {
@@ -23,7 +27,11 @@ public class Config {
 	}
 	
 	public double getDouble(String key) {
-		return Double.parseDouble(map.get(key));
+		try {
+			return Double.parseDouble(map.get(key));
+		} catch (NumberFormatException e) {
+			return -1.0;
+		}
 	}
 	
 	public Config(String fileName) {
