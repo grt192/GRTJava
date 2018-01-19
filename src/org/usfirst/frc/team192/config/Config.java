@@ -1,10 +1,11 @@
 package org.usfirst.frc.team192.config;
 
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Config {
@@ -37,13 +38,13 @@ public class Config {
 	public Config(String fileName) {
 		map = new HashMap<String, String>();
 		try {
-			BufferedReader br = new BufferedReader(new FileReader(fileName));
-			String line = br.readLine();
-			while (line != null) {
-				String[] splitted = line.split("=");
-				map.put(splitted[0], splitted[1]);
+			List<String> lines = Files.readAllLines(Paths.get(fileName));
+			for (String line : lines) {
+				if (line != null && line.charAt(0) != '#') {
+					String[] splitted = line.split("=");
+					map.put(splitted[0], splitted[1]);
+				}
 			}
-			br.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
