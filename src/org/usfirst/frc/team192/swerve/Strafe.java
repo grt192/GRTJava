@@ -1,5 +1,6 @@
 package org.usfirst.frc.team192.swerve;
 
+import org.usfirst.frc.team192.config.Config;
 import org.usfirst.frc.team192.robot.JoystickInput;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -12,8 +13,8 @@ public class Strafe extends SwerveBase {
 		STRAFE, ROTATE
 	}
 
-	public Strafe(double robotWidth, double robotHeight) {
-		super(robotWidth, robotHeight);
+	public Strafe(double robotWidth, double robotHeight, Config config) {
+		super(robotWidth, robotHeight, config);
 
 		currentMode = Mode.STRAFE;
 

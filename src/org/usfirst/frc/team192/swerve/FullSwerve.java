@@ -1,5 +1,6 @@
 package org.usfirst.frc.team192.swerve;
 
+import org.usfirst.frc.team192.config.Config;
 import org.usfirst.frc.team192.robot.JoystickInput;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
@@ -13,8 +14,8 @@ public class FullSwerve extends SwerveBase {
 	private final double MAX_ROTATE_VALUE = 1;
 	private double ROTATE_SCALE;
 
-	public FullSwerve(double robotWidth, double robotHeight, ADXRS450_Gyro gyro) {
-		super(robotWidth, robotHeight, true);
+	public FullSwerve(double robotWidth, double robotHeight, ADXRS450_Gyro gyro, Config config) {
+		super(robotWidth, robotHeight, true, config);
 		this.gyro = gyro;
 		double r = Math.sqrt(robotWidth * robotWidth + robotHeight * robotHeight);
 		ROTATE_SCALE = (1 - SPEED_SCALE * MAX_JOYSTICK_VALUE) / (MAX_ROTATE_VALUE * r);

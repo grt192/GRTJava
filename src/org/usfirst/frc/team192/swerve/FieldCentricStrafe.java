@@ -1,5 +1,6 @@
 package org.usfirst.frc.team192.swerve;
 
+import org.usfirst.frc.team192.config.Config;
 import org.usfirst.frc.team192.robot.JoystickInput;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
@@ -10,8 +11,8 @@ public class FieldCentricStrafe extends Strafe {
 
 	private ADXRS450_Gyro gyro;
 
-	public FieldCentricStrafe(double robotWidth, double robotHeight, ADXRS450_Gyro gyro) {
-		super(robotWidth, robotHeight);
+	public FieldCentricStrafe(double robotWidth, double robotHeight, ADXRS450_Gyro gyro, Config config) {
+		super(robotWidth, robotHeight, config);
 
 		this.gyro = gyro;
 	}

@@ -1,11 +1,12 @@
 package org.usfirst.frc.team192.swerve;
 
+import org.usfirst.frc.team192.config.Config;
 import org.usfirst.frc.team192.robot.JoystickInput;
 
 public class TankSwerve extends SwerveBase {
 
-	public TankSwerve(double robotWidth, double robotHeight) {
-		super(robotWidth, robotHeight, true);
+	public TankSwerve(double robotWidth, double robotHeight, Config config) {
+		super(robotWidth, robotHeight, true, config);
 	}
 
 	@Override
