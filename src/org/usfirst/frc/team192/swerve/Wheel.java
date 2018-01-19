@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 
 class Wheel {
 
-	private final double TICKS_PER_ROTATION = 4096.0 * 50.0 / 24.0;
+	private final double TICKS_PER_ROTATION;
 	private final double TWO_PI = Math.PI * 2;
 
 	private final double MIN_ANGLE_CHANGE = 0.005;
@@ -34,6 +34,8 @@ class Wheel {
 			limitSwitch = new DigitalInput(dioPort);
 		else
 			limitSwitch = null;
+
+		TICKS_PER_ROTATION = config.getDouble("ticks_per_rotation");
 	}
 
 	public void initialize() {
