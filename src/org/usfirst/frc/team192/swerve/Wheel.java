@@ -1,17 +1,17 @@
 package org.usfirst.frc.team192.swerve;
 
+import org.usfirst.frc.team192.config.Config;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Timer;
 
-class Wheel extends Thread {
+class Wheel {
 
-	private final int TICKS_PER_ROTATION = 8533;
-	private final double LIMIT_SWITCH_READ_DELAY = 0.05;
+	private final double TICKS_PER_ROTATION = 4096.0 * 50.0 / 24.0;
 	private final double TWO_PI = Math.PI * 2;
 
 	private final double MIN_ANGLE_CHANGE = 0.005;
@@ -20,43 +20,26 @@ class Wheel extends Thread {
 	private TalonSRX rotateMotor;
 	private TalonSRX driveMotor;
 	private DigitalInput limitSwitch;
-	private boolean useLimitSwitch;
 
-	private boolean running;
 	public boolean reversed;
 
 	private double targetAngle;
 	private double driveSpeed;
-	private double offset;
 
-	private FeedbackDevice sensor;
-
-	private static final FeedbackDevice defaultSensor = FeedbackDevice.PulseWidthEncodedPosition;
-	private static final boolean defaultUseLimitSwitch = false;
-
-	public Wheel(TalonSRX rotateMotor, TalonSRX driveMotor) {
-		this(rotateMotor, driveMotor, null, defaultUseLimitSwitch, defaultSensor);
-	}
-
-	public Wheel(TalonSRX rotateMotor, TalonSRX driveMotor, DigitalInput limitSwitch) {
-		this(rotateMotor, driveMotor, limitSwitch, defaultUseLimitSwitch, defaultSensor);
-	}
-
-	public Wheel(TalonSRX rotateMotor, TalonSRX driveMotor, DigitalInput limitSwitch, boolean useLimitSwitch,
-			FeedbackDevice sensor) {
-		this.rotateMotor = rotateMotor;
-		this.driveMotor = driveMotor;
-		this.limitSwitch = limitSwitch;
-
-		this.sensor = sensor;
-
-		this.useLimitSwitch = (limitSwitch != null) && useLimitSwitch;
+	public Wheel(String name, Config config) {
+		rotateMotor = new TalonSRX(config.getInt(name + "_rotate_port"));
+		driveMotor = new TalonSRX(config.getInt(name + "_drive_port"));
+		int dioPort = config.getInt(name + "_dio_port");
+		if (dioPort != -1)
+			limitSwitch = new DigitalInput(dioPort);
+		else
+			limitSwitch = null;
 	}
 
 	public void initialize() {
 		rotateMotor.setNeutralMode(NeutralMode.Brake);
 		driveMotor.setNeutralMode(NeutralMode.Brake);
-		rotateMotor.configSelectedFeedbackSensor(sensor, 0, 0);
+		rotateMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
 		rotateMotor.config_kP(0, 1.0, 0);
 		rotateMotor.config_kI(0, 0.0, 0);
 		rotateMotor.config_kD(0, 0.0, 0);
@@ -68,94 +51,48 @@ class Wheel extends Thread {
 	}
 
 	public void enable() {
-		running = true;
 		rotateMotor.set(ControlMode.Disabled, 0);
+		targetAngle = rotateMotor.getSelectedSensorPosition(0) / TICKS_PER_ROTATION;
 		setDriveSpeed(0);
-		targetAngle = rotateMotor.getSelectedSensorPosition(0);
 		driveSpeed = 0;
-		if (useLimitSwitch)
-			start();
+		reversed = false;
 	}
 
 	public void zero() {
-		if (useLimitSwitch)
-			offset = (double) rotateMotor.getSelectedSensorPosition(0) / TICKS_PER_ROTATION;
-		else
-			setSelectedSensorPosition(0);
-		setTargetPosition(0);
+		rotateMotor.getSensorCollection().setQuadraturePosition(0, 0);
 	}
 
 	public void disable() {
 		rotateMotor.set(ControlMode.Disabled, 0);
 		driveMotor.set(ControlMode.Disabled, 0);
-		running = false;
-	}
-
-	public Wheel copy() {
-		Wheel wheel = new Wheel(rotateMotor, driveMotor, limitSwitch);
-		wheel.offset = offset;
-		return wheel;
-	}
-
-	@Override
-	public void run() {
-		boolean switchValue = false;
-		switchValue = limitSwitch.get();
-		while (running) {
-			boolean newSwitchValue = limitSwitch.get();
-			if (newSwitchValue != switchValue) {
-				boolean forward = (Math.signum(rotateMotor.getSelectedSensorVelocity(0)) == 1.0f);
-				if (forward != switchValue) {
-					setSelectedSensorPosition(0);
-				}
-				switchValue = newSwitchValue;
-			}
-			Timer.delay(LIMIT_SWITCH_READ_DELAY);
-		}
 	}
 
 	public void setTargetPosition(double radians) {
 		double targetPosition = radians / TWO_PI;
-		if (useLimitSwitch)
-			targetPosition += offset;
-		// System.out.println(rotateMotor.getSelectedSensorPosition(0) /
-		// TICKS_PER_ROTATION + ", " + targetPosition);
 		targetPosition = ((targetPosition % 1.0) + 1.0) % 1.0;
-		if (targetPosition > 0.5)
-			targetPosition--;
 
-		double currentPosition = (double) (rotateMotor.getSelectedSensorPosition(0) % TICKS_PER_ROTATION)
-				/ TICKS_PER_ROTATION;
-		boolean positionChanged = false;
-		double delta = targetPosition - currentPosition;
+		int encoderPosition = rotateMotor.getSelectedSensorPosition(0);
+		double currentPosition = encoderPosition / TICKS_PER_ROTATION;
+		double rotations = Math.floor(currentPosition);
+		currentPosition -= rotations;
+		double delta = currentPosition - targetPosition;
 		if (Math.abs(delta) > 0.5) {
-			currentPosition += Math.signum(delta);
-			positionChanged = true;
+			targetPosition += Math.signum(delta);
 		}
-		delta = targetPosition - currentPosition;
+		delta = currentPosition - targetPosition;
 		boolean newReverse = false;
 		if (Math.abs(delta) > 0.25) {
-			targetPosition -= Math.signum(delta) * 0.5;
+			targetPosition += Math.signum(delta) * 0.5;
 			newReverse = true;
 		}
+		targetPosition += rotations;
 		if (Math.abs(targetPosition - targetAngle) > MIN_ANGLE_CHANGE || newReverse != reversed) {
-			// System.out.println("changing " + Math.abs(targetPosition - targetAngle));
-			if (positionChanged)
-				setSelectedSensorPosition((int) (currentPosition * TICKS_PER_ROTATION));
 			reversed = newReverse;
 			targetAngle = targetPosition;
-			double encoderPos = (targetPosition) * TICKS_PER_ROTATION;
-			// System.out.println("going to " + encoderPos);
+			double encoderPos = targetPosition * TICKS_PER_ROTATION;
 			rotateMotor.set(ControlMode.Position, encoderPos);
 		}
 
-	}
-
-	private void setSelectedSensorPosition(int pos) {
-		if (sensor == FeedbackDevice.PulseWidthEncodedPosition)
-			rotateMotor.getSensorCollection().setPulseWidthPosition(pos, 0);
-		else if (sensor == FeedbackDevice.QuadEncoder)
-			rotateMotor.getSensorCollection().setQuadraturePosition(pos, 0);
 	}
 
 	public void setDriveSpeed(double speed) {

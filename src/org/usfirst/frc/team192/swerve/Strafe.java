@@ -13,8 +13,8 @@ public class Strafe extends SwerveBase {
 		STRAFE, ROTATE
 	}
 
-	public Strafe(double robotWidth, double robotHeight, Config config) {
-		super(robotWidth, robotHeight, config);
+	public Strafe(Config config) {
+		super(config);
 
 		currentMode = Mode.STRAFE;
 
