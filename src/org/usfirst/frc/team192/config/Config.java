@@ -37,9 +37,13 @@ public class Config {
 		}
 	}
 	
-	public Config(String fileName) {
+	public Config() {
 		map = new HashMap<String, String>();
 		try {
+			Scanner nameScanner = new Scanner(new File("/home/lvuser/name.192"));
+			String name = nameScanner.nextLine();
+			nameScanner.close();
+			String fileName = "src/org/usfirst/frc/team192/config/" + name + ".192";
 			Scanner scanner = new Scanner(new File(fileName));
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
@@ -48,9 +52,8 @@ public class Config {
 					map.put(splitted[0], splitted[1]);
 				}
 			}
+			scanner.close();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		/*
