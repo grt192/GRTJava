@@ -37,7 +37,7 @@ public class Robot extends IterativeRobot {
 	public void robotInit() {
 		gyro = new ADXRS450_Gyro();
 		config = new Config("/home/lvuser/robot.conf");
-		swerve = new FullSwerve(ROBOT_WIDTH, ROBOT_HEIGHT, gyro, config);
+		swerve = new FullSwerve(config, gyro);
 		input = new JoystickInput(0, 1);
 	}
 
@@ -85,16 +85,16 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void testInit() {
 		String fileName = "/home/lvuser/hello";
-//		System.out.println("reading and writing from a file");
-//		try {
-//			File f = new File(fileName);
-//			f.createNewFile();
-//			PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(f)));
-//			out.println("hello hello");
-//			out.close();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
+		// System.out.println("reading and writing from a file");
+		// try {
+		// File f = new File(fileName);
+		// f.createNewFile();
+		// PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(f)));
+		// out.println("hello hello");
+		// out.close();
+		// } catch (IOException e) {
+		// e.printStackTrace();
+		// }
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(fileName));
 			System.out.println("file: " + br.readLine());

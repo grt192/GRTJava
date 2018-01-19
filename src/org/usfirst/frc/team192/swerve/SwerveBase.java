@@ -14,16 +14,13 @@ public abstract class SwerveBase {
 
 	protected final double SPEED_SCALE = 1.0 / 3;
 	private boolean zeroOnEnable;
-	
-	private Config config;
 
-	public SwerveBase(double robotWidth, double robotHeight, Config config) {
-		this(robotWidth, robotHeight, false, config);
+	public SwerveBase(Config config) {
+		this(config, false);
 	}
 
-	public SwerveBase(double robotWidth, double robotHeight, boolean zeroOnEnable, Config config) {
+	public SwerveBase(Config config, boolean zeroOnEnable) {
 		this.zeroOnEnable = zeroOnEnable;
-		this.config = config;
 
 		wheels = new Wheel[4];
 		wheels[2] = new Wheel(new TalonSRX(3), new TalonSRX(2));
@@ -34,9 +31,9 @@ public abstract class SwerveBase {
 			if (wheel != null)
 				wheel.initialize();
 
-		this.robotWidth = robotWidth;
-		this.robotHeight = robotHeight;
-		
+		this.robotWidth = config.getDouble("robot_width");
+		this.robotHeight = config.getDouble("robot_height");
+
 	}
 
 	public void enable() {
