@@ -21,10 +21,10 @@ public abstract class SwerveBase {
 		this.zeroOnEnable = zeroOnEnable;
 
 		wheels = new Wheel[4];
-		wheels[0] = new Wheel("tl", config);
-		wheels[1] = new Wheel("tr", config);
+		wheels[0] = new Wheel("fl", config);
+		wheels[1] = new Wheel("fr", config);
 		wheels[2] = new Wheel("bl", config);
-		wheels[0] = new Wheel("br", config);
+		wheels[3] = new Wheel("br", config);
 		for (Wheel wheel : wheels)
 			if (wheel != null)
 				wheel.initialize();

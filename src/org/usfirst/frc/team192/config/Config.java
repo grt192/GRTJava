@@ -1,17 +1,24 @@
 package org.usfirst.frc.team192.config;
 
-import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 public class Config {
 	private Map<String, String> map;
 	
 	public int getInt(String key) {
-		return Integer.parseInt(map.get(key));
+		try {
+			return Integer.parseInt(map.get(key));
+		} catch (NumberFormatException e) {
+			return -1;
+		}
 	}
 	
 	public boolean getBoolean(String key) {
@@ -23,24 +30,34 @@ public class Config {
 	}
 	
 	public double getDouble(String key) {
-		return Double.parseDouble(map.get(key));
+		try {
+			return Double.parseDouble(map.get(key));
+		} catch (NumberFormatException e) {
+			return -1.0;
+		}
 	}
 	
 	public Config(String fileName) {
 		map = new HashMap<String, String>();
 		try {
-			BufferedReader br = new BufferedReader(new FileReader(fileName));
-			String line = br.readLine();
-			while (line != null) {
-				String[] splitted = line.split("=");
-				map.put(splitted[0], splitted[1]);
+			Scanner scanner = new Scanner(new File(fileName));
+			while (scanner.hasNextLine()) {
+				String line = scanner.nextLine();
+				if (line.length() > 0 && line.charAt(0) != '#') {
+					String[] splitted = line.split("=");
+					map.put(splitted[0], splitted[1]);
+				}
 			}
-			br.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		/*
+		for (Map.Entry<String, String> entry : map.entrySet()) {
+			System.out.println(entry.getKey() + ": " + getInt(entry.getKey()));
+		}
+		*/
 	}
 }
 
