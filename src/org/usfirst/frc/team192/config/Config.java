@@ -1,5 +1,6 @@
 package org.usfirst.frc.team192.config;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -7,6 +8,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 public class Config {
 	private Map<String, String> map;
@@ -38,9 +40,10 @@ public class Config {
 	public Config(String fileName) {
 		map = new HashMap<String, String>();
 		try {
-			List<String> lines = Files.readAllLines(Paths.get(fileName));
-			for (String line : lines) {
-				if (line != null && line.length() > 0 && line.charAt(0) != '#') {
+			Scanner scanner = new Scanner(new File(fileName));
+			while (scanner.hasNextLine()) {
+				String line = scanner.nextLine();
+				if (line.length() > 0 && line.charAt(0) != '#') {
 					String[] splitted = line.split("=");
 					map.put(splitted[0], splitted[1]);
 				}
