@@ -26,16 +26,16 @@ class Wheel {
 	private double targetAngle;
 	private double driveSpeed;
 
-	public Wheel(String name, Config config) {
-		rotateMotor = new TalonSRX(config.getInt(name + "_rotate_port"));
-		driveMotor = new TalonSRX(config.getInt(name + "_drive_port"));
-		int dioPort = config.getInt(name + "_dio_port");
+	public Wheel(String name) {
+		rotateMotor = new TalonSRX(Config.getInt(name + "_rotate_port"));
+		driveMotor = new TalonSRX(Config.getInt(name + "_drive_port"));
+		int dioPort = Config.getInt(name + "_dio_port");
 		if (dioPort != -1)
 			limitSwitch = new DigitalInput(dioPort);
 		else
 			limitSwitch = null;
 
-		TICKS_PER_ROTATION = config.getDouble("ticks_per_rotation");
+		TICKS_PER_ROTATION = Config.getDouble("ticks_per_rotation");
 	}
 
 	public void initialize() {

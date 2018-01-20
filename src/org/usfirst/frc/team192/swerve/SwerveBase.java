@@ -13,24 +13,24 @@ public abstract class SwerveBase {
 	protected final double SPEED_SCALE = 1.0 / 3;
 	private boolean zeroOnEnable;
 
-	public SwerveBase(Config config) {
-		this(false, config);
+	public SwerveBase() {
+		this(false);
 	}
 
-	public SwerveBase(boolean zeroOnEnable, Config config) {
+	public SwerveBase(boolean zeroOnEnable) {
 		this.zeroOnEnable = zeroOnEnable;
 
 		wheels = new Wheel[4];
-		wheels[0] = new Wheel("fl", config);
-		wheels[1] = new Wheel("fr", config);
-		wheels[2] = new Wheel("bl", config);
-		wheels[3] = new Wheel("br", config);
+		wheels[0] = new Wheel("fl");
+		wheels[1] = new Wheel("fr");
+		wheels[2] = new Wheel("bl");
+		wheels[3] = new Wheel("br");
 		for (Wheel wheel : wheels)
 			if (wheel != null)
 				wheel.initialize();
 
-		this.robotWidth = config.getDouble("robot_width");
-		this.robotHeight = config.getDouble("robot_height");
+		this.robotWidth = Config.getDouble("robot_width");
+		this.robotHeight = Config.getDouble("robot_height");
 
 	}
 

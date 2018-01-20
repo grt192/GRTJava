@@ -5,8 +5,8 @@ import org.usfirst.frc.team192.robot.JoystickInput;
 
 public class TankSwerve extends SwerveBase {
 
-	public TankSwerve(Config config) {
-		super(true, config);
+	public TankSwerve() {
+		super(true);
 	}
 
 	@Override

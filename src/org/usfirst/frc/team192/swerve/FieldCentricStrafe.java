@@ -11,8 +11,8 @@ public class FieldCentricStrafe extends Strafe {
 
 	private ADXRS450_Gyro gyro;
 
-	public FieldCentricStrafe(ADXRS450_Gyro gyro, Config config) {
-		super(config);
+	public FieldCentricStrafe(ADXRS450_Gyro gyro) {
+		super();
 
 		this.gyro = gyro;
 	}

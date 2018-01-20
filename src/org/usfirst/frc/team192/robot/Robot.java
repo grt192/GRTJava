@@ -22,7 +22,6 @@ public class Robot extends IterativeRobot {
 
 	private JoystickInput input;
 	private ADXRS450_Gyro gyro;
-	private Config config;
 
 	private double ROBOT_WIDTH = 0.8128;
 	private double ROBOT_HEIGHT = 0.7112;
@@ -36,8 +35,8 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		gyro = new ADXRS450_Gyro();
-		config = new Config();
-		swerve = new FullSwerve(gyro, config);
+		Config.start();
+		swerve = new FullSwerve(gyro);
 		input = new JoystickInput(0, 1);
 	}
 

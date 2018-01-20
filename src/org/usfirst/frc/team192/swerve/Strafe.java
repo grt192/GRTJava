@@ -13,8 +13,8 @@ public class Strafe extends SwerveBase {
 		STRAFE, ROTATE
 	}
 
-	public Strafe(Config config) {
-		super(config);
+	public Strafe() {
+		super();
 
 		currentMode = Mode.STRAFE;
 

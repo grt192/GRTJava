@@ -11,9 +11,9 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class Config {
-	private Map<String, String> map;
+	private static Map<String, String> map;
 	
-	public int getInt(String key) {
+	public static int getInt(String key) {
 		try {
 			return Integer.parseInt(map.get(key));
 		} catch (NumberFormatException e) {
@@ -21,15 +21,19 @@ public class Config {
 		}
 	}
 	
-	public boolean getBoolean(String key) {
+	public static boolean getBoolean(String key) {
 		return Boolean.parseBoolean(map.get(key));
 	}
 	
-	public String getString(String key) {
-		return map.get(key);
+	public static String getString(String key) {
+		String result = map.get(key);
+		if (result == null) {
+			return "";
+		}
+		return result;
 	}
 	
-	public double getDouble(String key) {
+	public static double getDouble(String key) {
 		try {
 			return Double.parseDouble(map.get(key));
 		} catch (NumberFormatException e) {
@@ -37,7 +41,7 @@ public class Config {
 		}
 	}
 	
-	public Config() {
+	public static void start() {
 		map = new HashMap<String, String>();
 		try {
 			Scanner nameScanner = new Scanner(new File("/home/lvuser/name.192"));
@@ -61,6 +65,7 @@ public class Config {
 			System.out.println(entry.getKey() + ": " + getInt(entry.getKey()));
 		}
 		*/
+		System.out.println(getString("name"));
 	}
 }
 

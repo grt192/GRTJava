@@ -15,15 +15,15 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 	private PIDController pid;
 	private double rotateInput;
 
-	public FullSwervePID(ADXRS450_Gyro gyro, Config config) {
-		super(gyro, config);
-		double p = config.getDouble("swervepid_p");
+	public FullSwervePID(ADXRS450_Gyro gyro) {
+		super(gyro);
+		double p = Config.getDouble("swervepid_p");
 		p = 0.02;
-		double i = config.getDouble("swervepid_i");
+		double i = Config.getDouble("swervepid_i");
 		i = 0.0001;
-		double d = config.getDouble("swervepid_d");
+		double d = Config.getDouble("swervepid_d");
 		d = 0.5;
-		double f = config.getDouble("swervepid_f");
+		double f = Config.getDouble("swervepid_f");
 		f = 0.0;
 		SmartDashboard.putNumber("p", p);
 		SmartDashboard.putNumber("i", i);
