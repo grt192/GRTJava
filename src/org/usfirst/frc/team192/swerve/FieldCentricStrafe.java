@@ -10,8 +10,8 @@ public class FieldCentricStrafe extends Strafe {
 
 	private ADXRS450_Gyro gyro;
 
-	public FieldCentricStrafe(double robotWidth, double robotHeight, ADXRS450_Gyro gyro) {
-		super(robotWidth, robotHeight);
+	public FieldCentricStrafe(ADXRS450_Gyro gyro) {
+		super();
 
 		this.gyro = gyro;
 	}

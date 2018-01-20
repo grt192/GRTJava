@@ -1,8 +1,7 @@
 package org.usfirst.frc.team192.swerve;
 
+import org.usfirst.frc.team192.config.Config;
 import org.usfirst.frc.team192.robot.JoystickInput;
-
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 public abstract class SwerveBase {
 
@@ -14,24 +13,25 @@ public abstract class SwerveBase {
 	protected final double SPEED_SCALE = 1.0 / 3;
 	private boolean zeroOnEnable;
 
-	public SwerveBase(double robotWidth, double robotHeight) {
-		this(robotWidth, robotHeight, false);
+	public SwerveBase() {
+		this(false);
 	}
 
-	public SwerveBase(double robotWidth, double robotHeight, boolean zeroOnEnable) {
+	public SwerveBase(boolean zeroOnEnable) {
 		this.zeroOnEnable = zeroOnEnable;
 
 		wheels = new Wheel[4];
-		wheels[2] = new Wheel(new TalonSRX(3), new TalonSRX(2));
-		wheels[3] = new Wheel(new TalonSRX(8), new TalonSRX(7));
-		wheels[1] = new Wheel(new TalonSRX(9), new TalonSRX(10));
-		wheels[0] = new Wheel(new TalonSRX(14), new TalonSRX(16));
+		wheels[0] = new Wheel("fl");
+		wheels[1] = new Wheel("fr");
+		wheels[2] = new Wheel("bl");
+		wheels[3] = new Wheel("br");
 		for (Wheel wheel : wheels)
 			if (wheel != null)
 				wheel.initialize();
 
-		this.robotWidth = robotWidth;
-		this.robotHeight = robotHeight;
+		this.robotWidth = Config.getDouble("robot_width");
+		this.robotHeight = Config.getDouble("robot_height");
+
 	}
 
 	public void enable() {

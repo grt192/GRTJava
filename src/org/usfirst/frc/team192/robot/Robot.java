@@ -1,5 +1,6 @@
 package org.usfirst.frc.team192.robot;
 
+import org.usfirst.frc.team192.config.Config;
 import org.usfirst.frc.team192.swerve.FullSwerve;
 import org.usfirst.frc.team192.swerve.SwerveBase;
 
@@ -30,7 +31,8 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		gyro = new ADXRS450_Gyro();
-		swerve = new FullSwerve(ROBOT_WIDTH, ROBOT_HEIGHT, gyro);
+		Config.start();
+		swerve = new FullSwerve(gyro);
 		input = new JoystickInput(0, 1);
 	}
 
@@ -77,7 +79,6 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void testInit() {
-
 	}
 
 	/**

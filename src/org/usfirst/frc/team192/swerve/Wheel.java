@@ -1,5 +1,7 @@
 package org.usfirst.frc.team192.swerve;
 
+import org.usfirst.frc.team192.config.Config;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -9,8 +11,10 @@ import edu.wpi.first.wpilibj.DigitalInput;
 
 class Wheel {
 
-	private final double TICKS_PER_ROTATION = 4096.0 * 50.0 / 24.0;
-	private final double TWO_PI = Math.PI * 2;
+	private final double TICKS_PER_ROTATION;
+	private final int OFFSET;
+
+	private static final double TWO_PI = Math.PI * 2;
 
 	private final double MIN_ANGLE_CHANGE = 0.005;
 	private final double MIN_SPEED_CHANGE = 0.05;
@@ -24,14 +28,17 @@ class Wheel {
 	private double targetAngle;
 	private double driveSpeed;
 
-	public Wheel(TalonSRX rotateMotor, TalonSRX driveMotor) {
-		this(rotateMotor, driveMotor, null);
-	}
+	public Wheel(String name) {
+		rotateMotor = new TalonSRX(Config.getInt(name + "_rotate_port"));
+		driveMotor = new TalonSRX(Config.getInt(name + "_drive_port"));
+		int dioPort = Config.getInt(name + "_dio_port");
+		if (dioPort != -1)
+			limitSwitch = new DigitalInput(dioPort);
+		else
+			limitSwitch = null;
 
-	public Wheel(TalonSRX rotateMotor, TalonSRX driveMotor, DigitalInput limitSwitch) {
-		this.rotateMotor = rotateMotor;
-		this.driveMotor = driveMotor;
-		this.limitSwitch = limitSwitch;
+		TICKS_PER_ROTATION = Config.getDouble("ticks_per_rotation");
+		OFFSET = Config.getInt(name + "_offset");
 	}
 
 	public void initialize() {
@@ -57,7 +64,9 @@ class Wheel {
 	}
 
 	public void zero() {
-		rotateMotor.getSensorCollection().setQuadraturePosition(0, 0);
+		rotateMotor.set(ControlMode.Disabled, 0);
+		int absEncPos = rotateMotor.getSensorCollection().getPulseWidthPosition();
+		rotateMotor.getSensorCollection().setQuadraturePosition(absEncPos - OFFSET, 0);
 	}
 
 	public void disable() {

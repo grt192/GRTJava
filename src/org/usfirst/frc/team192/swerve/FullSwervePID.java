@@ -1,5 +1,6 @@
 package org.usfirst.frc.team192.swerve;
 
+import org.usfirst.frc.team192.config.Config;
 import org.usfirst.frc.team192.robot.JoystickInput;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
@@ -14,12 +15,16 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 	private PIDController pid;
 	private double rotateInput;
 
-	public FullSwervePID(double robotWidth, double robotHeight, ADXRS450_Gyro gyro) {
-		super(robotWidth, robotHeight, gyro);
-		double p = 0.02;
-		double i = 0.0001;
-		double d = 0.5;
-		double f = 0.0;
+	public FullSwervePID(ADXRS450_Gyro gyro) {
+		super(gyro);
+		double p = Config.getDouble("swervepid_p");
+		p = 0.02;
+		double i = Config.getDouble("swervepid_i");
+		i = 0.0001;
+		double d = Config.getDouble("swervepid_d");
+		d = 0.5;
+		double f = Config.getDouble("swervepid_f");
+		f = 0.0;
 		SmartDashboard.putNumber("p", p);
 		SmartDashboard.putNumber("i", i);
 		SmartDashboard.putNumber("d", d);
