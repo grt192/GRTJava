@@ -12,7 +12,9 @@ import edu.wpi.first.wpilibj.DigitalInput;
 class Wheel {
 
 	private final double TICKS_PER_ROTATION;
-	private final double TWO_PI = Math.PI * 2;
+	private final int OFFSET;
+
+	private static final double TWO_PI = Math.PI * 2;
 
 	private final double MIN_ANGLE_CHANGE = 0.005;
 	private final double MIN_SPEED_CHANGE = 0.05;
@@ -36,6 +38,7 @@ class Wheel {
 			limitSwitch = null;
 
 		TICKS_PER_ROTATION = Config.getDouble("ticks_per_rotation");
+		OFFSET = Config.getInt(name + "_offset");
 	}
 
 	public void initialize() {
@@ -61,7 +64,9 @@ class Wheel {
 	}
 
 	public void zero() {
-		rotateMotor.getSensorCollection().setQuadraturePosition(0, 0);
+		rotateMotor.set(ControlMode.Disabled, 0);
+		int absEncPos = rotateMotor.getSensorCollection().getPulseWidthPosition();
+		rotateMotor.getSensorCollection().setQuadraturePosition(absEncPos - OFFSET, 0);
 	}
 
 	public void disable() {

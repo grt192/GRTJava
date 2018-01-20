@@ -1,9 +1,5 @@
 package org.usfirst.frc.team192.robot;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-
 import org.usfirst.frc.team192.config.Config;
 import org.usfirst.frc.team192.swerve.FullSwerve;
 import org.usfirst.frc.team192.swerve.SwerveBase;
@@ -83,24 +79,6 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void testInit() {
-		String fileName = "/home/lvuser/hello";
-		// System.out.println("reading and writing from a file");
-		// try {
-		// File f = new File(fileName);
-		// f.createNewFile();
-		// PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(f)));
-		// out.println("hello hello");
-		// out.close();
-		// } catch (IOException e) {
-		// e.printStackTrace();
-		// }
-		try {
-			BufferedReader br = new BufferedReader(new FileReader(fileName));
-			System.out.println("file: " + br.readLine());
-			br.close();
-		} catch (IOException e) {
-			System.out.println("can't read");
-		}
 	}
 
 	/**
