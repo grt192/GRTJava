@@ -2,11 +2,8 @@ package org.usfirst.frc.team192.config;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStream;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -47,8 +44,10 @@ public class Config {
 			Scanner nameScanner = new Scanner(new File("/home/lvuser/name.192"));
 			String name = nameScanner.nextLine();
 			nameScanner.close();
-			String fileName = "src/org/usfirst/frc/team192/config/" + name + ".192";
-			Scanner scanner = new Scanner(new File(fileName));
+			String fileName = "beta2017.192";
+			System.out.println("reading from file " + fileName);
+			InputStream s = Config.class.getResourceAsStream(fileName);
+			Scanner scanner = new Scanner(s);
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
 				if (line.length() > 0 && line.charAt(0) != '#') {
