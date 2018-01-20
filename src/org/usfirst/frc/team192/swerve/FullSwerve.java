@@ -13,11 +13,13 @@ public class FullSwerve extends SwerveBase {
 	private final double MAX_ROTATE_VALUE = 1;
 	private double ROTATE_SCALE;
 
+	private final double RADIUS;
+
 	public FullSwerve(ADXRS450_Gyro gyro) {
 		super(true);
 		this.gyro = gyro;
-		double r = Math.sqrt(robotWidth * robotWidth + robotHeight * robotHeight);
-		ROTATE_SCALE = (1 - SPEED_SCALE * MAX_JOYSTICK_VALUE) / (MAX_ROTATE_VALUE * r);
+		RADIUS = Math.sqrt(robotWidth * robotWidth + robotHeight * robotHeight) / 2;
+		ROTATE_SCALE = (1 - SPEED_SCALE * MAX_JOYSTICK_VALUE) / (MAX_ROTATE_VALUE * RADIUS);
 	}
 
 	@Override
@@ -38,7 +40,6 @@ public class FullSwerve extends SwerveBase {
 		SmartDashboard.putNumber("rv", rv);
 		SmartDashboard.putNumber("vx", vx);
 		SmartDashboard.putNumber("vy", vy);
-		double r = Math.sqrt(robotWidth * robotWidth + robotHeight * robotHeight) / 2;
 		for (int i = 0; i < 4; i++) {
 			double wheelAngle = Math.atan2(robotWidth, robotHeight);
 			if (i == 0 || i == 3) {
@@ -48,8 +49,8 @@ public class FullSwerve extends SwerveBase {
 				wheelAngle += Math.PI;
 			}
 			wheelAngle += currentAngle;
-			double dx = r * Math.cos(wheelAngle);
-			double dy = r * Math.sin(wheelAngle);
+			double dx = RADIUS * Math.cos(wheelAngle);
+			double dy = RADIUS * Math.sin(wheelAngle);
 			double actualvx = vx + rv * dy;
 			double actualvy = vy - rv * dx;
 			double wheelTheta = Math.atan2(actualvy, actualvx);
