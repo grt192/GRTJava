@@ -1,6 +1,5 @@
 package org.usfirst.frc.team192.swerve;
 
-import org.usfirst.frc.team192.config.Config;
 import org.usfirst.frc.team192.robot.JoystickInput;
 
 public class TankSwerve extends SwerveBase {
