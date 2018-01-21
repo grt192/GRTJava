@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class FullSwerve extends SwerveBase {
-	private ADXRS450_Gyro gyro;
+	protected ADXRS450_Gyro gyro;
 	private final double MAX_JOYSTICK_VALUE = Math.sqrt(2);
 	private final double MAX_ROTATE_VALUE = 1;
 	private double ROTATE_SCALE;
@@ -24,6 +24,7 @@ public class FullSwerve extends SwerveBase {
 
 	@Override
 	public void zero() {
+		System.out.println("Zeroing gyro - DO NOT MOVE ROBOT");
 		for (Wheel wheel : wheels)
 			wheel.disable();
 		gyro.calibrate();
