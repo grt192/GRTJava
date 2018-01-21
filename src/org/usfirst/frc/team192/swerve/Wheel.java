@@ -1,5 +1,7 @@
 package org.usfirst.frc.team192.swerve;
 
+import java.util.Map;
+
 import org.usfirst.frc.team192.config.Config;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -27,8 +29,14 @@ class Wheel {
 
 	private double targetAngle;
 	private double driveSpeed;
+	
+	private Map<String, FeedbackDevice> feedbackDevices;
+	private FeedbackDevice feedbackDevice;
 
 	public Wheel(String name) {
+		feedbackDevices.put("QuadEncoder", FeedbackDevice.QuadEncoder);
+		feedbackDevices.put("Analog", FeedbackDevice.Analog);
+		
 		rotateMotor = new TalonSRX(Config.getInt(name + "_rotate_port"));
 		driveMotor = new TalonSRX(Config.getInt(name + "_drive_port"));
 		int dioPort = Config.getInt(name + "_dio_port");
@@ -39,12 +47,17 @@ class Wheel {
 
 		TICKS_PER_ROTATION = Config.getDouble("ticks_per_rotation");
 		OFFSET = Config.getInt(name + "_offset");
+		feedbackDevice = feedbackDevices.get(Config.getString("feedback_device"));
+		if (feedbackDevice == null) {
+			System.out.println("Invalid feedback device");
+			feedbackDevice = FeedbackDevice.QuadEncoder;
+		}
 	}
 
 	public void initialize() {
 		rotateMotor.setNeutralMode(NeutralMode.Brake);
 		driveMotor.setNeutralMode(NeutralMode.Brake);
-		rotateMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
+		rotateMotor.configSelectedFeedbackSensor(feedbackDevice, 0, 0);
 		rotateMotor.config_kP(0, 1.0, 0);
 		rotateMotor.config_kI(0, 0.0, 0);
 		rotateMotor.config_kD(0, 0.0, 0);

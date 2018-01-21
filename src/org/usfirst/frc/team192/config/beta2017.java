@@ -9,6 +9,8 @@
 // swervepid_d=0.5
 // swervepid_f=0.0
 //
+// feedback_device=QuadEncoder
+// 
 // fl_rotate_port=14
 // fl_drive_port=16
 // fl_dio_port=-1

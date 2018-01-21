@@ -8,6 +8,8 @@
 // swervepid_i=0.0001
 // swervepid_d=0.5
 // swervepid_f=0.0
+// 
+// feedback_device=Analog
 //
 // fl_rotate_port=14
 // fl_drive_port=16
