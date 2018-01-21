@@ -13,7 +13,6 @@ class Wheel {
 
 	private final double TICKS_PER_ROTATION;
 	private final int OFFSET;
-	private final boolean USE_ABSOLUTE_ENCODER;
 
 	private static final double TWO_PI = Math.PI * 2;
 
@@ -21,9 +20,9 @@ class Wheel {
 	private final double MIN_SPEED_CHANGE = 0.05;
 
 	private static final double kP = 9000.0;
-	private static final double kI = 100.0;
+	private static final double kI = 0.0;
 	private static final double kD = 0.0;
-	private static final double maxIAccum = 100.0;
+	private static final double maxIAccum = 0.0;
 
 	private TalonSRX rotateMotor;
 	private TalonSRX driveMotor;
@@ -42,7 +41,6 @@ class Wheel {
 			limitSwitch = new DigitalInput(dioPort);
 		else
 			limitSwitch = null;
-		USE_ABSOLUTE_ENCODER = Config.getBoolean("absolute_encoder");
 		TICKS_PER_ROTATION = Config.getDouble("ticks_per_rotation");
 		OFFSET = Config.getInt(name + "_offset");
 	}
@@ -72,13 +70,7 @@ class Wheel {
 	}
 
 	public void zero() {
-		int encPos = 0;
-		if (USE_ABSOLUTE_ENCODER) {
-			rotateMotor.set(ControlMode.Disabled, 0);
-			int absEncPos = rotateMotor.getSensorCollection().getPulseWidthPosition();
-			encPos = absEncPos - OFFSET;
-		}
-		rotateMotor.getSensorCollection().setQuadraturePosition(encPos, 0);
+		rotateMotor.getSensorCollection().setQuadraturePosition(0, 0);
 	}
 
 	public void disable() {
@@ -90,7 +82,7 @@ class Wheel {
 		double targetPosition = radians / TWO_PI;
 		targetPosition = ((targetPosition % 1.0) + 1.0) % 1.0;
 
-		int encoderPosition = rotateMotor.getSelectedSensorPosition(0);
+		int encoderPosition = rotateMotor.getSelectedSensorPosition(0) - OFFSET;
 		double currentPosition = encoderPosition / TICKS_PER_ROTATION;
 		double rotations = Math.floor(currentPosition);
 		currentPosition -= rotations;

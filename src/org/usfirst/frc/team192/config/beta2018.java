@@ -1,8 +1,8 @@
 // # Config file for 2018 beta
 // # Domain: roborio-192-frc.local
 //
-// robot_width=0.8128
-// robot_height=0.7112
+// robot_width=0.5112
+// robot_height=0.6274
 //
 // swervepid_p=0.02
 // swervepid_i=0.0001
