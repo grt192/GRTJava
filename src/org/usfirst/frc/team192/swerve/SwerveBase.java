@@ -11,15 +11,8 @@ public abstract class SwerveBase {
 	protected double robotHeight;
 
 	protected final double SPEED_SCALE = 1.0 / 3;
-	private boolean zeroOnEnable;
 
 	public SwerveBase() {
-		this(false);
-	}
-
-	public SwerveBase(boolean zeroOnEnable) {
-		this.zeroOnEnable = zeroOnEnable;
-
 		wheels = new Wheel[4];
 		wheels[0] = new Wheel("fl");
 		wheels[1] = new Wheel("fr");
@@ -38,8 +31,6 @@ public abstract class SwerveBase {
 		for (Wheel wheel : wheels)
 			if (wheel != null)
 				wheel.enable();
-		if (zeroOnEnable)
-			zero();
 	}
 
 	public void disable() {

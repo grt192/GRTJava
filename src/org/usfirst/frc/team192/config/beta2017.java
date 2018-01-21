@@ -12,19 +12,16 @@
 // fl_rotate_port=14
 // fl_drive_port=16
 // fl_dio_port=-1
-// fl_offset=3276
 // fr_rotate_port=9
 // fr_drive_port=10
 // fr_dio_port=-1
-// fr_offset=4048
 // bl_rotate_port=3
 // bl_drive_port=2
 // bl_dio_port=-1
-// bl_offset=1572
 // br_rotate_port=8
 // br_drive_port=7
 // br_dio_port=-1
-// br_offset=3880
 //
+// absolute_encoder=false
 // ticks_per_rotation=8533
 // name=beta2017

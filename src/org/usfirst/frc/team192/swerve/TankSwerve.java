@@ -5,7 +5,9 @@ import org.usfirst.frc.team192.robot.JoystickInput;
 public class TankSwerve extends SwerveBase {
 
 	public TankSwerve() {
-		super(true);
+		super();
+		for (Wheel wheel : wheels)
+			wheel.setTargetPosition(0.0);
 	}
 
 	@Override
