@@ -27,8 +27,8 @@ public class JoystickInput {
 	}
 
 	// get button pressing info
-	public boolean getShooterButton() {
-		return xbox.getAButton();
+	public boolean getLinkageButton() {
+		return xbox.getXButton();
 	}
 
 	public boolean getLeverButton() {
