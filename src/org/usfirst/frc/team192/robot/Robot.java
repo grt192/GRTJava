@@ -3,6 +3,8 @@ package org.usfirst.frc.team192.robot;
 import org.usfirst.frc.team192.swerve.FullSwerve;
 import org.usfirst.frc.team192.swerve.SwerveBase;
 
+import org.usfirst.frc.team192.robot.Teleop;
+
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.IterativeRobot;
 
@@ -16,12 +18,13 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 public class Robot extends IterativeRobot {
 
 	private JoystickInput input;
-	private ADXRS450_Gyro gyro;
+	private Teleop teleop;
+	
+	//private ADXRS450_Gyro gyro;
+	//private double ROBOT_WIDTH = 0.8128;
+	//private double ROBOT_HEIGHT = 0.7112;
 
-	private double ROBOT_WIDTH = 0.8128;
-	private double ROBOT_HEIGHT = 0.7112;
-
-	private SwerveBase swerve;
+	//private SwerveBase swerve;
 
 	/**
 	 * This function is run when the robot is first started up and should be used
@@ -29,9 +32,10 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		gyro = new ADXRS450_Gyro();
-		swerve = new FullSwerve(ROBOT_WIDTH, ROBOT_HEIGHT, gyro);
+		//gyro = new ADXRS450_Gyro();
+		//swerve = new FullSwerve(ROBOT_WIDTH, ROBOT_HEIGHT, gyro);
 		input = new JoystickInput(0, 1);
+		teleop = new Teleop(input);
 	}
 
 	/**
@@ -58,7 +62,8 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void teleopInit() {
-		swerve.enable();
+		//swerve.enable();
+		
 	}
 
 	/**
@@ -66,13 +71,14 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		swerve.update(input);
+		//swerve.update(input);
+		teleop.periodic();
 
 	}
 
 	@Override
 	public void disabledInit() {
-		swerve.disable();
+		//swerve.disable();
 	}
 
 	@Override
