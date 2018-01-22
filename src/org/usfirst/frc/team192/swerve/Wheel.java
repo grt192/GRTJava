@@ -7,8 +7,6 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-import edu.wpi.first.wpilibj.DigitalInput;
-
 class Wheel {
 
 	private final double TICKS_PER_ROTATION;
@@ -26,7 +24,6 @@ class Wheel {
 
 	private TalonSRX rotateMotor;
 	private TalonSRX driveMotor;
-	private DigitalInput limitSwitch;
 
 	public boolean reversed;
 
@@ -34,21 +31,25 @@ class Wheel {
 	private double driveSpeed;
 
 	public Wheel(String name) {
+
 		rotateMotor = new TalonSRX(Config.getInt(name + "_rotate_port"));
 		driveMotor = new TalonSRX(Config.getInt(name + "_drive_port"));
-		int dioPort = Config.getInt(name + "_dio_port");
-		if (dioPort != -1)
-			limitSwitch = new DigitalInput(dioPort);
-		else
-			limitSwitch = null;
 		TICKS_PER_ROTATION = Config.getDouble("ticks_per_rotation");
 		OFFSET = Config.getInt(name + "_offset");
-	}
 
-	public void initialize() {
+		FeedbackDevice feedbackDevice;
+		switch (Config.getString("feedback_device")) {
+		case "Analog":
+			feedbackDevice = FeedbackDevice.Analog;
+			break;
+		case "QuadEncoder":
+		default:
+			feedbackDevice = FeedbackDevice.QuadEncoder;
+		}
+
 		rotateMotor.setNeutralMode(NeutralMode.Brake);
 		driveMotor.setNeutralMode(NeutralMode.Brake);
-		rotateMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
+		rotateMotor.configSelectedFeedbackSensor(feedbackDevice, 0, 0);
 		rotateMotor.config_kP(0, kP / TICKS_PER_ROTATION, 0);
 		rotateMotor.config_kI(0, kI / TICKS_PER_ROTATION, 0);
 		rotateMotor.config_kD(0, kD / TICKS_PER_ROTATION, 0);

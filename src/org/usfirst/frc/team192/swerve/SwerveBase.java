@@ -18,9 +18,6 @@ public abstract class SwerveBase {
 		wheels[1] = new Wheel("fr");
 		wheels[2] = new Wheel("bl");
 		wheels[3] = new Wheel("br");
-		for (Wheel wheel : wheels)
-			if (wheel != null)
-				wheel.initialize();
 
 		this.robotWidth = Config.getDouble("robot_width");
 		this.robotHeight = Config.getDouble("robot_height");
