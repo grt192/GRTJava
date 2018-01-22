@@ -14,7 +14,7 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 	private PIDController pid;
 	private double rotateInput;
 
-	private static final double BUMPER = 0.2;
+	private static final double BUMPER = 0.4;
 
 	public FullSwervePID(ADXRS450_Gyro gyro) {
 		super(gyro);
@@ -26,8 +26,8 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 		// d = 0.5;
 		// double f = Config.getDouble("swervepid_f");
 		// f = 0.0;
-		double p = SmartDashboard.getNumber("p", 0.01);
-		double i = SmartDashboard.getNumber("i", 0.001);
+		double p = SmartDashboard.getNumber("p", 0.015);
+		double i = SmartDashboard.getNumber("i", 0.00);
 		double d = SmartDashboard.getNumber("d", 0.01);
 		double f = SmartDashboard.getNumber("f", 0.01);
 		SmartDashboard.putNumber("p", p);
@@ -79,15 +79,13 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 		SmartDashboard.putNumber("PID Setpoint", pid.getSetpoint());
 		SmartDashboard.putNumber("PID Output", pid.get());
 		double rotate = rotateInput;
-		if (xbox.getBumper(Hand.kRight))
-			rotate += BUMPER;
-		if (xbox.getBumper(Hand.kLeft))
-			rotate -= BUMPER;
+		rotate += xbox.getTriggerAxis(Hand.kRight) * BUMPER;
+		rotate -= xbox.getTriggerAxis(Hand.kLeft) * BUMPER;
 		// double[] array = new double[] { -1.0, rotate, 1.0 };
 		// Arrays.sort(array);
 		// rotate = array[1];
-		rotate = Math.max(Math.min(-1.0, rotate), 1.0);
-		changeMotors(rotateInput, -input.getClippedY(Hand.kLeft), input.getClippedX(Hand.kLeft));
+		rotate = Math.min(Math.max(-1.0, rotate), 1.0);
+		changeMotors(rotate, -input.getClippedY(Hand.kLeft), input.getClippedX(Hand.kLeft));
 	}
 
 	@Override

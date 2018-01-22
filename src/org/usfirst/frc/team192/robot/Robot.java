@@ -1,14 +1,13 @@
 package org.usfirst.frc.team192.robot;
 
 import org.usfirst.frc.team192.config.Config;
-import org.usfirst.frc.team192.swerve.FullSwerve;
+import org.usfirst.frc.team192.swerve.FullSwervePID;
 import org.usfirst.frc.team192.swerve.SwerveBase;
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -40,9 +39,8 @@ public class Robot extends IterativeRobot {
 	public void robotInit() {
 		gyro = new ADXRS450_Gyro();
 		Config.start();
-		swerve = new FullSwerve(gyro);
+		swerve = new FullSwervePID(gyro);
 		input = new JoystickInput(0, 1);
-		System.out.println("Zeroing gyro - DO NOT MOVE ROBOT");
 		swerve.zero();
 	}
 
@@ -97,9 +95,6 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-		SmartDashboard.putNumber("talon3", talon3.getSensorCollection().getPulseWidthPosition());
-		SmartDashboard.putNumber("talon14", talon14.getSensorCollection().getPulseWidthPosition());
-		SmartDashboard.putNumber("talon8", talon8.getSensorCollection().getPulseWidthPosition());
-		SmartDashboard.putNumber("talon9", talon9.getSensorCollection().getPulseWidthPosition());
+		swerve.zero();
 	}
 }
