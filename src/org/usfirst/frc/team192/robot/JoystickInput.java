@@ -30,12 +30,16 @@ public class JoystickInput {
 	public boolean getLinkageButton() {
 		return xbox.getXButton();
 	}
+	
+	public boolean getIntakeButton() {
+		return xbox.getAButton(); //Is A button free?
+	}
 
 	public boolean getLeverButton() {
 		return xbox.getBButton();
 	}
 
-	public boolean getChalupaButton() {
+	public boolean getClimberButton() { // changed getChalupaButton to getClimberButton
 		return xbox.getXButton();
 	}
 

@@ -29,7 +29,7 @@ public class Intake{
 		right.set(ControlMode.PercentOutput, flywheel_speed);
 	}
 	
-	public void output() {
+	public void reverseIntake() {
 		left.set(ControlMode.PercentOutput, -flywheel_speed);
 		left.set(ControlMode.PercentOutput, -flywheel_speed);
 	}

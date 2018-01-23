@@ -17,6 +17,7 @@ public class Teleop {
 	private XboxController xbox;
 	private Linkage linkage;
 	private Climber climber;
+	private Intake intake;
 	private Vision vision;
 	private Boolean is_vision_toggled;
 	private Point centroid;
@@ -26,6 +27,7 @@ public class Teleop {
 		xbox = input.getXboxController();
 		linkage = new Linkage(new TalonSRX(1));
 		climber = new Climber(new TalonSRX(8));
+		intake = new Intake(new TalonSRX(0), new TalonSRX(2), new TalonSRX(3)); //add talon numbers for this
 		is_vision_toggled = false;
 		centroid = new Point();
 		vision = new Vision();
@@ -97,11 +99,11 @@ public class Teleop {
 	}
 	
 	public void intake() {
-		
+		intake.intake();
 	}
 	
 	public void reverseIntake() {
-		
+		intake.reverseIntake();
 	}
 	
 	public void climb() {
