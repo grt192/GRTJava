@@ -1,5 +1,9 @@
 package org.usfirst.frc.team192.robot;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
+
+import org.usfirst.frc.team192.networking.NetworkServer;
 import org.usfirst.frc.team192.swerve.FullSwerve;
 import org.usfirst.frc.team192.swerve.SwerveBase;
 
@@ -22,6 +26,7 @@ public class Robot extends IterativeRobot {
 	private double ROBOT_HEIGHT = 0.7112;
 
 	private SwerveBase swerve;
+	private NetworkServer gyroServer;
 
 	/**
 	 * This function is run when the robot is first started up and should be used
@@ -29,6 +34,11 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
+		try {
+			gyroServer = new NetworkServer(1920);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		gyro = new ADXRS450_Gyro();
 		swerve = new FullSwerve(ROBOT_WIDTH, ROBOT_HEIGHT, gyro);
 		input = new JoystickInput(0, 1);
@@ -85,6 +95,10 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-
+		if (gyroServer != null) {
+			byte[] bytes = new byte[Double.BYTES];
+			ByteBuffer.wrap(bytes).putDouble(gyro.getAngle());
+			gyroServer.sendMessage(bytes);
+		}
 	}
 }
