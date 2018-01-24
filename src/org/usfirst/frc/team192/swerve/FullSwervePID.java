@@ -100,7 +100,7 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 		angle = Math.toRadians(gyro.getAngle()) + radians;
 	}
 	
-	public void enableAutonomous() {
+	public void autonomousInit() {
 		vx = 0;
 		vy = 0;
 		angle = 0;
