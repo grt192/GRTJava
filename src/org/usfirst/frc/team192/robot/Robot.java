@@ -1,6 +1,7 @@
 package org.usfirst.frc.team192.robot;
 
 import org.usfirst.frc.team192.swerve.FullSwerve;
+import org.usfirst.frc.team192.swerve.FullSwervePID;
 import org.usfirst.frc.team192.swerve.SwerveBase;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
@@ -20,6 +21,8 @@ public class Robot extends IterativeRobot {
 
 	private double ROBOT_WIDTH = 0.8128;
 	private double ROBOT_HEIGHT = 0.7112;
+	
+	private Autonomous auto;
 
 	private SwerveBase swerve;
 
@@ -30,8 +33,10 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		gyro = new ADXRS450_Gyro();
-		swerve = new FullSwerve(ROBOT_WIDTH, ROBOT_HEIGHT, gyro);
+		swerve = new FullSwervePID(ROBOT_WIDTH, ROBOT_HEIGHT, gyro);
 		input = new JoystickInput(0, 1);
+		
+		auto = new Autonomous(swerve);
 	}
 
 	/**
@@ -47,6 +52,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
+		auto.init();
 	}
 
 	/**
@@ -54,6 +60,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
+		auto.periodic();
 	}
 
 	@Override
