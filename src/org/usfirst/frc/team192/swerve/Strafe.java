@@ -41,7 +41,7 @@ public class Strafe extends SwerveBase {
 	}
 
 	@Override
-	public void update(JoystickInput input) {
+	public void updateTeleop(JoystickInput input) {
 		changeMode(input);
 		if (currentMode == Mode.STRAFE) {
 			double speed = input.getPolarRadius();

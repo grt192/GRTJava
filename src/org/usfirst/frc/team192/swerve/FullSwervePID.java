@@ -13,6 +13,11 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 
 	private PIDController pid;
 	private double rotateInput;
+	
+	// for autonomous
+	private double angle;
+	private double vx;
+	private double vy;
 
 	public FullSwervePID(double robotWidth, double robotHeight, ADXRS450_Gyro gyro) {
 		super(robotWidth, robotHeight, gyro);
@@ -55,23 +60,57 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 		pid.disable();
 		rotateInput = 0.0;
 	}
+	
+	private void updateMovement(double vx, double vy, double radians, boolean changePID) {
+		if (changePID)
+			pid.setSetpoint((Math.toDegrees(radians) + 360.0) % 360.0);
+		updatePID();
+		SmartDashboard.putNumber("PID Setpoint", pid.getSetpoint());
+		SmartDashboard.putNumber("PID Error", pid.getError());
+		SmartDashboard.putNumber("PID Output", pid.get());
+		changeMotors(rotateInput, vx, vy);
+	}
+	
+	private void updateMovement(double vx, double vy, double radians) {
+		updateMovement(vx, vy, radians, true);
+	}
 
 	@Override
-	public void update(JoystickInput input) {
+	public void updateTeleop(JoystickInput input) {
 		XboxController xbox = input.getXboxController();
 		if (xbox.getAButton() && xbox.getYButton())
 			zero();
 		double y = xbox.getX(Hand.kRight);
 		double x = -xbox.getY(Hand.kRight);
-		if (Math.sqrt(x * x + y * y) > 0.7)
-			pid.setSetpoint((Math.toDegrees(Math.atan2(y, x)) + 360.0) % 360.0);
-		updatePID();
-		SmartDashboard.putNumber("PID Setpoint", pid.getSetpoint());
-		SmartDashboard.putNumber("PID Error", pid.getError());
-		SmartDashboard.putNumber("PID Output", pid.get());
-		changeMotors(rotateInput, -input.getClippedY(Hand.kLeft), input.getClippedX(Hand.kLeft));
+		double angle = Math.atan2(y, x);
+		updateMovement(-input.getClippedY(Hand.kLeft), input.getClippedX(Hand.kLeft), angle, Math.sqrt(x * x + y * y) > 0.7);
 	}
-
+	
+	// for autonomous
+	public void setVelocity(double vx, double vy) {
+		this.vx = vx;
+		this.vy = vy;
+	}
+	
+	public void rotateTo(double radians) {
+		angle = radians;
+	}
+	
+	public void rotateBy(double radians) {
+		angle = Math.toRadians(gyro.getAngle()) + radians;
+	}
+	
+	public void enableAutonomous() {
+		vx = 0;
+		vy = 0;
+		angle = 0;
+	}
+	
+	public void updateAutonomous() {
+		updateMovement(vx, vy, angle);
+	}
+	
+	// for pid
 	@Override
 	public void pidWrite(double output) {
 		rotateInput = output;

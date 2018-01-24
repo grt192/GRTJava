@@ -61,6 +61,6 @@ public abstract class SwerveBase {
 		return (Math.atan2(x, -y) + 2 * Math.PI) % (2 * Math.PI);
 	}
 
-	public abstract void update(JoystickInput input);
+	public abstract void updateTeleop(JoystickInput input);
 
 }
