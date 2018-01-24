@@ -14,16 +14,24 @@ public class NetworkServer extends Thread {
 
 	private ArrayList<Client> clients;
 
-	public NetworkServer(int port) throws IOException {
+	public NetworkServer(int port, String name) throws IOException {
 		socket = new DatagramSocket(port, InetAddress.getLocalHost());
 		System.out.println(
-				"Robot recieving at " + socket.getLocalAddress().getHostAddress() + ":" + socket.getLocalPort());
+				name + "server joinable at " + socket.getLocalAddress().getHostAddress() + ":" + socket.getLocalPort());
 		clients = new ArrayList<>();
 		start();
 	}
 
 	@Override
 	public void run() {
+		try {
+			safeRun();
+		} finally {
+			socket.close();
+		}
+	}
+
+	public void safeRun() {
 		running = true;
 		while (running) {
 			DatagramPacket recieve = new DatagramPacket(new byte[4], 4);
@@ -37,7 +45,6 @@ public class NetworkServer extends Thread {
 			if (message.equals("join"))
 				clients.add(new Client(recieve));
 		}
-		socket.close();
 	}
 
 	public void sendMessage(byte[] message) {

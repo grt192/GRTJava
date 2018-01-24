@@ -1,14 +1,12 @@
 package org.usfirst.frc.team192.robot;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-
 import org.usfirst.frc.team192.networking.NetworkServer;
-import org.usfirst.frc.team192.swerve.FullSwerve;
-import org.usfirst.frc.team192.swerve.SwerveBase;
 
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
+import edu.wpi.first.wpilibj.GyroBase;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.XboxController;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -19,29 +17,29 @@ import edu.wpi.first.wpilibj.IterativeRobot;
  */
 public class Robot extends IterativeRobot {
 
-	private JoystickInput input;
-	private ADXRS450_Gyro gyro;
-
-	private double ROBOT_WIDTH = 0.8128;
-	private double ROBOT_HEIGHT = 0.7112;
-
-	private SwerveBase swerve;
-	private NetworkServer gyroServer;
-
 	/**
 	 * This function is run when the robot is first started up and should be used
 	 * for any initialization code.
 	 */
+
+	private NetworkServer gyroServer;
+	private GyroBase gyro;
+	private XboxController xbox;
+	private TalonSRX[] talons;
+
 	@Override
 	public void robotInit() {
-		try {
-			gyroServer = new NetworkServer(1920);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		gyro = new ADXRS450_Gyro();
-		swerve = new FullSwerve(ROBOT_WIDTH, ROBOT_HEIGHT, gyro);
-		input = new JoystickInput(0, 1);
+		// gyro = new ADXRS450_Gyro();
+		// try {
+		// gyroServer = new NetworkServer(1920, "Gyro");
+		// } catch (IOException e) {
+		// e.printStackTrace();
+		// }
+		xbox = new XboxController(1);
+		talons = new TalonSRX[16];
+		for (int i = 0; i < 16; i++)
+			talons[i] = new TalonSRX(i + 1);
+
 	}
 
 	/**
@@ -68,7 +66,6 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void teleopInit() {
-		swerve.enable();
 	}
 
 	/**
@@ -76,13 +73,11 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		swerve.update(input);
 
 	}
 
 	@Override
 	public void disabledInit() {
-		swerve.disable();
 	}
 
 	@Override
@@ -95,10 +90,18 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-		if (gyroServer != null) {
-			byte[] bytes = new byte[Double.BYTES];
-			ByteBuffer.wrap(bytes).putDouble(gyro.getAngle());
-			gyroServer.sendMessage(bytes);
+		if (xbox.getAButtonPressed()) {
+			for (int i = 0; i < 16; i++) {
+				TalonSRX test = talons[i];
+				System.out.println(
+						"ID: " + test.getDeviceID() + "; QuadPos: " + test.getSensorCollection().getQuadraturePosition()
+								+ "; AnalPos: " + test.getSensorCollection().getAnalogIn());
+			}
 		}
+		// if (gyroServer != null) {
+		// byte[] buf = new byte[Double.BYTES];
+		// ByteBuffer.wrap(buf).putDouble(gyro.getAngle());
+		// gyroServer.sendMessage(buf);
+		// }
 	}
 }
