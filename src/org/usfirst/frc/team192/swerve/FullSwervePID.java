@@ -19,17 +19,27 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 	private double vx;
 	private double vy;
 
-	public FullSwervePID(double robotWidth, double robotHeight, ADXRS450_Gyro gyro) {
-		super(robotWidth, robotHeight, gyro);
-		double p = 0.02;
-		double i = 0.0001;
-		double d = 0.5;
-		double f = 0.0;
+	private static final double BUMPER = 0.4;
+
+	public FullSwervePID(ADXRS450_Gyro gyro) {
+		super(gyro);
+		// double p = Config.getDouble("swervepid_p");
+		// p = 0.02;
+		// double i = Config.getDouble("swervepid_i");
+		// i = 0.0001;
+		// double d = Config.getDouble("swervepid_d");
+		// d = 0.5;
+		// double f = Config.getDouble("swervepid_f");
+		// f = 0.0;
+		double p = SmartDashboard.getNumber("p", 0.015);
+		double i = SmartDashboard.getNumber("i", 0.00);
+		double d = SmartDashboard.getNumber("d", 0.01);
+		double f = SmartDashboard.getNumber("f", 0.01);
 		SmartDashboard.putNumber("p", p);
 		SmartDashboard.putNumber("i", i);
 		SmartDashboard.putNumber("d", d);
 		SmartDashboard.putNumber("f", f);
-		pid = new PIDController(p, i, d, f, gyro, this);
+		pid = new PIDController(p, i, d, f, gyro, this, 0.01);
 		pid.setContinuous();
 		pid.setInputRange(0.0, 360.0);
 		pid.setAbsoluteTolerance(3.0);
@@ -41,8 +51,8 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 	@Override
 	public void enable() {
 		super.enable();
-		pid.setSetpoint(0.0);
 		pid.reset();
+		pid.setSetpoint(gyro.getAngle());
 		pid.enable();
 	}
 
@@ -78,7 +88,7 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 	@Override
 	public void updateTeleop(JoystickInput input) {
 		XboxController xbox = input.getXboxController();
-		if (xbox.getAButton() && xbox.getYButton())
+		if (xbox.getAButtonPressed() && xbox.getYButtonPressed())
 			zero();
 		double y = xbox.getX(Hand.kRight);
 		double x = -xbox.getY(Hand.kRight);
@@ -114,6 +124,7 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 	@Override
 	public void pidWrite(double output) {
 		rotateInput = output;
+		SmartDashboard.putNumber("PID Error", pid.getError());
 	}
 
 }
