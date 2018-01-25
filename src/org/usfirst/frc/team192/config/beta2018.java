@@ -11,14 +11,18 @@
 //
 // feedback_device=Analog
 //
-// fl_rotate_port=14
-// fl_drive_port=16
-// fr_rotate_port=9
-// fr_drive_port=10
-// bl_rotate_port=3
-// bl_drive_port=2
-// br_rotate_port=8
-// br_drive_port=7
+// fl_rotate_port=1
+// fl_drive_port=2
+// fl_offset=0
+// fr_rotate_port=15
+// fr_drive_port=16
+// fr_offset=0
+// bl_rotate_port=7
+// bl_drive_port=8
+// bl_offset=0
+// br_rotate_port=9
+// br_drive_port=10
+// br_offset=0
 //
-// ticks_per_rotation=8533
+// ticks_per_rotation=1024
 // name=beta2018
