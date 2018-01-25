@@ -26,7 +26,7 @@ public class Robot extends IterativeRobot {
 	
 	private Autonomous auto;
 
-	private SwerveBase swerve;
+	private FullSwervePID swerve;
 
 	private TalonSRX talon3 = new TalonSRX(3);
 	private TalonSRX talon14 = new TalonSRX(14);
@@ -44,7 +44,7 @@ public class Robot extends IterativeRobot {
 		swerve = new FullSwervePID(gyro);
 		input = new JoystickInput(0, 1);
 		
-		auto = new Autonomous((FullSwervePID) swerve);
+		auto = new Autonomous(swerve);
 		swerve.zero();
 	}
 

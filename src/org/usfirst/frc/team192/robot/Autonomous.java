@@ -54,16 +54,16 @@ public class Autonomous {
 		this.ds = DriverStation.getInstance();
 		this.swerve = swerve;
 		
-		SmartDashboard.putNumber("autonomous_delay_ms", 0.0);
-		SmartDashboard.putNumber("autonomous_distance_from_left_edge", 0.0);
+//		SmartDashboard.putNumber("autonomous_delay_ms", 0.0);
+//		SmartDashboard.putNumber("autonomous_distance_from_left_edge", 0.0);
 		
 		modeChooser = new SendableChooser<Mode>();
 		Mode[] modes = Mode.values();
 		Mode defaultMode = modes[0];
-//		modeChooser.addDefault(defaultMode.getDescription(), defaultMode);
-		for (int i=0; i<modes.length; i++) {
+		modeChooser.addDefault(defaultMode.getDescription(), defaultMode);
+		for (int i=1; i<modes.length; i++) {
 			modeChooser.addObject(modes[i].getDescription(), modes[i]);
-			System.out.println(modes[i].toString());
+//			System.out.println(modes[i].toString());
 		}
 		
 		SmartDashboard.putData("autonomous_mode", modeChooser);
@@ -89,14 +89,19 @@ public class Autonomous {
 	}
 	
 	public void periodic() {
-		if (timeElapsed() < delay) {
+		double timeElapsed = timeElapsed();
+		double timeLeft = timeLeft();
+		if (timeElapsed < delay) {
+			System.out.println("waiting " + timeElapsed);
 			return;
 		}
 		switch (selectedMode) {
 		case ONLY_FORWARD:
-			if (timeElapsed() < 7000) {
-				swerve.setVelocity(0.3, 0.0);
+			if (timeAfterDelay() < 4000) {
+				System.out.println("driving");
+				swerve.setVelocity(1.0, 0.0);
 			} else {
+				System.out.println("not driving");
 				swerve.setVelocity(0.0, 0.0);
 			}
 			break;
@@ -107,11 +112,18 @@ public class Autonomous {
 		swerve.updateAutonomous();
 	}
 	
-	public long timeElapsed() {
-		return (System.currentTimeMillis() - startTime);
+	//time since beginning of autonomous
+	public double timeElapsed() {
+		return System.currentTimeMillis() - startTime;
 	}
 	
-	public long timeLeft() {
+	//time since start of movement/since end of delay (may not last for 15 seconds if delayed)
+	public double timeAfterDelay() {
+		return timeElapsed() - delay;
+	}
+	
+	//time until autonomous 15 seconds ends
+	public double timeLeft() {
 		return (15 * 1000) - timeElapsed();
 	}
 	
