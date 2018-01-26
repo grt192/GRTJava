@@ -7,6 +7,8 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 class Wheel {
 
 	private final double TICKS_PER_ROTATION;
@@ -25,12 +27,15 @@ class Wheel {
 	private TalonSRX rotateMotor;
 	private TalonSRX driveMotor;
 
+	private String name;
+
 	public boolean reversed;
 
 	private double targetAngle;
 	private double driveSpeed;
 
 	public Wheel(String name) {
+		this.name = name;
 
 		rotateMotor = new TalonSRX(Config.getInt(name + "_rotate_port"));
 		driveMotor = new TalonSRX(Config.getInt(name + "_drive_port"));
@@ -80,6 +85,7 @@ class Wheel {
 	}
 
 	public void setTargetPosition(double radians) {
+		SmartDashboard.putNumber(name + " Enc Pos", rotateMotor.getSelectedSensorPosition(0));
 		double targetPosition = radians / TWO_PI;
 		targetPosition = ((targetPosition % 1.0) + 1.0) % 1.0;
 
@@ -101,7 +107,7 @@ class Wheel {
 		if (Math.abs(targetPosition - targetAngle) > MIN_ANGLE_CHANGE || newReverse != reversed) {
 			reversed = newReverse;
 			targetAngle = targetPosition;
-			double encoderPos = targetPosition * TICKS_PER_ROTATION;
+			double encoderPos = targetPosition * TICKS_PER_ROTATION + OFFSET;
 			rotateMotor.set(ControlMode.Position, encoderPos);
 		}
 

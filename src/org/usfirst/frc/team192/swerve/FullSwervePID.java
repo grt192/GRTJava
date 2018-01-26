@@ -2,8 +2,8 @@ package org.usfirst.frc.team192.swerve;
 
 import org.usfirst.frc.team192.robot.JoystickInput;
 
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.GyroBase;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.XboxController;
@@ -14,9 +14,9 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 	private PIDController pid;
 	private double rotateInput;
 
-	private static final double BUMPER = 0.4;
+	private boolean usePID;
 
-	public FullSwervePID(ADXRS450_Gyro gyro) {
+	public FullSwervePID(GyroBase gyro) {
 		super(gyro);
 		// double p = Config.getDouble("swervepid_p");
 		// p = 0.02;
@@ -73,14 +73,25 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 			zero();
 		double y = xbox.getX(Hand.kRight);
 		double x = -xbox.getY(Hand.kRight);
-		if (Math.sqrt(x * x + y * y) > 0.7)
+		if (Math.sqrt(x * x + y * y) > 0.7) {
+			usePID = true;
 			pid.setSetpoint((Math.toDegrees(Math.atan2(y, x)) + 360.0) % 360.0);
+		}
 		updatePID();
 		SmartDashboard.putNumber("PID Setpoint", pid.getSetpoint());
 		SmartDashboard.putNumber("PID Output", pid.get());
-		double rotate = rotateInput;
-		rotate += xbox.getTriggerAxis(Hand.kRight) * BUMPER;
-		rotate -= xbox.getTriggerAxis(Hand.kLeft) * BUMPER;
+		double rotate = 0.0;
+		double lTrigger = xbox.getTriggerAxis(Hand.kLeft);
+		double rTrigger = xbox.getTriggerAxis(Hand.kRight);
+		if (lTrigger + rTrigger > 0.05)
+			usePID = false;
+		if (usePID) {
+			rotate = rotateInput;
+		} else {
+			rotate += Math.pow(rTrigger, 2);
+			rotate -= Math.pow(lTrigger, 2);
+		}
+
 		// double[] array = new double[] { -1.0, rotate, 1.0 };
 		// Arrays.sort(array);
 		// rotate = array[1];

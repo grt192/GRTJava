@@ -19,9 +19,9 @@
 // fr_offset=322
 // bl_rotate_port=7
 // bl_drive_port=8
-// bl_offset=140
+// bl_offset=183
 // br_rotate_port=9
-// br_drive_port=10
+// br_drive_port=11
 // br_offset=214
 //
 // ticks_per_rotation=1024

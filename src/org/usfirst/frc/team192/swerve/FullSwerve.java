@@ -2,24 +2,25 @@ package org.usfirst.frc.team192.swerve;
 
 import org.usfirst.frc.team192.robot.JoystickInput;
 
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.GyroBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class FullSwerve extends SwerveBase {
-	protected ADXRS450_Gyro gyro;
+	protected GyroBase gyro;
 	private final double MAX_JOYSTICK_VALUE = Math.sqrt(2);
 	private final double MAX_ROTATE_VALUE = 1;
 	private double ROTATE_SCALE;
 
 	private final double RADIUS;
 
-	public FullSwerve(ADXRS450_Gyro gyro) {
+	public FullSwerve(GyroBase gyro) {
 		super();
 		this.gyro = gyro;
 		RADIUS = Math.sqrt(robotWidth * robotWidth + robotHeight * robotHeight) / 2;
 		ROTATE_SCALE = (1 - SPEED_SCALE * MAX_JOYSTICK_VALUE) / (MAX_ROTATE_VALUE * RADIUS);
+		zero();
 	}
 
 	@Override
