@@ -5,6 +5,7 @@ import org.usfirst.frc.team192.swerve.FullSwervePID;
 import org.usfirst.frc.team192.swerve.SwerveBase;
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import org.usfirst.frc.team192.robot.Teleop;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -25,13 +26,13 @@ public class Robot extends IterativeRobot {
 	private double ROBOT_HEIGHT = 0.7112;
 	
 	private Autonomous auto;
-
 	private FullSwervePID swerve;
 
 	private TalonSRX talon3 = new TalonSRX(3);
 	private TalonSRX talon14 = new TalonSRX(14);
 	private TalonSRX talon8 = new TalonSRX(8);
 	private TalonSRX talon9 = new TalonSRX(9);
+	private Teleop teleop;
 
 	/**
 	 * This function is run when the robot is first started up and should be used
@@ -43,9 +44,11 @@ public class Robot extends IterativeRobot {
 		Config.start();
 		swerve = new FullSwervePID(gyro);
 		input = new JoystickInput(0, 1);
-		
-		auto = new Autonomous(swerve);
 		swerve.zero();
+    
+		auto = new Autonomous(swerve);
+		teleop = new Teleop(input);
+
 	}
 
 	/**
@@ -74,7 +77,8 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void teleopInit() {
-		swerve.enable();
+		//swerve.enable();
+		
 	}
 
 	/**
@@ -83,12 +87,13 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		swerve.updateTeleop(input);
+		teleop.periodic();
 
 	}
 
 	@Override
 	public void disabledInit() {
-		swerve.disable();
+		//swerve.disable();
 	}
 
 	@Override
