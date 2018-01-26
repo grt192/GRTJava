@@ -13,7 +13,7 @@
 //
 // fl_rotate_port=1
 // fl_drive_port=2
-// fl_offset=371
+// fl_offset=314
 // fr_rotate_port=15
 // fr_drive_port=16
 // fr_offset=322
