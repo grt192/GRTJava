@@ -1,8 +1,10 @@
 package org.usfirst.frc.team192.robot;
 
-import org.usfirst.frc.team192.swerve.FullSwerve;
+import org.usfirst.frc.team192.config.Config;
+import org.usfirst.frc.team192.swerve.FullSwervePID;
 import org.usfirst.frc.team192.swerve.SwerveBase;
 
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import org.usfirst.frc.team192.robot.Teleop;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
@@ -18,13 +20,19 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 public class Robot extends IterativeRobot {
 
 	private JoystickInput input;
-	private Teleop teleop;
-	
-	//private ADXRS450_Gyro gyro;
-	//private double ROBOT_WIDTH = 0.8128;
-	//private double ROBOT_HEIGHT = 0.7112;
+	private ADXRS450_Gyro gyro;
 
-	//private SwerveBase swerve;
+	private double ROBOT_WIDTH = 0.8128;
+	private double ROBOT_HEIGHT = 0.7112;
+	
+	private Autonomous auto;
+	private FullSwervePID swerve;
+
+	private TalonSRX talon3 = new TalonSRX(3);
+	private TalonSRX talon14 = new TalonSRX(14);
+	private TalonSRX talon8 = new TalonSRX(8);
+	private TalonSRX talon9 = new TalonSRX(9);
+	private Teleop teleop;
 
 	/**
 	 * This function is run when the robot is first started up and should be used
@@ -32,10 +40,15 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		//gyro = new ADXRS450_Gyro();
-		//swerve = new FullSwerve(ROBOT_WIDTH, ROBOT_HEIGHT, gyro);
+		gyro = new ADXRS450_Gyro();
+		Config.start();
+		swerve = new FullSwervePID(gyro);
 		input = new JoystickInput(0, 1);
+		swerve.zero();
+    
+		auto = new Autonomous(swerve);
 		teleop = new Teleop(input);
+
 	}
 
 	/**
@@ -51,6 +64,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
+		auto.init();
 	}
 
 	/**
@@ -58,6 +72,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
+		auto.periodic();
 	}
 
 	@Override
@@ -71,7 +86,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		//swerve.update(input);
+		swerve.updateTeleop(input);
 		teleop.periodic();
 
 	}
@@ -91,6 +106,6 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-
+		swerve.zero();
 	}
 }
