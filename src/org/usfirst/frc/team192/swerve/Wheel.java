@@ -56,7 +56,6 @@ class Wheel {
 
 		boolean inverted = Config.getBoolean("swerve_inverted") ^ Config.getBoolean(name + "_inverted");
 		rotateMotor.setInverted(inverted);
-		rotateMotor.setSensorPhase(inverted);
 
 		rotateMotor.setNeutralMode(NeutralMode.Brake);
 		driveMotor.setNeutralMode(NeutralMode.Brake);

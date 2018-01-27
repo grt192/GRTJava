@@ -13,7 +13,7 @@ public class Config {
 	public static int getInt(String key) {
 		try {
 			return Integer.parseInt(map.get(key));
-		} catch (NumberFormatException e) {
+		} catch (Exception e) {
 			return -1;
 		}
 	}
@@ -33,7 +33,7 @@ public class Config {
 	public static double getDouble(String key) {
 		try {
 			return Double.parseDouble(map.get(key));
-		} catch (NumberFormatException e) {
+		} catch (Exception e) {
 			return -1.0;
 		}
 	}

@@ -14,13 +14,13 @@
 //
 // fl_rotate_port=1
 // fl_drive_port=2
-// fl_offset=371
+// fl_offset=-321
 // fr_rotate_port=15
 // fr_drive_port=16
 // fr_offset=5
 // bl_rotate_port=7
 // bl_drive_port=8
-// bl_offset=183
+// bl_offset=582
 // br_rotate_port=9
 // br_drive_port=11
 // br_offset=275
