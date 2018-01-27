@@ -1,7 +1,7 @@
 package org.usfirst.frc.team192.robot;
 
 import org.usfirst.frc.team192.robot.JoystickInput;
-import org.usfirst.frc.team192.vision.Vision;
+import org.usfirst.frc.team192.vision.VisionTracking;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -18,7 +18,7 @@ public class Teleop {
 	private Linkage linkage;
 	private Climber climber;
 	private Intake intake;
-	private Vision vision;
+	private VisionTracking vision;
 	private Boolean is_vision_toggled;
 	private Point centroid;
 	private PIDController pid;
@@ -30,7 +30,7 @@ public class Teleop {
 		intake = new Intake(new TalonSRX(0), new TalonSRX(2), new TalonSRX(3)); //add talon numbers for this
 		is_vision_toggled = false;
 		centroid = new Point();
-		vision = new Vision();
+		vision = new VisionTracking();
 		init();
 		
 		double P = 0.02;
@@ -50,8 +50,6 @@ public class Teleop {
 	
 	public void init() {
 		//start swerve thread
-		//start vision thread
-		vision.cameraThread();
 	}
 	
 	public void periodic() {
