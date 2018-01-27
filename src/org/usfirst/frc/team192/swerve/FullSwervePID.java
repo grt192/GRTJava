@@ -47,7 +47,7 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 	public void enable() {
 		super.enable();
 		pid.reset();
-		pid.setSetpoint(gyro.getAngle());
+		pid.setSetpoint(getGyroAngle());
 		pid.enable();
 	}
 

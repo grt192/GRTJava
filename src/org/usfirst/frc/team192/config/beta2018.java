@@ -10,6 +10,7 @@
 // swervepid_f=0.0
 //
 // feedback_device=Analog
+// swerve_inverted=true
 //
 // fl_rotate_port=1
 // fl_drive_port=2

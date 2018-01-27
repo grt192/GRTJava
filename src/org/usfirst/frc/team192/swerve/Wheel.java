@@ -13,6 +13,7 @@ class Wheel {
 
 	private final double TICKS_PER_ROTATION;
 	private final int OFFSET;
+	private final double DRIVE_TICKS_TO_MPS;
 
 	private static final double TWO_PI = Math.PI * 2;
 
@@ -41,6 +42,7 @@ class Wheel {
 		driveMotor = new TalonSRX(Config.getInt(name + "_drive_port"));
 		TICKS_PER_ROTATION = Config.getDouble("ticks_per_rotation");
 		OFFSET = Config.getInt(name + "_offset");
+		DRIVE_TICKS_TO_MPS = Config.getDouble("drive_encoder_scale");
 
 		FeedbackDevice feedbackDevice;
 		switch (Config.getString("feedback_device")) {
@@ -52,9 +54,14 @@ class Wheel {
 			feedbackDevice = FeedbackDevice.QuadEncoder;
 		}
 
+		boolean inverted = Config.getBoolean("swerve_inverted") ^ Config.getBoolean(name + "_inverted");
+		rotateMotor.setInverted(inverted);
+		rotateMotor.setSensorPhase(inverted);
+
 		rotateMotor.setNeutralMode(NeutralMode.Brake);
 		driveMotor.setNeutralMode(NeutralMode.Brake);
 		rotateMotor.configSelectedFeedbackSensor(feedbackDevice, 0, 0);
+		driveMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
 		rotateMotor.config_kP(0, kP / TICKS_PER_ROTATION, 0);
 		rotateMotor.config_kI(0, kI / TICKS_PER_ROTATION, 0);
 		rotateMotor.config_kD(0, kD / TICKS_PER_ROTATION, 0);
@@ -119,6 +126,14 @@ class Wheel {
 			driveMotor.set(ControlMode.PercentOutput, speed);
 			driveSpeed = speed;
 		}
+	}
+
+	public double getDriveSpeed() {
+		return driveMotor.getSelectedSensorVelocity(0) * DRIVE_TICKS_TO_MPS;
+	}
+
+	public double getCurrentPosition() {
+		return (((rotateMotor.getSelectedSensorPosition(0) * TWO_PI / TICKS_PER_ROTATION) % TWO_PI) + TWO_PI) % TWO_PI;
 	}
 
 }
