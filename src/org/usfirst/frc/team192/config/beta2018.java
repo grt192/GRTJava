@@ -17,13 +17,13 @@
 // fl_offset=371
 // fr_rotate_port=15
 // fr_drive_port=16
-// fr_offset=322
+// fr_offset=5
 // bl_rotate_port=7
 // bl_drive_port=8
 // bl_offset=183
 // br_rotate_port=9
 // br_drive_port=11
-// br_offset=214
+// br_offset=275
 //
 // ticks_per_rotation=1024
 // name=beta2018
