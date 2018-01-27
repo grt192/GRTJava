@@ -68,11 +68,15 @@ public class FullSwerve extends SwerveBase {
 	}
 
 	@Override
-	public void updateTeleop(JoystickInput input) {
+	public void updateWithJoystick(JoystickInput input) {
 		XboxController xbox = input.getXboxController();
 		if (xbox.getAButton() && xbox.getYButton())
 			zero();
 		changeMotors(input.getClippedX(Hand.kRight), -input.getClippedY(Hand.kLeft), input.getClippedX(Hand.kLeft));
+	}
+
+	public void updateWithAngularVelocity(double rv, double vx, double vy) {
+		changeMotors(rv, vx, vy);
 	}
 
 }

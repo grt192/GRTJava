@@ -24,7 +24,7 @@ public class FieldCentricStrafe extends Strafe {
 	}
 
 	@Override
-	public void updateTeleop(JoystickInput input) {
+	public void updateWithJoystick(JoystickInput input) {
 		changeMode(input);
 		double gyroAngle = Math.toRadians(gyro.getAngle());
 		double radius = input.getPolarRadius();
