@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 class Wheel {
@@ -14,6 +15,7 @@ class Wheel {
 	private final double TICKS_PER_ROTATION;
 	private final int OFFSET;
 	private final double DRIVE_TICKS_TO_MPS;
+
 
 	private static final double TWO_PI = Math.PI * 2;
 
@@ -56,7 +58,6 @@ class Wheel {
 
 		boolean inverted = Config.getBoolean("swerve_inverted") ^ Config.getBoolean(name + "_inverted");
 		rotateMotor.setInverted(inverted);
-
 		rotateMotor.setNeutralMode(NeutralMode.Brake);
 		driveMotor.setNeutralMode(NeutralMode.Brake);
 		rotateMotor.configSelectedFeedbackSensor(feedbackDevice, 0, 0);
