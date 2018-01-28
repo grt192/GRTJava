@@ -41,15 +41,16 @@ public class VisionTracking {
 	}
 
 	public Mat maskImageForTape(Mat img) {
-		Mode mode = visionMode;
-		Scalar upper = null, lower = null;
-		if (mode == Mode.CUBE) {
+		Scalar lower = new Scalar(0, 0, 0);
+		Scalar upper = new Scalar(0, 0, 0);
+
+		if (visionMode == Mode.CUBE) {
 			lower = new Scalar(100, 180, 170);
 			upper = new Scalar(150, 255, 215);
-		} else if (mode == Mode.TAPE) {
+		} else if (visionMode == Mode.TAPE) {
 			lower = new Scalar(0, 0, 0);
 			upper = new Scalar(0, 0, 0);
-		} else if (mode == Mode.EXCHANGE) {
+		} else if (visionMode == Mode.EXCHANGE) {
 			lower = new Scalar(0, 0, 170);
 			upper = new Scalar(60, 60, 255);
 		}
