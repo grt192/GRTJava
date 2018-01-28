@@ -1,7 +1,5 @@
 package org.usfirst.frc.team192.robot;
 
-import javax.xml.ws.Service.Mode;
-
 import org.usfirst.frc.team192.swerve.FullSwervePID;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -88,23 +86,40 @@ public class Autonomous {
 		swerve.autonomousInit();
 	}
 	
-	public void periodic() {
+	public void periodic() { //~5 times / second
 		double timeElapsed = timeElapsed();
 		double timeLeft = timeLeft();
 		if (timeElapsed < delay) {
-			System.out.println("waiting " + timeElapsed);
+//			System.out.println("waiting " + timeElapsed);
 			return;
 		}
 		switch (selectedMode) {
 		case ONLY_FORWARD:
 			if (timeAfterDelay() < 4000) {
-				System.out.println("driving");
+//				System.out.println("driving");
 				swerve.setVelocity(1.0, 0.0);
 			} else {
-				System.out.println("not driving");
+//				System.out.println("not driving");
 				swerve.setVelocity(0.0, 0.0);
 			}
 			break;
+		case FORWARD_AND_PLACE_SWITCH:
+			boolean leftStart = distanceFromLeft < FIELD_EDGE_LENGTH/2;
+			if (leftStart == switchLeft) {
+				if (timeAfterDelay() < 6000) { //determine exact timings
+					swerve.setVelocity(1.0, 0.0);
+				} else if (timeAfterDelay() < 6050) {
+					swerve.setVelocity(0.0, 0.0);
+				} else if (timeAfterDelay() < 9000){
+					double theta = switchLeft ? Math.PI/2 : -Math.PI/2;
+					swerve.rotateTo(theta);
+				} else if (timeAfterDelay() < 10500) {
+					swerve.setVelocity(0.0, switchLeft ? 1.0 : -1.0);
+				} else if (timeAfterDelay() < 12000) {
+					//place block
+					//move linkage back
+				}
+			}
 		default:
 			break;
 		}
