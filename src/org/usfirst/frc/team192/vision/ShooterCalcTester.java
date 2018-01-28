@@ -10,9 +10,7 @@ public class ShooterCalcTester {
 	public static void main(String[] args) {
 		ShooterCalc chopper = new ShooterCalc();
 		distance = chopper.distanceToPoint();
-		chopper.allignRotationX();
-		
-		
+		chopper.allignRotationX();		
 
 	}
 

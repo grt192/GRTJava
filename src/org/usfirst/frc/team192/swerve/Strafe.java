@@ -12,8 +12,8 @@ public class Strafe extends SwerveBase {
 		STRAFE, ROTATE
 	}
 
-	public Strafe(double robotWidth, double robotHeight) {
-		super(robotWidth, robotHeight);
+	public Strafe() {
+		super();
 
 		currentMode = Mode.STRAFE;
 
@@ -41,7 +41,7 @@ public class Strafe extends SwerveBase {
 	}
 
 	@Override
-	public void update(JoystickInput input) {
+	public void updateWithJoystick(JoystickInput input) {
 		changeMode(input);
 		if (currentMode == Mode.STRAFE) {
 			double speed = input.getPolarRadius();
