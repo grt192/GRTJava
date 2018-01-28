@@ -75,8 +75,4 @@ public class FullSwerve extends SwerveBase {
 		changeMotors(input.getClippedX(Hand.kRight), -input.getClippedY(Hand.kLeft), input.getClippedX(Hand.kLeft));
 	}
 
-	public void updateWithAngularVelocity(double rv, double vx, double vy) {
-		changeMotors(rv, vx, vy);
-	}
-
 }

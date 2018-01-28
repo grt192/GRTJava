@@ -13,11 +13,13 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 
 	private PIDController pid;
 	private double rotateInput;
-	
+	private boolean usePID;
+
 	// for autonomous
 	private double angle;
 	private double vx;
 	private double vy;
+	private double rv;
 
 	public FullSwervePID(double robotWidth, double robotHeight, ADXRS450_Gyro gyro) {
 		super(robotWidth, robotHeight, gyro);
@@ -36,6 +38,7 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 		pid.setOutputRange(-1.0, 1.0);
 		pid.reset();
 		pid.setSetpoint(0.0);
+		usePID = false;
 	}
 
 	@Override
@@ -60,19 +63,15 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 		pid.disable();
 		rotateInput = 0.0;
 	}
-	
-	private void updateMovement(double vx, double vy, double radians, boolean changePID) {
-		if (changePID)
-			pid.setSetpoint((Math.toDegrees(radians) + 360.0) % 360.0);
+
+	private void updateMovement(double vx, double vy, double rv) {
 		updatePID();
-		SmartDashboard.putNumber("PID Setpoint", pid.getSetpoint());
-		SmartDashboard.putNumber("PID Error", pid.getError());
-		SmartDashboard.putNumber("PID Output", pid.get());
+		logPID();
 		changeMotors(rotateInput, vx, vy);
 	}
-	
-	private void updateMovement(double vx, double vy, double radians) {
-		updateMovement(vx, vy, radians, true);
+
+	private void updateMovement(double vx, double vy) {
+		updateMovement(vx, vy, 0);
 	}
 
 	@Override
@@ -83,37 +82,46 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 		double y = xbox.getX(Hand.kRight);
 		double x = -xbox.getY(Hand.kRight);
 		double angle = Math.atan2(y, x);
-		updateMovement(-input.getClippedY(Hand.kLeft), input.getClippedX(Hand.kLeft), angle, Math.sqrt(x * x + y * y) > 0.7);
+		updateMovement(-input.getClippedY(Hand.kLeft), input.getClippedX(Hand.kLeft));
 	}
-	
+
 	// for autonomous
 	public void setVelocity(double vx, double vy) {
 		this.vx = vx;
 		this.vy = vy;
 	}
-	
-	public void rotateTo(double radians) {
-		angle = radians;
+
+	public void setTargetPosition(double radians) {
+		pid.setSetpoint(Math.toDegrees(radians));
 	}
-	
-	public void rotateBy(double radians) {
-		angle = Math.toRadians(gyro.getAngle()) + radians;
+
+	public void setWithAngularVelocity(double vx, double vy, double rv) {
+		this.vx = vx;
+		this.vy = vy;
+		this.rv = rv;
 	}
-	
+
 	public void autonomousInit() {
 		vx = 0;
 		vy = 0;
+		rv = 0;
 		angle = 0;
 	}
-	
+
 	public void updateAutonomous() {
 		updateMovement(vx, vy, angle);
 	}
-	
+
 	// for pid
 	@Override
 	public void pidWrite(double output) {
 		rotateInput = output;
+	}
+
+	private void logPID() {
+		SmartDashboard.putNumber("PID Setpoint", pid.getSetpoint());
+		SmartDashboard.putNumber("PID Error", pid.getError());
+		SmartDashboard.putNumber("PID Output", pid.get());
 	}
 
 }
