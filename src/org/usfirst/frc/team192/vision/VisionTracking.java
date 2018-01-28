@@ -8,11 +8,11 @@ import java.util.*;
 import java.awt.Point;
 import org.opencv.videoio.*;
 
-public class VisionTracking /*implements Runnable*/{
+public class VisionTracking {
 	
-	public org.opencv.core.Point centroid;
-	public int width, height;
-	protected Mode mode;
+	protected org.opencv.core.Point centroid;
+	protected int width, height;
+	protected Mode visionMode;
 	
 	protected enum Mode {
 		CUBE, TAPE, EXCHANGE;
@@ -26,32 +26,29 @@ public class VisionTracking /*implements Runnable*/{
 		return width * height;
 	}
 	
-	protected void setMode(int x) {
+	public void setVisionMode(int x) {
 		if (x == 0)
-			mode = Mode.CUBE;
+			visionMode = Mode.CUBE;
 		else if (x == 1)
-			mode = Mode.TAPE;
+			visionMode = Mode.TAPE;
 		else if (x == 2)
-			mode = Mode.EXCHANGE;		
+			visionMode = Mode.EXCHANGE;		
 	}
     
     public Mat maskImageForTape(Mat img) 
     {
-    	
-    	/*//VISION TAPE
-    	Scalar lower = new Scalar(0, 0, 0);
-    	Scalar upper = new Scalar(0, 0, 0);
-    	//With HSV: 65 105 195, 105 145 255*/
-        
-    	//POWER CUBE
-    	Scalar lower = new Scalar(100, 180, 170);
-		Scalar upper = new Scalar(150, 255, 215);
-		//With HSV: 0 130 130, 50 255 255
- 
-    	/*//EXCHANGE
-		Scalar lower = new Scalar(0, 0, 170);
-		Scalar upper = new Scalar(60, 60, 255);
-		//With HSV: 0 150 170, 180 205 255*/
+        if (mode == Mode.CUBE) {
+        	Scalar lower = new Scalar(100, 180, 170);
+    		Scalar upper = new Scalar(150, 255, 215);
+        }
+        else if (mode == Mode.TAPE) {
+        	Scalar lower = new Scalar(0, 0, 0);
+        	Scalar upper = new Scalar(0, 0, 0);
+        }
+        else if (mode == Mode.EXCHANGE) {
+        	Scalar lower = new Scalar(0, 0, 170);
+        	Scalar upper = new Scalar(60, 60, 255);
+        }
         
         Core.inRange(img, lower, upper, img);         
         return img;
@@ -59,7 +56,6 @@ public class VisionTracking /*implements Runnable*/{
     
     public Mat findContoursOfTape(Mat img) 
     {	
-    		//find the contours of the two pieces of tape
     		Mat imgIn32SC1 = new Mat();
     		Mat binary = new Mat();
     		Mat edges = new Mat();
@@ -100,8 +96,7 @@ public class VisionTracking /*implements Runnable*/{
     
     public org.opencv.core.Point findCentroid(Mat img) 
     {   
-    		//find centroid point of vision target
-    		Moments moments = Imgproc.moments(img); //moments used to find center of mass of id'd pixels
+    		Moments moments = Imgproc.moments(img); 
     		org.opencv.core.Point centroid2 = new org.opencv.core.Point();
     		centroid2.x = (int) (moments.get_m10()/moments.get_m00());
     		centroid2.y = (int) (moments.get_m01()/moments.get_m00());
