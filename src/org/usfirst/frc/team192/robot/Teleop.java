@@ -12,6 +12,7 @@ import org.usfirst.frc.team192.mechs.*;
 
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 
 public class Teleop {
 	private XboxController xbox;
@@ -22,6 +23,16 @@ public class Teleop {
 	private Boolean is_vision_toggled;
 	private Point centroid;
 	private PIDController pid;
+	
+	public enum RobotState{
+		NothingState,
+		StartPickupState,
+		MovingToBlock,
+		PickingUpBlock,
+		EndPickup
+	}
+
+	private RobotState pickupState = RobotState.NothingState;
 
 	public Teleop(JoystickInput input) {
 		xbox = input.getXboxController();
@@ -55,24 +66,63 @@ public class Teleop {
 	}
 	
 	public void periodic() {
+		
 		if (xbox.getStartButton()) {
 			visionToggleOn();
 		}
-		else if (xbox.getBackButtonPressed()) {
+		if (xbox.getBackButtonPressed()) {
 			visionToggleOff();
 		}
-		else if(xbox.getAButtonPressed()) {
+		if(xbox.getAButtonPressed()) {
 			switchLinkagePlacement();
 		}
-		else if(xbox.getBButtonPressed()) {
+		if(xbox.getBButtonPressed()) {
 			scaleLinkagePlacement();
 		}
-		else if(xbox.getYButtonPressed()) {
+		if(xbox.getYButtonPressed()) {
 			groundLinkagePlacement();
-		}else if(xbox.getXButtonPressed()) {
+		}
+		if(xbox.getXButtonPressed()) {
 			climb();
-		}else if(xbox.getXButtonReleased()) {
+		}
+		if(xbox.getXButtonReleased()) {
 			stopClimb();
+		}if(xbox.getTriggerAxis(Hand.kRight) > 0) {
+			System.out.println(Double.toString(xbox.getTriggerAxis(Hand.kRight)));						
+		}
+		if(xbox.getAButtonPressed()) {
+			this.pickupState = RobotState.StartPickupState;
+			
+			switch(this.pickupState) {
+			case NothingState:
+				break;
+			case StartPickupState:
+				groundLinkagePlacement();
+				intakeDown();
+				intake();
+				//visionon
+				//getvisiondata
+				
+//				if(getvisiondata) {
+					this.pickupState = RobotState.MovingToBlock;
+//				}
+			case MovingToBlock:
+//				getvisiondata
+//				if (visiondatareturn == movingorsomething) { PID?
+//					x = new pseudoJoystick
+//					getPseudoJoystick(visioninfo, x)
+//					sendtoswerve(joystick)
+//				}else if (visiondatareturn = reachedDestination){
+//				this.pickupState = RobotState.PickingUpBlock;
+//				}
+			case PickingUpBlock:
+				if (intakeVision()) {
+					this.pickupState = RobotState.EndPickup;
+				}
+			case EndPickup:
+//				visionoff;
+			}
+			
 		}
 	}
 	
@@ -98,12 +148,20 @@ public class Teleop {
 		linkage.moveToGroundPosition();
 	}
 	
+	public void intakeDown() {
+		intake.rollDown();
+	}
+	
+	public void intakeUp() {
+		intake.rollUp();
+	}
+	
 	public void intake() {
-		intake.intake();
+		intake.takeIn();
 	}
 	
 	public void reverseIntake() {
-		intake.reverseIntake();
+		intake.reverse();
 	}
 	
 	public void climb() {
@@ -114,13 +172,11 @@ public class Teleop {
 		climber.stopClimb();
 	}
 	
-	public void blockVisionPickup() {
-		
-		
-	}
-	
-	public void exchangeVision() {
-		
+	public boolean exchangeVision() { //true if succeed, false if fails
+		return false;
 	}
 
+	public boolean intakeVision() { //true if succeed, false if fails
+		return false;
+	}
 }
