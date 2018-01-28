@@ -1,12 +1,9 @@
 package org.usfirst.frc.team192.vision;
 
 import org.opencv.core.*;
-import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
 import java.util.*;
-import java.awt.Point;
-import org.opencv.videoio.*;
 
 public class VisionTracking {
 	
@@ -37,17 +34,20 @@ public class VisionTracking {
     
     public Mat maskImageForTape(Mat img) 
     {
-        if (mode == Mode.CUBE) {
-        	Scalar lower = new Scalar(100, 180, 170);
-    		Scalar upper = new Scalar(150, 255, 215);
+    	Scalar lower = new Scalar(0, 0, 0);
+    	Scalar upper = new Scalar(0, 0, 0);
+    	
+        if (visionMode == Mode.CUBE) {
+        	lower = new Scalar(100, 180, 170);
+    		upper = new Scalar(150, 255, 215);
         }
-        else if (mode == Mode.TAPE) {
-        	Scalar lower = new Scalar(0, 0, 0);
-        	Scalar upper = new Scalar(0, 0, 0);
+        else if (visionMode == Mode.TAPE) {
+        	lower = new Scalar(0, 0, 0);
+        	upper = new Scalar(0, 0, 0);
         }
-        else if (mode == Mode.EXCHANGE) {
-        	Scalar lower = new Scalar(0, 0, 170);
-        	Scalar upper = new Scalar(60, 60, 255);
+        else if (visionMode == Mode.EXCHANGE) {
+        	lower = new Scalar(0, 0, 170);
+        	upper = new Scalar(60, 60, 255);
         }
         
         Core.inRange(img, lower, upper, img);         
