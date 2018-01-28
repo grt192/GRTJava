@@ -4,10 +4,10 @@
 // robot_width=0.6274
 // robot_height=0.5112
 //
-// swervepid_p=0.02
-// swervepid_i=0.0001
-// swervepid_d=0.5
-// swervepid_f=0.0
+// swervepid_p=0.015
+// swervepid_i=0.0
+// swervepid_d=0.01
+// swervepid_f=0.01
 //
 // feedback_device=QuadEncoder
 //

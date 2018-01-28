@@ -11,7 +11,7 @@ public class TankSwerve extends SwerveBase {
 	}
 
 	@Override
-	public void updateTeleop(JoystickInput input) {
+	public void updateWithJoystick(JoystickInput input) {
 		double xSpeed = -input.getTurnStickY();
 		double zRotation = input.getTurnStickX();
 

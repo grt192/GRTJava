@@ -7,8 +7,8 @@ public abstract class SwerveBase {
 
 	protected Wheel[] wheels;
 
-	protected double robotWidth;
-	protected double robotHeight;
+	protected final double robotWidth;
+	protected final double robotHeight;
 
 	protected final double SPEED_SCALE = 1.0 / 3;
 
@@ -49,6 +49,6 @@ public abstract class SwerveBase {
 		return (Math.atan2(x, -y) + 2 * Math.PI) % (2 * Math.PI);
 	}
 
-	public abstract void updateTeleop(JoystickInput input);
+	public abstract void updateWithJoystick(JoystickInput input);
 
 }
