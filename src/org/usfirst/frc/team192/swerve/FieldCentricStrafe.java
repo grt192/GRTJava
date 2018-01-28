@@ -2,15 +2,15 @@ package org.usfirst.frc.team192.swerve;
 
 import org.usfirst.frc.team192.robot.JoystickInput;
 
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.GyroBase;
 
 public class FieldCentricStrafe extends Strafe {
 
 	private final double TWO_PI = 2 * Math.PI;
 
-	private ADXRS450_Gyro gyro;
+	private GyroBase gyro;
 
-	public FieldCentricStrafe(ADXRS450_Gyro gyro) {
+	public FieldCentricStrafe(GyroBase gyro) {
 		super();
 
 		this.gyro = gyro;
@@ -24,7 +24,7 @@ public class FieldCentricStrafe extends Strafe {
 	}
 
 	@Override
-	public void updateTeleop(JoystickInput input) {
+	public void updateWithJoystick(JoystickInput input) {
 		changeMode(input);
 		double gyroAngle = Math.toRadians(gyro.getAngle());
 		double radius = input.getPolarRadius();
