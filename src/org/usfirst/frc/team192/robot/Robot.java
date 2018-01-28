@@ -13,30 +13,21 @@ public class Robot extends IterativeRobot {
 	private FullSwervePID swerve;
 	private JoystickInput input;
 
-	private Autonomous auto;
-	private Teleop teleop;
-
 	@Override
 	public void robotInit() {
 		Config.start();
 		gyro = new ADXRS450_Gyro();
 		swerve = new FullSwervePID(gyro);
 		input = new JoystickInput(0, 1);
-		swerve.zero();
-
-		auto = new Autonomous(swerve);
-		teleop = new Teleop(input);
 
 	}
 
 	@Override
 	public void autonomousInit() {
-		auto.init();
 	}
 
 	@Override
 	public void autonomousPeriodic() {
-		auto.periodic();
 	}
 
 	@Override
@@ -47,7 +38,7 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void teleopPeriodic() {
-		teleop.periodic();
+		swerve.updateWithJoystick(input);
 	}
 
 	@Override

@@ -125,7 +125,6 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 	@Override
 	public void pidWrite(double output) {
 		rotateInput = output;
-		SmartDashboard.putNumber("PID Error", pid.getError());
 	}
 
 	private void logPID() {
