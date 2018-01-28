@@ -2,16 +2,16 @@ package org.usfirst.frc.team192.swerve;
 
 import org.usfirst.frc.team192.robot.JoystickInput;
 
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.GyroBase;
 
 public class FieldCentricStrafe extends Strafe {
 
 	private final double TWO_PI = 2 * Math.PI;
 
-	private ADXRS450_Gyro gyro;
+	private GyroBase gyro;
 
-	public FieldCentricStrafe(double robotWidth, double robotHeight, ADXRS450_Gyro gyro) {
-		super(robotWidth, robotHeight);
+	public FieldCentricStrafe(GyroBase gyro) {
+		super();
 
 		this.gyro = gyro;
 	}
