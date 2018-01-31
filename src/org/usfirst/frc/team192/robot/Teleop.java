@@ -2,6 +2,8 @@ package org.usfirst.frc.team192.robot;
 
 import org.usfirst.frc.team192.robot.JoystickInput;
 import org.usfirst.frc.team192.vision.VisionTracking;
+import org.usfirst.frc.team192.robot.VisionPID;
+import org.usfirst.frc.team192.swerve.FullSwervePID;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -22,7 +24,8 @@ public class Teleop {
 	private VisionTracking vision;
 	private Boolean is_vision_toggled;
 	private Point centroid;
-	private PIDController pid;
+	private VisionPID pid;
+	private FullSwervePID swerve;
 	
 	public enum RobotState{
 		NothingState,
@@ -43,19 +46,6 @@ public class Teleop {
 		centroid = new Point();
 		vision = new VisionTracking();
 		init();
-		
-		double P = 0.02;
-		double I = 0.0001;
-		double D = 0.5;
-		double f = 0.0;
-		
-//		pid = new PIDController(P, I, D, f, gyro, this);
-//		pid.setContinuous();
-//		pid.setInputRange(0.0, 360.0);
-//		pid.setAbsoluteTolerance(3.0);
-//		pid.setOutputRange(-1.0, 1.0);
-//		pid.reset();
-//		pid.setSetpoint(0.0);
 
 	}
 	
@@ -64,6 +54,16 @@ public class Teleop {
 	}
 	
 	public void periodic() {
+		
+		if (xbox.getBButtonPressed()) {
+			double range = 10;
+			System.out.println("b button");
+			pid.PIDEnable();
+			while (pid.pidGet() > (Math.abs(Math.abs(pid.getCamCenter()) - 10))) {
+				pid.updateWithVision();
+				swerve.updateAutonomous();
+			}
+		}
 		
 		if (xbox.getStartButton()) {
 			visionToggleOn();
@@ -75,7 +75,7 @@ public class Teleop {
 			switchLinkagePlacement();
 		}
 		if(xbox.getBButtonPressed()) {
-			scaleLinkagePlacement();
+			//scaleLinkagePlacement();
 		}
 		if(xbox.getYButtonPressed()) {
 			groundLinkagePlacement();

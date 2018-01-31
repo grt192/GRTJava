@@ -7,11 +7,10 @@ import java.util.*;
 
 public class VisionTracking {
 	
-	protected org.opencv.core.Point centroid;
-	protected int width, height;
-	protected Mode visionMode;
+	protected static org.opencv.core.Point centroid;
+	protected static int width, height;
 	
-	protected enum Mode {
+	public enum Mode {
 		CUBE, TAPE, EXCHANGE;
 	}
 	
@@ -22,17 +21,8 @@ public class VisionTracking {
 	public int getArea() {
 		return width * height;
 	}
-	
-	public void setVisionMode(int x) {
-		if (x == 0)
-			visionMode = Mode.CUBE;
-		else if (x == 1)
-			visionMode = Mode.TAPE;
-		else if (x == 2)
-			visionMode = Mode.EXCHANGE;		
-	}
     
-    public Mat maskImageForTape(Mat img) 
+    public static Mat maskImageForTape(Mode visionMode, Mat img) 
     {
     	Scalar lower = new Scalar(0, 0, 0);
     	Scalar upper = new Scalar(0, 0, 0);
@@ -49,12 +39,12 @@ public class VisionTracking {
         	lower = new Scalar(0, 0, 170);
         	upper = new Scalar(60, 60, 255);
         }
-        
         Core.inRange(img, lower, upper, img);         
         return img;
     }
     
-    public Mat findContoursOfTape(Mat img) 
+    
+    public static Mat findContoursOfTape(Mat img) 
     {	
     		Mat imgIn32SC1 = new Mat();
     		Mat binary = new Mat();
@@ -94,7 +84,7 @@ public class VisionTracking {
     		return edges;   		
     }
     
-    public org.opencv.core.Point findCentroid(Mat img) 
+    public static org.opencv.core.Point findCentroid(Mat img) 
     {   
     		Moments moments = Imgproc.moments(img); 
     		org.opencv.core.Point centroid2 = new org.opencv.core.Point();
