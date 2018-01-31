@@ -14,7 +14,9 @@ import org.usfirst.frc.team192.mechs.*;
 
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.GyroBase;
 
 public class Teleop {
 	private XboxController xbox;
@@ -37,7 +39,7 @@ public class Teleop {
 
 	private RobotState pickupState = RobotState.NothingState;
 
-	public Teleop(JoystickInput input) {
+	public Teleop(JoystickInput input, GyroBase gyro) {
 		xbox = input.getXboxController();
 		linkage = new Linkage(new TalonSRX(1));
 		climber = new Climber(new TalonSRX(8));
@@ -45,6 +47,7 @@ public class Teleop {
 		is_vision_toggled = false;
 		centroid = new Point();
 		vision = new VisionTracking();
+		pid = new VisionPID(gyro, vision);
 		init();
 
 	}

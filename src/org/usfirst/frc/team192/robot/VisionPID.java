@@ -1,15 +1,14 @@
 package org.usfirst.frc.team192.robot;
 
-import org.usfirst.frc.team192.swerve.FullSwervePID;
 import org.opencv.core.Point;
-
+import org.usfirst.frc.team192.swerve.FullSwervePID;
 import org.usfirst.frc.team192.vision.VisionTracking;
 
+import edu.wpi.first.wpilibj.GyroBase;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class VisionPID implements PIDOutput, PIDSource{
 	private PIDController angle_pid;
@@ -19,17 +18,21 @@ public class VisionPID implements PIDOutput, PIDSource{
 	
 	private org.opencv.core.Point CAMCENTER;
 	
-	public VisionPID(){
+	public VisionPID(GyroBase gyro, VisionTracking vision){
+		CAMCENTER = new org.opencv.core.Point();
 		CAMCENTER.x = 0;
 		CAMCENTER.y = 0;
+		
+		swerve = new FullSwervePID(gyro);
+		this.vision = vision;
 		
 		double p = 0.05;
 		double i = 0.05;
 		double d = 0.05;
 		double f = 0.05;
 		angle_pid = new PIDController(p, i, d, f, this, this, 0.01);
-		angle_pid.setContinuous();
 		angle_pid.setInputRange(0, 360);
+		angle_pid.setContinuous();
 		angle_pid.setAbsoluteTolerance(3.0);
 		angle_pid.setOutputRange(-1.0, 1.0);
 		angle_pid.reset();
@@ -82,7 +85,6 @@ public class VisionPID implements PIDOutput, PIDSource{
 
 	@Override
 	public void pidWrite(double output) {
-		// TODO Auto-generated method stub
 		swerve.setWithAngularVelocity(0, 0, output);
 		
 	}

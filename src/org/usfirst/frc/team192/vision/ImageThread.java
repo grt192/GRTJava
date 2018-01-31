@@ -44,11 +44,11 @@ public class ImageThread extends Thread{
         		cap.read(image);
         		VisionTracking.maskImageForTape(Mode.CUBE, image);
         		Imgproc.cvtColor(image, image, Imgproc.COLOR_GRAY2BGR);
-        		VisionTracking.findContoursOfTape(image);
+        		/*image = VisionTracking.findContoursOfTape(image);
         		image.convertTo(image, CvType.CV_32SC1, 255, 0);
         		org.opencv.core.Point midpoint = VisionTracking.findCentroid(image);
         		Scalar red = new Scalar(0, 0, 255);
-	            Imgproc.circle(image, midpoint, 1, red);
+	            Imgproc.circle(image, midpoint, 1, red);*/
         		//cvSink.grabFrame(source);
         		outputStream.putFrame(image);
         }
