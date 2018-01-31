@@ -32,20 +32,12 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 		SmartDashboard.putNumber("d", d);
 		SmartDashboard.putNumber("f", f);
 		pid = new PIDController(p, i, d, f, gyro, this, 0.01);
-		pid.setContinuous();
 		pid.setInputRange(0.0, 360.0);
+		pid.setContinuous();
 		pid.setAbsoluteTolerance(3.0);
 		pid.setOutputRange(-1.0, 1.0);
 		pid.reset();
 		pid.setSetpoint(0.0);
-		usePID = false;
-	}
-
-	@Override
-	public void enable() {
-		super.enable();
-		pid.reset();
-		pid.enable();
 		usePID = false;
 	}
 
