@@ -52,6 +52,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		teleop.periodic();
+		swerve.updateWithJoystick(input);
 	}
 
 	@Override

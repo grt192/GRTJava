@@ -77,7 +77,7 @@ public class FullSwerve extends SwerveBase {
 	
 	private void changeMode(JoystickInput input) {
 		XboxController xbox = input.getXboxController();
-		if (xbox.getAButton() && xbox.getYButton()) {
+		if (xbox.getStartButtonPressed()) {
 			mode = Mode.ZERO;
 			wheelIndex = 0;
 			for (Wheel wheel : wheels) {
