@@ -18,10 +18,11 @@ public class VisionPID implements PIDOutput, PIDSource{
 	
 	private org.opencv.core.Point CAMCENTER;
 	
-	public VisionPID(GyroBase gyro, VisionTracking vision){
+	public VisionPID(GyroBase gyro, VisionTracking vision, FullSwervePID swerve){
 		CAMCENTER = new org.opencv.core.Point();
 		CAMCENTER.x = 0;
 		CAMCENTER.y = 0;
+		this.swerve = swerve;
 		
 		swerve = new FullSwervePID(gyro);
 		this.vision = vision;

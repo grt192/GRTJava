@@ -5,6 +5,7 @@ import org.usfirst.frc.team192.vision.VisionTracking.Mode;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
@@ -27,7 +28,7 @@ public class ImageThread extends Thread{
 	}
 	
 	public void run() {
-		//Imshow im = new Imshow("ControlsPicture");
+		
 		VideoCapture cap = new VideoCapture(0);
 		Mat image = new Mat();
 		//UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
@@ -41,16 +42,19 @@ public class ImageThread extends Thread{
 		cap.open(0);
         
         while(!Thread.interrupted()) {
-        		cap.read(image);
-        		VisionTracking.maskImageForTape(Mode.CUBE, image);
-        		Imgproc.cvtColor(image, image, Imgproc.COLOR_GRAY2BGR);
-        		/*image = VisionTracking.findContoursOfTape(image);
-        		image.convertTo(image, CvType.CV_32SC1, 255, 0);
-        		org.opencv.core.Point midpoint = VisionTracking.findCentroid(image);
-        		Scalar red = new Scalar(0, 0, 255);
-	            Imgproc.circle(image, midpoint, 1, red);*/
-        		//cvSink.grabFrame(source);
-        		outputStream.putFrame(image);
+        		try {
+        			cap.read(image);
+        			VisionTracking.maskImageForTape(Mode.CUBE, image);
+        			Imgproc.cvtColor(image, image, Imgproc.COLOR_GRAY2BGR);
+        			VisionTracking.findContoursOfTape(image);
+        			Point midpoint = VisionTracking.findCentroid(image);
+        			System.out.printf("%s%.2f%s%.2f", "x: ", midpoint.x, "y: ", midpoint.y);
+        			Scalar white = new Scalar(255, 255, 255);
+        			Imgproc.circle(image, midpoint, 1, white);
+        			outputStream.putFrame(image);
+        		} catch (Exception e) {
+        			e.printStackTrace();
+        		}
         }
 	}
 

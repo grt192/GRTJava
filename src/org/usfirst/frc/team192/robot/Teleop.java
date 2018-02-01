@@ -1,6 +1,6 @@
 package org.usfirst.frc.team192.robot;
 
-import org.usfirst.frc.team192.robot.JoystickInput;
+import org.usfirst.frc.team192.vision.ImageThread;
 import org.usfirst.frc.team192.vision.VisionTracking;
 import org.usfirst.frc.team192.robot.VisionPID;
 import org.usfirst.frc.team192.swerve.FullSwervePID;
@@ -23,11 +23,11 @@ public class Teleop {
 	private Linkage linkage;
 	private Climber climber;
 	private Intake intake;
-	private VisionTracking vision;
+	private ImageThread img;
 	private Boolean is_vision_toggled;
 	private Point centroid;
 	private VisionPID pid;
-	private FullSwervePID swerve;
+	private JoystickInput input;
 	
 	public enum RobotState{
 		NothingState,
@@ -39,15 +39,14 @@ public class Teleop {
 
 	private RobotState pickupState = RobotState.NothingState;
 
-	public Teleop(JoystickInput input, GyroBase gyro) {
+	public Teleop(ImageThread img, FullSwervePID swerve) {
 		xbox = input.getXboxController();
 		linkage = new Linkage(new TalonSRX(1));
 		climber = new Climber(new TalonSRX(8));
 		intake = new Intake(new TalonSRX(0), new TalonSRX(2), new TalonSRX(3)); //add talon numbers for this
 		is_vision_toggled = false;
 		centroid = new Point();
-		vision = new VisionTracking();
-		pid = new VisionPID(gyro, vision);
+		//pid = new VisionPID(vision, swerve);
 		init();
 
 	}
@@ -64,7 +63,7 @@ public class Teleop {
 			pid.PIDEnable();
 			while (pid.pidGet() > (Math.abs(Math.abs(pid.getCamCenter()) - 10))) {
 				pid.updateWithVision();
-				swerve.updateAutonomous();
+				//swerve.updateAutonomous();
 			}
 		}
 		
