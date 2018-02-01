@@ -30,8 +30,8 @@ public class VisionPID implements PIDOutput, PIDSource{
 		double d = 0.05;
 		double f = 0.05;
 		angle_pid = new PIDController(p, i, d, f, this, this, 0.01);
-		angle_pid.setInputRange(0, 360);
-		angle_pid.setContinuous();
+		angle_pid.setInputRange(0, 640);
+		//angle_pid.setContinuous();
 		angle_pid.setAbsoluteTolerance(3.0);
 		angle_pid.setOutputRange(-1.0, 1.0);
 		angle_pid.reset();
@@ -48,6 +48,9 @@ public class VisionPID implements PIDOutput, PIDSource{
 		return CAMCENTER.x;
 	}
 	
+	public void getValue() {
+		System.out.println(angle_pid.get());
+	}
 
 	@Override
 	public void setPIDSourceType(PIDSourceType pidSource) {
@@ -64,12 +67,14 @@ public class VisionPID implements PIDOutput, PIDSource{
 	@Override
 	public double pidGet() {
 		Point center = vision.getCenter();
+		//System.out.println(center.x);
 		return center.x;
 	}
 
 	@Override
 	public void pidWrite(double output) {
 		swerve.setWithAngularVelocity(0, 0, output);
+		//System.out.println(output);
 		
 	}
 
