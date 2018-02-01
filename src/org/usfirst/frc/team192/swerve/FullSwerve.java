@@ -3,13 +3,13 @@ package org.usfirst.frc.team192.swerve;
 import org.usfirst.frc.team192.robot.JoystickInput;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
-import edu.wpi.first.wpilibj.GyroBase;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class FullSwerve extends SwerveBase {
 
-	private GyroBase gyro;
+	private Gyro gyro;
 	private final double MAX_JOYSTICK_VALUE = Math.sqrt(2);
 	private final double MAX_ROTATE_VALUE = 1;
 	private double ROTATE_SCALE;
@@ -17,7 +17,7 @@ public class FullSwerve extends SwerveBase {
 	private final double RADIUS;
 	private final double WHEEL_ANGLE;
 
-	public FullSwerve(GyroBase gyro) {
+	public FullSwerve(Gyro gyro) {
 		super();
 		this.gyro = gyro;
 		RADIUS = Math.sqrt(robotWidth * robotWidth + robotHeight * robotHeight) / 2;

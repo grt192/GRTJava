@@ -4,12 +4,12 @@ import org.usfirst.frc.team192.config.Config;
 import org.usfirst.frc.team192.swerve.FullSwervePID;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
-import edu.wpi.first.wpilibj.GyroBase;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 public class Robot extends IterativeRobot {
 
-	private GyroBase gyro;
+	private Gyro gyro;
 	private FullSwervePID swerve;
 	private JoystickInput input;
 
