@@ -14,11 +14,11 @@ public class VisionTracking {
 		CUBE, TAPE, EXCHANGE;
 	}
 	
-	public org.opencv.core.Point getCenter() {
+	public static org.opencv.core.Point getCenter() {
 		return centroid;
 	}
 	
-	public int getArea() {
+	public static int getArea() {
 		return width * height;
 	}
     
@@ -39,7 +39,7 @@ public class VisionTracking {
         	lower = new Scalar(0, 0, 170);
         	upper = new Scalar(60, 60, 255);
         }
-        Core.inRange(img, lower, upper, img);         
+        // Core.inRange(img, lower, upper, img);         
         return img;
     }
     

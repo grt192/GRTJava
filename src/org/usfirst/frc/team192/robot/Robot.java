@@ -55,12 +55,11 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopInit() {
 		//swerve.enable();
-		
 	}
 
 	@Override
 	public void teleopPeriodic() {
-		teleop.periodic();
+		// teleop.periodic();
 		//swerve.updateWithJoystick(input);
 	}
 

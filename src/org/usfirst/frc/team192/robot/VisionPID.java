@@ -2,9 +2,9 @@ package org.usfirst.frc.team192.robot;
 
 import org.opencv.core.Point;
 import org.usfirst.frc.team192.swerve.FullSwervePID;
+import org.usfirst.frc.team192.vision.ImageThread;
 import org.usfirst.frc.team192.vision.VisionTracking;
 
-import edu.wpi.first.wpilibj.GyroBase;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.PIDSource;
@@ -15,16 +15,19 @@ public class VisionPID implements PIDOutput, PIDSource{
 	//private PIDController distance_pid;
 	private FullSwervePID swerve;
 	private VisionTracking vision;
+	ImageThread imgThread;
 	
 	private org.opencv.core.Point CAMCENTER;
 	
-	public VisionPID(GyroBase gyro, VisionTracking vision){
+	public VisionPID(VisionTracking vision, FullSwervePID swerve, ImageThread imgThread) {
 		CAMCENTER = new org.opencv.core.Point();
 		CAMCENTER.x = 0;
 		CAMCENTER.y = 0;
 		
-		swerve = new FullSwervePID(gyro);
 		this.vision = vision;
+		this.swerve = swerve;
+		this.imgThread = imgThread;
+		imgThread.start();
 		
 		double p = 0.05;
 		double i = 0.05;
@@ -79,8 +82,13 @@ public class VisionPID implements PIDOutput, PIDSource{
 
 	@Override
 	public double pidGet() {
-		Point center = vision.getCenter();
-		return center.x;
+		Point center = VisionTracking.findCentroid(imgThread.getImage());
+		if (center == null) {
+			System.out.println("did not find a block");
+			return 200;
+		} else {
+			return center.x;
+		}
 	}
 
 	@Override

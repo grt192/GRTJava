@@ -1,22 +1,19 @@
 package org.usfirst.frc.team192.robot;
 
-import org.usfirst.frc.team192.robot.JoystickInput;
-import org.usfirst.frc.team192.vision.VisionTracking;
-import org.usfirst.frc.team192.robot.VisionPID;
-import org.usfirst.frc.team192.swerve.FullSwervePID;
-
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-
 import java.awt.Point;
 
-import org.usfirst.frc.team192.mechs.*;
+import org.usfirst.frc.team192.mechs.Climber;
+import org.usfirst.frc.team192.mechs.Intake;
+import org.usfirst.frc.team192.mechs.Linkage;
+import org.usfirst.frc.team192.swerve.FullSwervePID;
+import org.usfirst.frc.team192.vision.ImageThread;
+import org.usfirst.frc.team192.vision.VisionTracking;
 
-import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.GyroBase;
+import edu.wpi.first.wpilibj.XboxController;
 
 public class Teleop {
 	private XboxController xbox;
@@ -47,7 +44,8 @@ public class Teleop {
 		is_vision_toggled = false;
 		centroid = new Point();
 		vision = new VisionTracking();
-		pid = new VisionPID(gyro, vision);
+		swerve = new FullSwervePID(gyro);
+		pid = new VisionPID(vision, swerve, new ImageThread());
 		init();
 
 	}
@@ -59,13 +57,20 @@ public class Teleop {
 	public void periodic() {
 		
 		if (xbox.getBButtonPressed()) {
-			double range = 10;
 			System.out.println("b button");
 			pid.PIDEnable();
-			while (pid.pidGet() > (Math.abs(Math.abs(pid.getCamCenter()) - 10))) {
+		}
+		
+		if (xbox.getBButton()) {
+			double range = 10;
+			if (pid.pidGet() > (Math.abs(Math.abs(pid.getCamCenter()) - 10))) {
 				pid.updateWithVision();
 				swerve.updateAutonomous();
 			}
+		}
+		
+		if (xbox.getBButtonReleased()) {
+			swerve.setWithAngularVelocity(0, 0, 0);
 		}
 		
 		if (xbox.getStartButton()) {
