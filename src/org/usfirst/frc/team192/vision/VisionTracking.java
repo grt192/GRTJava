@@ -94,4 +94,3 @@ public class VisionTracking {
     		return centroid2;
     }
 }
-
