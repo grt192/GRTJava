@@ -48,7 +48,7 @@ public class ImageThread extends Thread{
         			Imgproc.cvtColor(image, image, Imgproc.COLOR_GRAY2BGR);
         			VisionTracking.findContoursOfTape(image);
         			Point midpoint = VisionTracking.findCentroid(image);
-        			System.out.printf("%s%.2f%s%.2f", "x: ", midpoint.x, "y: ", midpoint.y);
+        			System.out.println("x: " + midpoint.x +  " y: " + midpoint.y);
         			Scalar white = new Scalar(255, 255, 255);
         			Imgproc.circle(image, midpoint, 1, white);
         			outputStream.putFrame(image);

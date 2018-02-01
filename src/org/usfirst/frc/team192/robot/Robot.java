@@ -34,12 +34,12 @@ public class Robot extends IterativeRobot {
 		swerve = new FullSwervePID(gyro);
 		input = new JoystickInput(0, 1);
 		img = new ImageThread();
+		vision = new VisionTracking();
 			
 		auto = new Autonomous(swerve);
-		teleop = new Teleop(img, swerve);
+		teleop = new Teleop(vision, swerve, input);
 		
 		img.start();
-
 	}
 
 	@Override

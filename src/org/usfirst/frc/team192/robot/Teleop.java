@@ -27,7 +27,7 @@ public class Teleop {
 	private Boolean is_vision_toggled;
 	private Point centroid;
 	private VisionPID pid;
-	private JoystickInput input;
+	private FullSwervePID swerve;
 	
 	public enum RobotState{
 		NothingState,
@@ -39,32 +39,30 @@ public class Teleop {
 
 	private RobotState pickupState = RobotState.NothingState;
 
-	public Teleop(ImageThread img, FullSwervePID swerve) {
+	public Teleop(VisionTracking vision, FullSwervePID swerve, JoystickInput input) {
 		xbox = input.getXboxController();
 		linkage = new Linkage(new TalonSRX(1));
 		climber = new Climber(new TalonSRX(8));
 		intake = new Intake(new TalonSRX(0), new TalonSRX(2), new TalonSRX(3)); //add talon numbers for this
 		is_vision_toggled = false;
 		centroid = new Point();
-		//pid = new VisionPID(vision, swerve);
+		pid = new VisionPID(vision, swerve);
+		this.swerve = swerve;
 		init();
 
 	}
 	
 	public void init() {
 		//start swerve thread
+		pid.PIDEnable();
 	}
 	
 	public void periodic() {
 		
-		if (xbox.getBButtonPressed()) {
-			double range = 10;
+		if (xbox.getBButton()) {
 			System.out.println("b button");
-			pid.PIDEnable();
-			while (pid.pidGet() > (Math.abs(Math.abs(pid.getCamCenter()) - 10))) {
-				pid.updateWithVision();
-				//swerve.updateAutonomous();
-			}
+			swerve.updateAutonomous();
+			
 		}
 		
 		if (xbox.getStartButton()) {

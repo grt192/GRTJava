@@ -18,17 +18,15 @@ public class VisionPID implements PIDOutput, PIDSource{
 	
 	private org.opencv.core.Point CAMCENTER;
 	
-	public VisionPID(GyroBase gyro, VisionTracking vision, FullSwervePID swerve){
+	public VisionPID(VisionTracking vision, FullSwervePID swerve){
 		CAMCENTER = new org.opencv.core.Point();
-		CAMCENTER.x = 0;
-		CAMCENTER.y = 0;
+		CAMCENTER.x = 320;
+		CAMCENTER.y = 240;
 		this.swerve = swerve;
-		
-		swerve = new FullSwervePID(gyro);
 		this.vision = vision;
 		
 		double p = 0.05;
-		double i = 0.05;
+		double i = 0.00;
 		double d = 0.05;
 		double f = 0.05;
 		angle_pid = new PIDController(p, i, d, f, this, this, 0.01);
@@ -37,34 +35,19 @@ public class VisionPID implements PIDOutput, PIDSource{
 		angle_pid.setAbsoluteTolerance(3.0);
 		angle_pid.setOutputRange(-1.0, 1.0);
 		angle_pid.reset();
-		angle_pid.setSetpoint(0.0);
-		
-//		distance_pid = new PIDController(p, i, d, f, this, this, 0.01);
-//		distance_pid.setContinuous();
-//		distance_pid.setInputRange(0,100);
-//		distance_pid.setAbsoluteTolerance(3.0);
-//		distance_pid.setOutputRange(-1.0, 1.0);
-//		distance_pid.reset();
-//		distance_pid.setSetpoint(0.0);
+		angle_pid.setSetpoint(CAMCENTER.x);
+
 	}
 	
 	public void PIDEnable() {
 		angle_pid.reset();
 		angle_pid.enable();
-		//distance_pid.reset();
-		//distance_pid.enable();
 	}
 	
 	public double getCamCenter() {
 		return CAMCENTER.x;
 	}
 	
-	public void updateWithVision() {
-		//int AREACONSTANT = 1;
-		angle_pid.setSetpoint(CAMCENTER.x);
-		//distance_pid.setSetpoint(area/AREACONSTANT);
-		
-	}
 
 	@Override
 	public void setPIDSourceType(PIDSourceType pidSource) {
@@ -75,7 +58,7 @@ public class VisionPID implements PIDOutput, PIDSource{
 	@Override
 	public PIDSourceType getPIDSourceType() {
 		// TODO Auto-generated method stub
-		return null;
+		return PIDSourceType.kDisplacement;
 	}
 
 	@Override
