@@ -77,5 +77,9 @@ public class VisionPID implements PIDOutput, PIDSource{
 		//System.out.println(output);
 		
 	}
+	
+	public void setSetpoint(double point) {
+		angle_pid.setSetpoint(point);
+	}
 
 }

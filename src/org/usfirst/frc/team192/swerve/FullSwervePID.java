@@ -2,6 +2,8 @@ package org.usfirst.frc.team192.swerve;
 
 import org.usfirst.frc.team192.robot.JoystickInput;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.GyroBase;
 import edu.wpi.first.wpilibj.PIDController;
@@ -124,6 +126,11 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 		SmartDashboard.putNumber("PID Error", pid.getError());
 		SmartDashboard.putNumber("PID Output", pid.get());
 
+	}
+	
+	// for zeroing
+	public void zeroWithInputs(int talonNumber, XboxController xbox) {
+		wheels[talonNumber].getRotateMotor().set(ControlMode.PercentOutput, xbox.getX(Hand.kLeft) / 3);
 	}
 
 }

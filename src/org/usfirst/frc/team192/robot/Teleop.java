@@ -29,6 +29,9 @@ public class Teleop {
 	private VisionPID pid;
 	private FullSwervePID swerve;
 	
+	private boolean zeroing;
+	private int index;
+	
 	public enum RobotState{
 		NothingState,
 		StartPickupState,
@@ -49,6 +52,8 @@ public class Teleop {
 		pid = new VisionPID(vision, swerve);
 		this.swerve = swerve;
 		init();
+		
+		this.zeroing = false;
 
 	}
 	
@@ -59,8 +64,31 @@ public class Teleop {
 	
 	public void periodic() {
 		
+		if (!zeroing && xbox.getAButton() && xbox.getXButton()) {
+			zeroing = true;
+			index = 0;
+			System.out.println("zeroing");
+			return;
+		}
+		
+		if (zeroing && xbox.getBButtonPressed()) {
+			index++;
+			System.out.println("changing wheels");
+			if (index == 4) {
+				zeroing = false;
+				swerve.zero();
+				return;
+			}
+		}
+		
+		if (zeroing) {
+			swerve.zeroWithInputs(index, xbox);
+			return;
+		}
+		
 		if (xbox.getBButton()) {
 			System.out.println("b button");
+			pid.setSetpoint(pid.pidGet());
 			swerve.updateAutonomous();
 			
 		}
