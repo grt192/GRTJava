@@ -24,20 +24,22 @@ public class VisionTracking {
     
     public static Mat maskImageForTape(Mode visionMode, Mat img) 
     {
-    	Scalar lower = new Scalar(0, 0, 0);
-    	Scalar upper = new Scalar(0, 0, 0);
+    		Scalar lower = new Scalar(0, 0, 0);
+    		Scalar upper = new Scalar(0, 0, 0);
     	
         if (visionMode == Mode.CUBE) {
-        	lower = new Scalar(100, 190, 180);
-    		upper = new Scalar(140, 255, 215);
+        		/*lower = new Scalar(100, 190, 180); 
+        		upper = new Scalar(140, 255, 215);*/
+        		lower = new Scalar(100, 190, 190);
+        		upper = new Scalar(180, 255, 255);
         }
         else if (visionMode == Mode.TAPE) {
-        	lower = new Scalar(0, 0, 0);
-        	upper = new Scalar(0, 0, 0);
+        		lower = new Scalar(0, 0, 0);
+        		upper = new Scalar(0, 0, 0);
         }
         else if (visionMode == Mode.EXCHANGE) {
-        	lower = new Scalar(0, 0, 170);
-        	upper = new Scalar(60, 60, 255);
+        		lower = new Scalar(0, 0, 170);
+        		upper = new Scalar(60, 60, 255);
         }
         Core.inRange(img, lower, upper, img);         
         return img;
@@ -46,10 +48,6 @@ public class VisionTracking {
     
     public static Mat findContoursOfTape(Mat img) 
     {	
-//    		Mat imgIn32SC1 = new Mat();
-//    		Mat binary = new Mat();
-//    		Mat edges = new Mat();
-//    		Mat blurred = new Mat();
     		Imgproc.cvtColor(img, img, Imgproc.COLOR_BGR2GRAY);
     		Imgproc.threshold(img,  img,  100,  255,  Imgproc.THRESH_BINARY);
     		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
@@ -80,12 +78,16 @@ public class VisionTracking {
     	
     		width = (int) (end.x - start.x);
     		height = (int) (end.y - start.y);
-    		Imgproc.rectangle(img, start, end, x, 3); 		
+    		/*Mat rectangle = new Mat(); //new one
+    		img = rectangle;
+    		rectangle.release();*/
+    		Imgproc.rectangle(img, start, end, x, 3); 
     		return img;   		
     }
     
     public static org.opencv.core.Point findCentroid(Mat img) 
     {   
+    		//problem to fix: still getting moments of contours, should get moments of rectangle
     		Moments moments = Imgproc.moments(img); 
     		org.opencv.core.Point centroid2 = new org.opencv.core.Point();
     		centroid2.x = (int) (moments.get_m10()/moments.get_m00());

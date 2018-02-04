@@ -37,8 +37,6 @@ public class ImageThread extends Thread{
         //CvSink cvSink = CameraServer.getInstance().getVideo();
         CvSource outputStream = CameraServer.getInstance().putVideo("Blur", 640, 480);
         
-        //Mat source = new Mat();
-        //Mat output = new Mat();
 		cap.open(0);
         
         while(!Thread.interrupted()) {
@@ -46,13 +44,14 @@ public class ImageThread extends Thread{
         			cap.read(image);
         			VisionTracking.maskImageForTape(Mode.CUBE, image);
         			Imgproc.cvtColor(image, image, Imgproc.COLOR_GRAY2BGR);
-        			VisionTracking.findContoursOfTape(image);
+        			/*VisionTracking.findContoursOfTape(image);
         			Point midpoint = VisionTracking.findCentroid(image);
         			System.out.println("x: " + midpoint.x +  " y: " + midpoint.y);
         			Scalar white = new Scalar(255, 255, 255);
-        			Imgproc.circle(image, midpoint, 1, white);
+        			Imgproc.circle(image, midpoint, 1, white);*/
         			outputStream.putFrame(image);
         		} catch (Exception e) {
+
         			e.printStackTrace();
         		}
         }
