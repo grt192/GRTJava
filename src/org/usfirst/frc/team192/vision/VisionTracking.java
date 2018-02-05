@@ -28,8 +28,8 @@ public class VisionTracking {
     	Scalar upper = new Scalar(0, 0, 0);
     	
         if (visionMode == Mode.CUBE) {
-        	lower = new Scalar(100, 190, 180);
-    		upper = new Scalar(140, 255, 215);
+        	lower = new Scalar(50, 190, 180);
+    		upper = new Scalar(150, 255, 245);
         }
         else if (visionMode == Mode.TAPE) {
         	lower = new Scalar(0, 0, 0);

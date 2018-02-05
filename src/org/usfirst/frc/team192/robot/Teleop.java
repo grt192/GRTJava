@@ -86,11 +86,16 @@ public class Teleop {
 			return;
 		}
 		
-		if (xbox.getBButton()) {
-			System.out.println("b button");
+		if (xbox.getYButtonPressed()) {
+			pid.PIDEnable();
+		}
+		if (xbox.getYButton()) {
+			//System.out.println("b button");
 			pid.setSetpoint(pid.pidGet());
 			swerve.updateAutonomous();
 			
+		}else {
+			swerve.enable();
 		}
 		
 		if (xbox.getStartButton()) {
@@ -109,10 +114,10 @@ public class Teleop {
 			groundLinkagePlacement();
 		}
 		if(xbox.getXButtonPressed()) {
-			climb();
+			//climb();
 		}
 		if(xbox.getXButtonReleased()) {
-			stopClimb();
+			//stopClimb();
 		}if(xbox.getTriggerAxis(Hand.kRight) > 0) {
 			System.out.println(Double.toString(xbox.getTriggerAxis(Hand.kRight)));						
 		}

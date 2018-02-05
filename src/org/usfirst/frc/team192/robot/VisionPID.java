@@ -15,20 +15,23 @@ public class VisionPID implements PIDOutput, PIDSource{
 	//private PIDController distance_pid;
 	private FullSwervePID swerve;
 	private VisionTracking vision;
+	boolean changeoutput;
+	boolean runforward;
 	
 	private org.opencv.core.Point CAMCENTER;
 	
 	public VisionPID(VisionTracking vision, FullSwervePID swerve){
+		runforward = false;
 		CAMCENTER = new org.opencv.core.Point();
 		CAMCENTER.x = 320;
 		CAMCENTER.y = 240;
 		this.swerve = swerve;
 		this.vision = vision;
 		
-		double p = 0.05;
+		double p = 0.3;
 		double i = 0.00;
-		double d = 0.05;
-		double f = 0.05;
+		double d = 0.0001;
+		double f = 0.1;
 		angle_pid = new PIDController(p, i, d, f, this, this, 0.01);
 		angle_pid.setInputRange(0, 640);
 		//angle_pid.setContinuous();
@@ -42,6 +45,7 @@ public class VisionPID implements PIDOutput, PIDSource{
 	public void PIDEnable() {
 		angle_pid.reset();
 		angle_pid.enable();
+		changeoutput = true;
 	}
 	
 	public double getCamCenter() {
@@ -70,12 +74,34 @@ public class VisionPID implements PIDOutput, PIDSource{
 		//System.out.println(center.x);
 		return center.x;
 	}
+	
 
 	@Override
 	public void pidWrite(double output) {
-		swerve.setWithAngularVelocity(0, 0, output);
-		//System.out.println(output);
+		double camerror = CAMCENTER.x - vision.getCenter().x;
+		System.out.println(output);
 		
+		if (changeoutput) {
+			if (Math.abs(camerror) < 50) {
+				runforward = true;
+			}else {
+				runforward = false;
+			}
+			
+			if (camerror < 0) {
+				if (runforward){
+					swerve.setWithAngularVelocity(.7, .5, 0);
+				}else {
+					swerve.setWithAngularVelocity(.7, .5, 0);
+				}
+			} else if (camerror > 0) {
+				if (runforward){
+					swerve.setWithAngularVelocity(.7, -.5, 0);
+				}else {
+					swerve.setWithAngularVelocity(.7, -.5, 0);
+				}
+			}
+		}
 	}
 	
 	public void setSetpoint(double point) {

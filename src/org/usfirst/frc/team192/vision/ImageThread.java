@@ -31,8 +31,8 @@ public class ImageThread extends Thread{
 		
 		VideoCapture cap = new VideoCapture(0);
 		Mat image = new Mat();
+
 		//UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
-        //camera.setResolution(640, 480);
         
         //CvSink cvSink = CameraServer.getInstance().getVideo();
         CvSource outputStream = CameraServer.getInstance().putVideo("Blur", 640, 480);
