@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class VisionPID implements PIDOutput, PIDSource{
 	private PIDController angle_pid;
@@ -20,6 +21,11 @@ public class VisionPID implements PIDOutput, PIDSource{
 	
 	private org.opencv.core.Point CAMCENTER;
 	
+	private double initp;
+	private double initi;
+	private double initd;
+	private double initf;
+	
 	public VisionPID(VisionTracking vision, FullSwervePID swerve){
 		runforward = false;
 		CAMCENTER = new org.opencv.core.Point();
@@ -28,10 +34,21 @@ public class VisionPID implements PIDOutput, PIDSource{
 		this.swerve = swerve;
 		this.vision = vision;
 		
-		double p = 0.3;
-		double i = 0.00;
-		double d = 0.0001;
-		double f = 0.1;
+		initp = 0.015;
+		initi = 0.00;
+		initd = 0.001;
+		initf = 0.001;
+		
+		double p = initp;
+		double i = initi;
+		double d = initd;
+		double f = initf;
+		
+		SmartDashboard.putNumber("p_vision", p);
+		SmartDashboard.putNumber("i_vision", i);
+		SmartDashboard.putNumber("d_vision", d);
+		SmartDashboard.putNumber("f_vision", f);
+		
 		angle_pid = new PIDController(p, i, d, f, this, this, 0.01);
 		angle_pid.setInputRange(0, 640);
 		//angle_pid.setContinuous();
@@ -40,6 +57,14 @@ public class VisionPID implements PIDOutput, PIDSource{
 		angle_pid.reset();
 		angle_pid.setSetpoint(CAMCENTER.x);
 
+	}
+
+	public void updatePID() {
+		double p = SmartDashboard.getNumber("p_vision", initp);
+		double i = SmartDashboard.getNumber("i_vision", initi);
+		double d = SmartDashboard.getNumber("d_vision", initd);
+		double f = SmartDashboard.getNumber("f_vision", initf);
+		angle_pid.setPID(p, i, d, f);
 	}
 	
 	public void PIDEnable() {
@@ -70,17 +95,18 @@ public class VisionPID implements PIDOutput, PIDSource{
 
 	@Override
 	public double pidGet() {
-		Point center = vision.getCenter();
-		//System.out.println(center.x);
-		return center.x;
+		return CAMCENTER.x;
 	}
 	
 
 	@Override
 	public void pidWrite(double output) {
-		double camerror = CAMCENTER.x - vision.getCenter().x;
+		// double camerror = CAMCENTER.x - vision.getCenter().x;
+		// System.out.println(output);
 		System.out.println(output);
+		swerve.setWithAngularVelocity(0, 0, output * .4);
 		
+		/*
 		if (changeoutput) {
 			if (Math.abs(camerror) < 50) {
 				runforward = true;
@@ -102,10 +128,11 @@ public class VisionPID implements PIDOutput, PIDSource{
 				}
 			}
 		}
+		*/
 	}
 	
-	public void setSetpoint(double point) {
-		angle_pid.setSetpoint(point);
+	public void update() {
+		angle_pid.setSetpoint(vision.getCenter().x);
 	}
 
 }

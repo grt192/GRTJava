@@ -89,13 +89,22 @@ public class Teleop {
 		if (xbox.getYButtonPressed()) {
 			pid.PIDEnable();
 		}
+		
+		double rotateRight = Math.pow(xbox.getTriggerAxis(Hand.kRight), 2);
+		double rotateLeft = Math.pow(xbox.getTriggerAxis(Hand.kLeft), 2);
+		double howMuchToRotate = rotateRight - rotateLeft;
 		if (xbox.getYButton()) {
 			//System.out.println("b button");
-			pid.setSetpoint(pid.pidGet());
+			pid.update();
 			swerve.updateAutonomous();
 			
-		}else {
-			swerve.enable();
+		} else if (Math.abs(howMuchToRotate) > 0.05) {
+			System.out.println("trigger: " + howMuchToRotate / 2);
+			swerve.setWithAngularVelocity(0, 0, howMuchToRotate / 2);
+			swerve.updateAutonomous();
+		} else {
+			swerve.setWithAngularVelocity(0, 0, 0);
+			swerve.updateAutonomous();
 		}
 		
 		if (xbox.getStartButton()) {
@@ -119,7 +128,7 @@ public class Teleop {
 		if(xbox.getXButtonReleased()) {
 			//stopClimb();
 		}if(xbox.getTriggerAxis(Hand.kRight) > 0) {
-			System.out.println(Double.toString(xbox.getTriggerAxis(Hand.kRight)));						
+			// System.out.println(Double.toString(xbox.getTriggerAxis(Hand.kRight)));						
 		}
 		if(xbox.getAButtonPressed()) {
 			this.pickupState = RobotState.StartPickupState;
@@ -155,6 +164,7 @@ public class Teleop {
 			}
 			
 		}
+
 	}
 	
 	public void visionToggleOn() {
