@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 public class Robot extends IterativeRobot {
 
 	private GyroBase gyro;
-	private SwerveBase swerve;
+	private FullSwervePID swerve;
 	private JoystickInput input;
 
 	private Autonomous auto;
