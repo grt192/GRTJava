@@ -48,7 +48,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopInit() {
 		swerve.enable();
-		teleop = new Teleop(vision, swerve, input);
+		teleop = new Teleop(vision, swerve, input, gyro);
 
 	}
 

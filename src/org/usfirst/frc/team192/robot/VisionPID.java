@@ -1,6 +1,5 @@
 package org.usfirst.frc.team192.robot;
 
-import org.opencv.core.Point;
 import org.usfirst.frc.team192.swerve.FullSwervePID;
 import org.usfirst.frc.team192.vision.VisionTracking;
 
@@ -18,36 +17,40 @@ public class VisionPID implements PIDOutput, PIDSource{
 	private VisionTracking vision;
 	boolean changeoutput;
 	boolean runforward;
+	private GyroBase gyro;
 	
 	private org.opencv.core.Point CAMCENTER;
+	private final int CAMERA_WIDTH = 640;
+	private final int CAMERA_HEIGHT = 480;
 	
 	private double initp;
 	private double initi;
 	private double initd;
 	private double initf;
 	
-	public VisionPID(VisionTracking vision, FullSwervePID swerve){
+	public VisionPID(VisionTracking vision, FullSwervePID swerve, GyroBase gyro){
 		runforward = false;
 		CAMCENTER = new org.opencv.core.Point();
-		CAMCENTER.x = 320;
-		CAMCENTER.y = 240;
+		CAMCENTER.x = CAMERA_WIDTH / 2;
+		CAMCENTER.y = CAMERA_HEIGHT / 2;
 		this.swerve = swerve;
 		this.vision = vision;
+		this.gyro = gyro;
 		
-		initp = 0.015;
-		initi = 0.00;
-		initd = 0.001;
+		initp = 0.003;
+		initi = 0.0;
+		initd = 0.1;
 		initf = 0.001;
 		
 		double p = initp;
 		double i = initi;
 		double d = initd;
 		double f = initf;
-		
 		SmartDashboard.putNumber("p_vision", p);
 		SmartDashboard.putNumber("i_vision", i);
 		SmartDashboard.putNumber("d_vision", d);
 		SmartDashboard.putNumber("f_vision", f);
+		SmartDashboard.putNumber("blockLocation", 0);
 		
 		angle_pid = new PIDController(p, i, d, f, this, this, 0.01);
 		angle_pid.setInputRange(0, 640);
@@ -56,6 +59,8 @@ public class VisionPID implements PIDOutput, PIDSource{
 		angle_pid.setOutputRange(-1.0, 1.0);
 		angle_pid.reset();
 		angle_pid.setSetpoint(CAMCENTER.x);
+		
+		SmartDashboard.putData(angle_pid);
 
 	}
 
@@ -104,7 +109,7 @@ public class VisionPID implements PIDOutput, PIDSource{
 		// double camerror = CAMCENTER.x - vision.getCenter().x;
 		// System.out.println(output);
 		System.out.println(output);
-		swerve.setWithAngularVelocity(0, 0, output * .4);
+		swerve.setWithAngularVelocity(0, 0, output);
 		
 		/*
 		if (changeoutput) {
@@ -132,7 +137,16 @@ public class VisionPID implements PIDOutput, PIDSource{
 	}
 	
 	public void update() {
-		angle_pid.setSetpoint(vision.getCenter().x);
+		// angle_pid.setSetpoint(vision.getCenter().x);
+		// angle_pid.setSetpoint(SmartDashboard.getNumber("blockLocation", CAMCENTER.x));
+		double currentAngle = Math.toRadians((gyro.getAngle() % 360 + 360) % 360);
+		double targetAngle = SmartDashboard.getNumber("blockLocation", currentAngle);
+		double deltaAngle = targetAngle - currentAngle;
+		if (Math.abs(deltaAngle) > Math.PI) {
+			deltaAngle = deltaAngle - 2 * Math.PI * Math.signum(deltaAngle);
+		}
+		SmartDashboard.putNumber("deltaAngle", deltaAngle);
+		angle_pid.setSetpoint(CAMCENTER.x + CAMERA_WIDTH * deltaAngle / Math.PI);
 	}
 
 }
