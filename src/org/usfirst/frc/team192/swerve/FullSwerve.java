@@ -32,7 +32,6 @@ public class FullSwerve extends SwerveBase {
 		for (Wheel wheel : wheels)
 			wheel.disable();
 		gyro.calibrate();
-		gyro.reset();
 		super.zero();
 	}
 
