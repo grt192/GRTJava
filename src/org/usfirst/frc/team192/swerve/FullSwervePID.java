@@ -103,6 +103,7 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 		this.vx = vx;
 		this.vy = vy;
 		this.rv = rv;
+		usePID = false;
 	}
 
 	public void autonomousInit() {
