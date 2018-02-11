@@ -2,6 +2,8 @@ package org.usfirst.frc.team192.swerve;
 
 import org.usfirst.frc.team192.robot.JoystickInput;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.GyroBase;
 import edu.wpi.first.wpilibj.PIDController;
@@ -32,20 +34,12 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 		SmartDashboard.putNumber("d", d);
 		SmartDashboard.putNumber("f", f);
 		pid = new PIDController(p, i, d, f, gyro, this, 0.01);
-		//pid.setContinuous();
 		pid.setInputRange(0.0, 360.0);
+		pid.setContinuous();
 		pid.setAbsoluteTolerance(3.0);
 		pid.setOutputRange(-1.0, 1.0);
 		pid.reset();
 		pid.setSetpoint(0.0);
-		usePID = false;
-	}
-
-	@Override
-	public void enable() {
-		super.enable();
-		pid.reset();
-		pid.enable();
 		usePID = false;
 	}
 
@@ -126,7 +120,6 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 	@Override
 	public void pidWrite(double output) {
 		rotateInput = output;
-		SmartDashboard.putNumber("PID Error", pid.getError());
 	}
 
 	private void logPID() {
@@ -134,6 +127,11 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 		SmartDashboard.putNumber("PID Error", pid.getError());
 		SmartDashboard.putNumber("PID Output", pid.get());
 
+	}
+	
+	// for zeroing
+	public void zeroWithInputs(int talonNumber, XboxController xbox) {
+		wheels[talonNumber].getRotateMotor().set(ControlMode.PercentOutput, xbox.getX(Hand.kLeft) / 3);
 	}
 
 }

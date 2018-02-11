@@ -3,26 +3,23 @@ package org.usfirst.frc.team192.robot;
 import org.usfirst.frc.team192.config.Config;
 import org.usfirst.frc.team192.swerve.FullSwervePID;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Autonomous {
-	
+
 	private DriverStation ds;
-//	private Vision vision;
+	// private Vision vision;
 	private FullSwervePID swerve;
-	
+
 	private SendableChooser<Mode> modeChooser;
-	
+
 	private int dsLocation;
-	
+
 	private boolean switchLeft;
 	private boolean scaleLeft;
-	
+
 	private long startTime;
 	private Mode selectedMode;
 	private double delay;
@@ -42,13 +39,13 @@ public class Autonomous {
 		PLACE_SWITCH_BOTTOM ("move to correct part of bottom of switch to place"),
 		PLACE_SWITCH_SIDE ("move to correct side of switch to place"),
 		PLACE_SCALE_SIDE ("move to correct side of scale to place");
-		
+    
 		String description;
-		
+
 		Mode(String description) {
 			this.description = description;
 		}
-		
+
 		String getDescription() {
 			return description;
 		}
@@ -67,24 +64,25 @@ public class Autonomous {
 		Mode[] modes = Mode.values();
 		Mode defaultMode = modes[0];
 		modeChooser.addDefault(defaultMode.getDescription(), defaultMode);
-		for (int i=1; i<modes.length; i++) {
+		for (int i = 1; i < modes.length; i++) {
 			modeChooser.addObject(modes[i].getDescription(), modes[i]);
-//			System.out.println(modes[i].toString());
+			// System.out.println(modes[i].toString());
 		}
-		
+
 		SmartDashboard.putData("autonomous_mode", modeChooser);
 	}
-	
+
 	public void init() {
 		startTime = System.currentTimeMillis();
-		
-		//get game information
+
+		// get game information
 		dsLocation = ds.getLocation();
 		String fieldPositions = ds.getGameSpecificMessage();
 		selectedMode = modeChooser.getSelected();
 		System.out.println(selectedMode.toString());
-		
+
 		delay = SmartDashboard.getNumber("autonomous_delay_ms", 0.0);
+
 		distanceFromLeft = SmartDashboard.getNumber("autonomous_distance_from_left_edge_inches", FIELD_LENGTH/2 - robotWidth/2);
 		
 		switchLeft = (fieldPositions.charAt(0) == 'L');
@@ -97,7 +95,7 @@ public class Autonomous {
 		swerve.autonomousInit();
 		swerve.setTargetPosition(0);
 	}
-	
+  
 	public void periodic() { //~5 times / second
 		double timeElapsed = timeElapsed();
 		double timeLeft = timeLeft();
@@ -215,7 +213,7 @@ public class Autonomous {
 		default:
 			break;
 		}
-		
+
 		swerve.updateAutonomous();
 	}
 	
@@ -227,15 +225,16 @@ public class Autonomous {
 	public double timeElapsed() {
 		return System.currentTimeMillis() - startTime;
 	}
-	
-	//time since start of movement/since end of delay (may not last for 15 seconds if delayed)
+
+	// time since start of movement/since end of delay (may not last for 15 seconds
+	// if delayed)
 	public double timeAfterDelay() {
 		return timeElapsed() - delay;
 	}
-	
-	//time until autonomous 15 seconds ends
+
+	// time until autonomous 15 seconds ends
 	public double timeLeft() {
 		return (15 * 1000) - timeElapsed();
 	}
-	
+
 }
