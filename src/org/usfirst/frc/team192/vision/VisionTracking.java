@@ -24,12 +24,13 @@ public class VisionTracking {
     
     public static Mat maskImageForTape(Mode visionMode, Mat img) 
     {
-    	Scalar lower = new Scalar(0, 0, 0);
-    	Scalar upper = new Scalar(0, 0, 0);
+    		Imgproc.cvtColor(img, img, Imgproc.COLOR_BGR2HSV);
+    		Scalar lower = new Scalar(0, 0, 0);
+    		Scalar upper = new Scalar(0, 0, 0);
     	
         if (visionMode == Mode.CUBE) {
-        	lower = new Scalar(50, 190, 180);
-    		upper = new Scalar(150, 255, 245);
+        	lower = new Scalar(29, 30, 170);
+    		upper = new Scalar(90, 160, 300);
         }
         else if (visionMode == Mode.TAPE) {
         	lower = new Scalar(0, 0, 0);
@@ -46,10 +47,6 @@ public class VisionTracking {
     
     public static Mat findContoursOfTape(Mat img) 
     {	
-//    		Mat imgIn32SC1 = new Mat();
-//    		Mat binary = new Mat();
-//    		Mat edges = new Mat();
-//    		Mat blurred = new Mat();
     		Imgproc.cvtColor(img, img, Imgproc.COLOR_BGR2GRAY);
     		Imgproc.threshold(img,  img,  100,  255,  Imgproc.THRESH_BINARY);
     		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
