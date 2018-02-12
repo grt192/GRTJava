@@ -39,7 +39,7 @@ public class Robot extends IterativeRobot {
 		auto = new Autonomous(swerve);
 		
 		img.start();
-		teleop = new Teleop(input);
+		teleop = new Teleop(vision, swerve, input, gyro);
 	}
 
 	@Override
