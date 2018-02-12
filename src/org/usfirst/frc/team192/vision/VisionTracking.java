@@ -28,10 +28,8 @@ public class VisionTracking {
     		Scalar upper = new Scalar(0, 0, 0);
     	
         if (visionMode == Mode.CUBE) {
-        		/*lower = new Scalar(100, 190, 190);
-        		upper = new Scalar(180, 255, 255);*/
-        		lower = new Scalar(50, 190, 180);
-        		upper = new Scalar(150, 255, 245);
+        		lower = new Scalar(29, 30, 170);
+        		upper = new Scalar(90, 160, 300);
         }
         else if (visionMode == Mode.TAPE) {
         		lower = new Scalar(0, 0, 0);
@@ -78,16 +76,12 @@ public class VisionTracking {
     	
     		width = (int) (end.x - start.x);
     		height = (int) (end.y - start.y);
-    		/*Mat rectangle = new Mat(); //new one
-    		img = rectangle;
-    		rectangle.release();*/
     		Imgproc.rectangle(img, start, end, x, 3); 
     		return img;   		
     }
     
     public static org.opencv.core.Point findCentroid(Mat img) 
     {   
-    		//problem to fix: still getting moments of contours, should get moments of rectangle
     		Moments moments = Imgproc.moments(img); 
     		org.opencv.core.Point centroid2 = new org.opencv.core.Point();
     		centroid2.x = (int) (moments.get_m10()/moments.get_m00());

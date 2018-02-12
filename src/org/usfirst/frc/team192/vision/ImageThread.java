@@ -18,9 +18,11 @@ import edu.wpi.first.wpilibj.CameraServer;
 
 public class ImageThread extends Thread{
 	private Mode visionMode;
+	//private QElapsedTimer timer; 
 
 	public ImageThread() {
 		visionMode = Mode.CUBE;
+		//timer = new QElapsedTimer();
 	}
 	
 	public void setVisionMode(Mode mode) {
@@ -30,26 +32,28 @@ public class ImageThread extends Thread{
 	public void run() {
 		
 		VideoCapture cap = new VideoCapture(0);
+		//cap.set(38, 1); //38 = CV_CAP_PROP_BUFFERSIZE
+		//cap.set(5, 50); //5 = CV_CAP_PROP_FPS
+		//cap.set(10, 100); //10 = CV_CAP_PROP_BRIGHTNESS
+		
 		Mat image = new Mat();
-
-		//UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
-        
-        //CvSink cvSink = CameraServer.getInstance().getVideo();
         CvSource outputStream = CameraServer.getInstance().putVideo("Blur", 640, 480);
         
 		cap.open(0);
         
         while(!Thread.interrupted()) {
         		try {
+        			cap.grab(); 
         			cap.read(image);
         			VisionTracking.maskImageForTape(Mode.CUBE, image);
         			Imgproc.cvtColor(image, image, Imgproc.COLOR_GRAY2BGR);
-        			/*VisionTracking.findContoursOfTape(image);
+        			VisionTracking.findContoursOfTape(image);
         			Point midpoint = VisionTracking.findCentroid(image);
-        			// System.out.println("x: " + midpoint.x +  " y: " + midpoint.y);
+        			System.out.println("x: " + midpoint.x +  " y: " + midpoint.y);
         			Scalar white = new Scalar(255, 255, 255);
-        			Imgproc.circle(image, midpoint, 1, white);*/
+        			Imgproc.circle(image, midpoint, 1, white);
         			outputStream.putFrame(image);
+        			
         		} catch (Exception e) {
 
         			e.printStackTrace();
