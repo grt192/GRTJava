@@ -135,5 +135,9 @@ class Wheel {
 	public double getCurrentPosition() {
 		return (((rotateMotor.getSelectedSensorPosition(0) * TWO_PI / TICKS_PER_ROTATION) % TWO_PI) + TWO_PI) % TWO_PI;
 	}
+	
+	public TalonSRX getRotateMotor() {
+		return rotateMotor;
+	}
 
 }

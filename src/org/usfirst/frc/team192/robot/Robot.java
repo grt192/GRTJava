@@ -6,6 +6,10 @@ import org.usfirst.frc.team192.vision.ImageThread;
 import org.usfirst.frc.team192.vision.VisionTracking;
 import org.usfirst.frc.team192.vision.Imshow;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+import org.usfirst.frc.team192.swerve.FullSwervePID;
+import org.usfirst.frc.team192.swerve.SwerveBase;
+
 import org.usfirst.frc.team192.swerve.FullSwervePID;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
@@ -35,20 +39,23 @@ public class Robot extends IterativeRobot {
 		auto = new Autonomous(swerve);
 		
 		img.start();
+		teleop = new Teleop(input);
 	}
 
 	@Override
 	public void autonomousInit() {
+    auto.init();
 	}
 
 	@Override
 	public void autonomousPeriodic() {
+    auto.periodic();
 	}
 
 	@Override
 	public void teleopInit() {
 		swerve.enable();
-		teleop = new Teleop(vision, swerve, input);
+		teleop = new Teleop(vision, swerve, input, gyro);
 
 	}
 
@@ -56,7 +63,7 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		teleop.periodic();
 
-		swerve.updateWithJoystick(input);
+		// swerve.updateWithJoystick(input);
 	}
 
 	@Override
