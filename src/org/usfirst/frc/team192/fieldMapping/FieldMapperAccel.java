@@ -1,15 +1,12 @@
 package org.usfirst.frc.team192.fieldMapping;
 
 import edu.wpi.first.wpilibj.interfaces.Gyro;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public abstract class FieldMapperAccel extends FieldMapperGyro {
-	private double x;
-	private double y;
-	private Gyro gyro;
-	private long lastUpdated;
 	
-	private double vx;
-	private double vy;
+	protected double vx;
+	protected double vy;
 	
 	public FieldMapperAccel(Gyro gyro) {
 		super(gyro);
@@ -29,11 +26,15 @@ public abstract class FieldMapperAccel extends FieldMapperGyro {
 	}
 	
 	protected void updateAcceleration(double ax, double ay) {
-		long dt = getDeltaTime();
+		double dt = getDeltaTime();
 		vx += ax * dt;
+		SmartDashboard.putNumber("vel x", vx);
 		vy += ay * dt;
+		SmartDashboard.putNumber("vel y", vy);
 		x += vx * dt;
+		SmartDashboard.putNumber("x", x);
 		y += vy * dt;
+		SmartDashboard.putNumber("y", y);
 	}
 	
 }

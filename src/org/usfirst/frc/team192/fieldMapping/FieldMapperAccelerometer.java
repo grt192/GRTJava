@@ -4,11 +4,7 @@ import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 public class FieldMapperAccelerometer extends FieldMapperAccel {
-	
-	private double x;
-	private double y;
-	private long lastUpdated;
-	private Accelerometer accel;
+	protected Accelerometer accel;
 	
 	public FieldMapperAccelerometer(Gyro gyro, Accelerometer accelerometer) {
 		super(gyro);

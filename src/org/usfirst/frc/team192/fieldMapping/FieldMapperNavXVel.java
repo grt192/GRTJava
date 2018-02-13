@@ -4,14 +4,17 @@ import org.usfirst.frc.team192.swerve.NavXGyro;
 
 public class FieldMapperNavXVel extends FieldMapperVel {
 	
-	private NavXGyro gyro;
+	protected NavXGyro gyro;
 	
 	public FieldMapperNavXVel(NavXGyro gyro) {
-		super(gyro);
+		super(null);
+		this.gyro = gyro;
 	}
 	
 	public void update() {
-		updateVelocity(gyro.getVelocityX(), gyro.getVelocityY());
+		if (gyro != null) {
+			updateVelocity(gyro.getVelocityX(), gyro.getVelocityY());
+		}
 	}
 	
 }

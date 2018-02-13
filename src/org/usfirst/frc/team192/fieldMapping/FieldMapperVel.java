@@ -3,9 +3,6 @@ package org.usfirst.frc.team192.fieldMapping;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 public abstract class FieldMapperVel extends FieldMapperGyro {
-	private double x;
-	private double y;
-	private long lastUpdated;
 	
 	public FieldMapperVel(Gyro gyro) {
 		super(gyro);
@@ -23,7 +20,7 @@ public abstract class FieldMapperVel extends FieldMapperGyro {
 	}
 	
 	protected void updateVelocity(double vx, double vy) {
-		long dt = getDeltaTime();
+		double dt = getDeltaTime();
 		x += vx * dt;
 		y += vy * dt;
 	}

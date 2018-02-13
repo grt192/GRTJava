@@ -47,6 +47,7 @@ public class Robot extends IterativeRobot {
 		fieldMapperNavXAccel.reset();
 		fieldMapperNavXVel.reset();
 		fieldMapperRoborio.reset();
+		gyro.resetDisplacement();
 	}
 
 	@Override

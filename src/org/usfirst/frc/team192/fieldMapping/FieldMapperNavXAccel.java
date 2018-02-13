@@ -2,16 +2,23 @@ package org.usfirst.frc.team192.fieldMapping;
 
 import org.usfirst.frc.team192.swerve.NavXGyro;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class FieldMapperNavXAccel extends FieldMapperAccel {
 	
-	private NavXGyro gyro;
+	protected NavXGyro gyro;
 	
 	public FieldMapperNavXAccel(NavXGyro gyro) {
-		super(gyro);
+		super(null);
+		this.gyro = gyro;
 	}
 	
 	public void update() {
-		updateAcceleration(gyro.getRawAccelX(), gyro.getRawAccelY());
+		double accelX = gyro.getWorldLinearAccelX();
+		double accelY = gyro.getWorldLinearAccelY();
+		SmartDashboard.putNumber("accel x", accelX);
+		SmartDashboard.putNumber("accel y", accelY);
+		updateAcceleration(accelX, accelY);
 	}
 	
 }
