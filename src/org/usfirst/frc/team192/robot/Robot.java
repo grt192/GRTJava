@@ -2,10 +2,6 @@ package org.usfirst.frc.team192.robot;
 
 import org.usfirst.frc.team192.config.Config;
 import org.usfirst.frc.team192.swerve.FullSwervePID;
-import org.usfirst.frc.team192.swerve.SwerveBase;
-
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import org.usfirst.frc.team192.robot.Teleop;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.GyroBase;
@@ -27,7 +23,7 @@ public class Robot extends IterativeRobot {
 		swerve = new FullSwervePID(gyro);
 		input = new JoystickInput(0, 1);
 		swerve.zero();
-    
+
 		auto = new Autonomous(swerve);
 		teleop = new Teleop(input);
 
@@ -46,7 +42,6 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopInit() {
 		swerve.enable();
-		
 	}
 
 	@Override
@@ -56,7 +51,6 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void disabledInit() {
-		swerve.disable();
 	}
 
 	@Override
@@ -66,5 +60,6 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void testPeriodic() {
+
 	}
 }
