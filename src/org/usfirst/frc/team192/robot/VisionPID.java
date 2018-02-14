@@ -109,7 +109,14 @@ public class VisionPID implements PIDOutput, PIDSource{
 		// double camerror = CAMCENTER.x - vision.getCenter().x;
 		// System.out.println(output);
 		System.out.println(output);
-		swerve.setWithAngularVelocity(0, 0, output);
+		double vx = 0;
+		double vy = 0;
+		if (Math.abs(output) < 0.3) {
+			double angle = Math.PI / 2 - Math.toRadians(gyro.getAngle());
+			vx = Math.cos(angle);
+			vy = Math.sin(angle);
+		}
+		swerve.setWithAngularVelocity(vx, vy, output/2);
 		
 		/*
 		if (changeoutput) {
