@@ -8,6 +8,9 @@ public abstract class FieldMapperAccel extends FieldMapperGyro {
 	protected double vx;
 	protected double vy;
 	
+	protected double lastAx;
+	protected double lastAy;
+	
 	public FieldMapperAccel(Gyro gyro) {
 		super(gyro);
 		reset();
@@ -26,15 +29,15 @@ public abstract class FieldMapperAccel extends FieldMapperGyro {
 	}
 	
 	protected void updateAcceleration(double ax, double ay) {
+		double lastVx = vx;
+		double lastVy = vy;
 		double dt = getDeltaTime();
-		vx += ax * dt;
-		SmartDashboard.putNumber("vel x", vx);
-		vy += ay * dt;
-		SmartDashboard.putNumber("vel y", vy);
-		x += vx * dt;
-		SmartDashboard.putNumber("x", x);
-		y += vy * dt;
-		SmartDashboard.putNumber("y", y);
+		vx += (lastAx + ax) / 2 * dt;
+		vy += (lastAy + ay) / 2 * dt;
+		x += (lastVx + vx) / 2 * dt;
+		y += (lastVy + vy) / 2 * dt;
+		lastAx = ax;
+		lastAy = ay; // lmao 
 	}
 	
 }

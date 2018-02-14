@@ -2,6 +2,8 @@ package org.usfirst.frc.team192.swerve;
 
 import org.usfirst.frc.team192.robot.JoystickInput;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
@@ -21,6 +23,13 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 	private double vx;
 	private double vy;
 	private double rv;
+	
+	private Mode mode;
+	private int index;
+	
+	private enum Mode {
+		SWERVE, ZERO
+	}
 
 	public FullSwervePID(Gyro gyro) {
 		super(gyro);
@@ -40,6 +49,7 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 		pid.reset();
 		pid.setSetpoint(0.0);
 		usePID = false;
+		mode = Mode.SWERVE;
 	}
 
 	@Override
@@ -75,8 +85,26 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 	@Override
 	public void updateWithJoystick(JoystickInput input) {
 		XboxController xbox = input.getXboxController();
-		if (xbox.getAButtonPressed() && xbox.getYButtonPressed())
-			zero();
+		boolean aButton = xbox.getAButtonPressed();
+		if (aButton && xbox.getYButtonPressed() && mode == Mode.SWERVE) {
+			System.out.println("beginning to zero");
+			mode = Mode.ZERO;
+			index = 0;
+			return;
+		}
+		if (mode == Mode.ZERO) {
+			if (aButton) {
+				System.out.println("ahh");
+				if (index == 3) {
+					mode = Mode.SWERVE;
+					zero();
+					return;
+				}
+				index++;
+			}
+			wheels[index].getRotateMotor().set(ControlMode.PercentOutput, xbox.getX(Hand.kLeft) / 3);
+			return;
+		}
 		double y = xbox.getX(Hand.kRight);
 		double x = -xbox.getY(Hand.kRight);
 		if (Math.sqrt(x * x + y * y) > 0.7) {

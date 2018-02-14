@@ -3,6 +3,7 @@ package org.usfirst.frc.team192.robot;
 import org.usfirst.frc.team192.config.Config;
 import org.usfirst.frc.team192.fieldMapping.FieldMapperAccelerometer;
 import org.usfirst.frc.team192.fieldMapping.FieldMapperNavXAccel;
+import org.usfirst.frc.team192.fieldMapping.FieldMapperNavXDisp;
 import org.usfirst.frc.team192.fieldMapping.FieldMapperNavXVel;
 import org.usfirst.frc.team192.swerve.FullSwervePID;
 import org.usfirst.frc.team192.swerve.NavXGyro;
@@ -10,7 +11,6 @@ import org.usfirst.frc.team192.swerve.NavXGyro;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends IterativeRobot {
@@ -21,6 +21,7 @@ public class Robot extends IterativeRobot {
 	private FieldMapperNavXAccel fieldMapperNavXAccel;
 	private FieldMapperNavXVel fieldMapperNavXVel;
 	private FieldMapperAccelerometer fieldMapperRoborio;
+	private FieldMapperNavXDisp fieldMapperNavXDisp;
 
 	@Override
 	public void robotInit() {
@@ -32,6 +33,7 @@ public class Robot extends IterativeRobot {
 		fieldMapperNavXAccel = new FieldMapperNavXAccel(gyro);
 		fieldMapperNavXVel = new FieldMapperNavXVel(gyro);
 		fieldMapperRoborio = new FieldMapperAccelerometer(gyro, new BuiltInAccelerometer());
+		fieldMapperNavXDisp = new FieldMapperNavXDisp(gyro);
 	}
 
 	@Override
@@ -48,14 +50,15 @@ public class Robot extends IterativeRobot {
 		fieldMapperNavXAccel.reset();
 		fieldMapperNavXVel.reset();
 		fieldMapperRoborio.reset();
+		fieldMapperNavXDisp.reset();
 		gyro.resetDisplacement();
 	}
 
 	@Override
 	public void teleopPeriodic() {
 		swerve.updateWithJoystick(input);
-		SmartDashboard.putNumber("X Displacement (gyro displacement)", gyro.getDisplacementX());
-		SmartDashboard.putNumber("Y Displacement (gyro displacement)", gyro.getDisplacementY());
+		SmartDashboard.putNumber("X Displacement (gyro displacement)", fieldMapperNavXDisp.getX());
+		SmartDashboard.putNumber("Y Displacement (gyro displacement)", fieldMapperNavXDisp.getY());
 		SmartDashboard.putNumber("X Displacement (gyro velocity)", fieldMapperNavXVel.getX());
 		SmartDashboard.putNumber("Y Displacement (gyro velocity)", fieldMapperNavXVel.getY());
 		SmartDashboard.putNumber("X Displacement (gyro acceleration)", fieldMapperNavXAccel.getX());
@@ -65,6 +68,7 @@ public class Robot extends IterativeRobot {
 		fieldMapperNavXVel.update();
 		fieldMapperNavXAccel.update();
 		fieldMapperRoborio.update();
+		fieldMapperNavXDisp.update();
 	}
 
 	@Override

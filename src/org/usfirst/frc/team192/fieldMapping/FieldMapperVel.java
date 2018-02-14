@@ -4,6 +4,9 @@ import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 public abstract class FieldMapperVel extends FieldMapperGyro {
 	
+	protected double lastVx;
+	protected double lastVy;
+	
 	public FieldMapperVel(Gyro gyro) {
 		super(gyro);
 		reset();
@@ -21,8 +24,10 @@ public abstract class FieldMapperVel extends FieldMapperGyro {
 	
 	protected void updateVelocity(double vx, double vy) {
 		double dt = getDeltaTime();
-		x += vx * dt;
-		y += vy * dt;
+		x += (vx + lastVx) / 2 * dt;
+		y += (vy + lastVy) / 2 * dt;
+		lastVx = vx;
+		lastVy = vy;
 	}
 }
 
