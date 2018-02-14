@@ -12,7 +12,7 @@ import org.usfirst.frc.team192.networking.NetworkServer;
 public class RemoteVision extends Thread {
 
 	private final int QUALITY = 90;
-	private final int BUFFER_SIZE = 55000;
+	private final int BUFFER_SIZE = 60000;
 	private MatOfInt params;
 
 	private NetworkServer server;
