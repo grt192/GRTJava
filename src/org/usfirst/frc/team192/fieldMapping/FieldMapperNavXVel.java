@@ -6,8 +6,8 @@ public class FieldMapperNavXVel extends FieldMapperVel {
 	
 	protected NavXGyro gyro;
 	
-	public FieldMapperNavXVel(NavXGyro gyro) {
-		super(null);
+	public FieldMapperNavXVel(NavXGyro gyro, double relX, double relY) {
+		super(null, relX, relY);
 		this.gyro = gyro;
 	}
 	

@@ -1,11 +1,11 @@
 package org.usfirst.frc.team192.fieldMapping;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 public abstract class FieldMapperBase implements FieldMapper {
 	protected long lastUpdated;
 	protected double x;
 	protected double y;
+	protected double relX;
+	protected double relY;
 	
 	protected double getDeltaTime() {
 		long now = System.currentTimeMillis();

@@ -8,8 +8,8 @@ public class FieldMapperNavXAccel extends FieldMapperAccel {
 	
 	protected NavXGyro gyro;
 	
-	public FieldMapperNavXAccel(NavXGyro gyro) {
-		super(null);
+	public FieldMapperNavXAccel(NavXGyro gyro, double relX, double relY) {
+		super(null, relX, relY);
 		this.gyro = gyro;
 	}
 	

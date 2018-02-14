@@ -9,7 +9,7 @@ public class FieldMapperEncoder extends FieldMapperVel {
 	private FullSwerve swerve;
 	
 	public FieldMapperEncoder(Gyro gyro, FullSwerve swerve) {
-		super(gyro);
+		super(gyro, 0, 0);
 		this.swerve = swerve;
 	}
 	

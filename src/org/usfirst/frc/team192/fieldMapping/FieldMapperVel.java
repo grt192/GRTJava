@@ -7,8 +7,8 @@ public abstract class FieldMapperVel extends FieldMapperGyro {
 	protected double lastVx;
 	protected double lastVy;
 	
-	public FieldMapperVel(Gyro gyro) {
-		super(gyro);
+	public FieldMapperVel(Gyro gyro, double relX, double relY) {
+		super(gyro, relX, relY);
 		reset();
 	}
 	

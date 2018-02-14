@@ -11,8 +11,8 @@ public abstract class FieldMapperAccel extends FieldMapperGyro {
 	protected double lastAx;
 	protected double lastAy;
 	
-	public FieldMapperAccel(Gyro gyro) {
-		super(gyro);
+	public FieldMapperAccel(Gyro gyro, double relX, double relY) {
+		super(gyro, relX, relY);
 		reset();
 	}
 	
