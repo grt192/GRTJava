@@ -13,10 +13,11 @@ import org.usfirst.frc.team192.mechs.*;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
-
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Encoder;
 public class Teleop {
 	private XboxController xbox;
-	private Linkage linkage;
+	private Elevator elevator;
 	private Climber climber;
 	private Intake intake;
 	private VisionTracking vision;
@@ -24,6 +25,11 @@ public class Teleop {
 	private Point centroid;
 	private PIDController pid;
 	
+	DigitalInput innerLimitSwitch;
+	DigitalInput outerLimitSwitch;
+	Encoder eencoder;
+	private int elevatorPos;
+	private double k;
 	public enum RobotState{
 		NothingState,
 		StartPickupState,
@@ -36,7 +42,7 @@ public class Teleop {
 
 	public Teleop(JoystickInput input) {
 		xbox = input.getXboxController();
-		linkage = new Linkage(new TalonSRX(1));
+		elevator = new Elevator(new TalonSRX(1));
 		climber = new Climber(new TalonSRX(8));
 		intake = new Intake(new TalonSRX(0), new TalonSRX(2), new TalonSRX(3)); //add talon numbers for this
 		is_vision_toggled = false;
@@ -61,10 +67,12 @@ public class Teleop {
 	
 	public void init() {
 		//start swerve thread
+		elevatorPos = elevator.getElevatorPosition();
+		eencoder = new Encoder(0, 1, false, Encoder.EncodingType.k4X); // 0 and 1 are digital input ports
+																	  //false: don't invert counting direction
 	}
 	
 	public void periodic() {
-		
 		if (xbox.getStartButton()) {
 			visionToggleOn();
 		}
@@ -72,13 +80,13 @@ public class Teleop {
 			visionToggleOff();
 		}
 		if(xbox.getAButtonPressed()) {
-			switchLinkagePlacement();
+			switchElevatorPlacement();
 		}
 		if(xbox.getBButtonPressed()) {
-			scaleLinkagePlacement();
+			scaleElevatorPlacement();
 		}
 		if(xbox.getYButtonPressed()) {
-			groundLinkagePlacement();
+			groundElevatorPlacement();
 		}
 		if(xbox.getXButtonPressed()) {
 			climb();
@@ -95,7 +103,7 @@ public class Teleop {
 			case NothingState:
 				break;
 			case StartPickupState:
-				groundLinkagePlacement();
+				groundElevatorPlacement();
 				intakeDown();
 				intake();
 				//visionon
@@ -134,16 +142,39 @@ public class Teleop {
 		System.out.println("vision toggle off");
 	}
 	
-	public void switchLinkagePlacement() {
-		linkage.moveToSwitchPosition();
+	public void switchElevatorPlacement() {
+		elevator.moveToSwitchPosition();
+		while(outerLimitSwitch.get()) {
+			if(Math.abs(eencoder.get()) > k) {
+				if (eencoder.get() < k) {
+					elevatorPos--;
+				}else if (eencoder.get() > k) {
+					elevatorPos++;
+				}
+			}
+		}
 	}
 	
-	public void scaleLinkagePlacement() {
-		linkage.moveToScalePosition();
+	public void scaleElevatorPlacement() {
+		elevator.moveToScalePosition();
+		while (outerLimitSwitch.get()) {
+			if (Math.abs(elevatorPos - 2) > 1) {
+				elevatorPos++;
+			} else if(eencoder.get() > k /*directional velocity */){
+				elevatorPos++;
+			}
+		}
 	}
 	
-	public void groundLinkagePlacement() {
-		linkage.moveToGroundPosition();
+	public void groundElevatorPlacement() {
+		elevator.moveToGroundPosition();
+		while(innerLimitSwitch.get()) {
+			if(elevatorPos >= 1 && eencoder.get() < k) {
+				elevatorPos--;
+			}else if(eencoder.get() < k /*directional velocity */) {
+				elevatorPos--;
+			}
+		}
 	}
 	
 	public void intakeDown() {
