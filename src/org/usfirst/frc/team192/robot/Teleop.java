@@ -145,10 +145,10 @@ public class Teleop {
 	public void switchElevatorPlacement() {
 		elevator.moveToSwitchPosition();
 		while(outerLimitSwitch.get()) {
-			if(Math.abs(eencoder.get()) > k) {
-				if (eencoder.get() < k) {
+			if(Math.abs(eencoder.get()) > k) /*speed check*/ {
+				if (eencoder.get() < k) /*direction check*/{
 					elevatorPos--;
-				}else if (eencoder.get() > k) {
+				}else if (eencoder.get() > k) /*direction check*/ {
 					elevatorPos++;
 				}
 			}
@@ -158,9 +158,9 @@ public class Teleop {
 	public void scaleElevatorPlacement() {
 		elevator.moveToScalePosition();
 		while (outerLimitSwitch.get()) {
-			if (Math.abs(elevatorPos - 2) > 1) {
+			if (Math.abs(elevatorPos - 2) > 1) /*distance (how many limit switches should be passed) check*/{
 				elevatorPos++;
-			} else if(eencoder.get() > k /*directional velocity */){
+			} else if(eencoder.get() > k /*directional velocity check*/){
 				elevatorPos++;
 			}
 		}
@@ -171,7 +171,7 @@ public class Teleop {
 		while(innerLimitSwitch.get()) {
 			if(elevatorPos >= 1 && eencoder.get() < k) {
 				elevatorPos--;
-			}else if(eencoder.get() < k /*directional velocity */) {
+			}else if(eencoder.get() < k /*directional velocity check*/) {
 				elevatorPos--;
 			}
 		}
