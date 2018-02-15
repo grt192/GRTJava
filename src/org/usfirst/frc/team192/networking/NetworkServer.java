@@ -37,6 +37,7 @@ public class NetworkServer extends Thread {
 				clientAddress = receive.getAddress();
 				clientPort = receive.getPort();
 				connected = true;
+				System.out.println("Connected to " + clientAddress.getHostAddress() + ":" + clientPort);
 			}
 		}
 	}

@@ -9,22 +9,24 @@ import org.opencv.core.Point;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.usfirst.frc.team192.networking.NetworkServer;
 
-public class RemoteVision extends Thread {
+class RemoteVision extends Thread {
 
 	private final int QUALITY = 90;
 	private final int BUFFER_SIZE = 60000;
 	private MatOfInt params;
 
+	private int port;
 	private NetworkServer server;
 	private Point point;
 
 	private long timeOfLastData;
 	private byte[] buffer;
 
-	public RemoteVision() {
+	public RemoteVision(int port) {
 		point = new Point();
 		params = new MatOfInt(Imgcodecs.IMWRITE_JPEG_QUALITY, 0);
 		buffer = new byte[BUFFER_SIZE];
+		this.port = port;
 		start();
 	}
 
@@ -48,7 +50,7 @@ public class RemoteVision extends Thread {
 	}
 
 	private void initialize() throws IOException, InterruptedException {
-		server = new NetworkServer(1920, "Vision");
+		server = new NetworkServer(port, "Vision");
 		server.waitUntilConnected();
 	}
 
@@ -62,6 +64,7 @@ public class RemoteVision extends Thread {
 				continue;
 			}
 			point.set(data);
+			System.out.println(point);
 			timeOfLastData = System.currentTimeMillis();
 		}
 	}
@@ -79,6 +82,7 @@ public class RemoteVision extends Thread {
 			Imgcodecs.imencode(".jpeg", img, buf, params);
 		}
 		buf.get(0, 0, buffer);
+		buf.release();
 		try {
 			server.sendBytes(buffer);
 		} catch (IOException e) {
