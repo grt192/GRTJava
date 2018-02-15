@@ -5,6 +5,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
+import org.usfirst.frc.team192.vision.VisionTracking.Mode;
 
 public class Tester /*implements Runnable*/ {
 
@@ -20,7 +21,7 @@ public class Tester /*implements Runnable*/ {
 	    		cap.read(image);
 	            im.showImage(image);
 	            VisionTracking code = new VisionTracking();
-	            Mat maskedImage = code.maskImageForTape(image);
+	            Mat maskedImage = code.maskImageForTape(Mode.CUBE, image);
 	            Mat displayImage = new Mat();
 	            
 	            Imgproc.cvtColor(maskedImage, displayImage, Imgproc.COLOR_GRAY2BGR);

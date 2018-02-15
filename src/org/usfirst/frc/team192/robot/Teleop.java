@@ -1,7 +1,9 @@
 package org.usfirst.frc.team192.robot;
 
-import org.usfirst.frc.team192.robot.JoystickInput;
+import org.usfirst.frc.team192.vision.ImageThread;
 import org.usfirst.frc.team192.vision.VisionTracking;
+import org.usfirst.frc.team192.robot.VisionPID;
+import org.usfirst.frc.team192.swerve.FullSwervePID;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -12,66 +14,166 @@ import org.usfirst.frc.team192.mechs.*;
 
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.GyroBase;
 
 public class Teleop {
 	private XboxController xbox;
 	private Linkage linkage;
 	private Climber climber;
 	private Intake intake;
-	private VisionTracking vision;
+	private ImageThread img;
 	private Boolean is_vision_toggled;
 	private Point centroid;
-	private PIDController pid;
+	private VisionPID pid;
+	private FullSwervePID swerve;
+	
+	private boolean zeroing;
+	private int index;
+	
+	public enum RobotState{
+		NothingState,
+		StartPickupState,
+		MovingToBlock,
+		PickingUpBlock,
+		EndPickup
+	}
 
-	public Teleop(JoystickInput input) {
+	private RobotState pickupState = RobotState.NothingState;
+
+	public Teleop(VisionTracking vision, FullSwervePID swerve, JoystickInput input, GyroBase gyro) {
 		xbox = input.getXboxController();
 		linkage = new Linkage(new TalonSRX(1));
 		climber = new Climber(new TalonSRX(8));
 		intake = new Intake(new TalonSRX(0), new TalonSRX(2), new TalonSRX(3)); //add talon numbers for this
 		is_vision_toggled = false;
 		centroid = new Point();
-		vision = new VisionTracking();
+		pid = new VisionPID(vision, swerve, gyro);
+		this.swerve = swerve;
 		init();
 		
-		double P = 0.02;
-		double I = 0.0001;
-		double D = 0.5;
-		double f = 0.0;
-		
-//		pid = new PIDController(P, I, D, f, gyro, this);
-//		pid.setContinuous();
-//		pid.setInputRange(0.0, 360.0);
-//		pid.setAbsoluteTolerance(3.0);
-//		pid.setOutputRange(-1.0, 1.0);
-//		pid.reset();
-//		pid.setSetpoint(0.0);
+		this.zeroing = false;
 
 	}
 	
 	public void init() {
 		//start swerve thread
+		pid.PIDEnable();
 	}
 	
 	public void periodic() {
+		
+		if (!zeroing && xbox.getAButton() && xbox.getXButton()) {
+			zeroing = true;
+			index = 0;
+			System.out.println("zeroing");
+			return;
+		}
+		
+		if (zeroing && xbox.getBButtonPressed()) {
+			index++;
+			System.out.println("changing wheels");
+			if (index == 4) {
+				zeroing = false;
+				swerve.zero();
+				return;
+			}
+		}
+		
+		if (zeroing) {
+			swerve.zeroWithInputs(index, xbox);
+			return;
+		}
+		
+		if (xbox.getYButtonPressed()) {
+			pid.PIDEnable();
+		}
+		
+		double rotateRight = Math.pow(xbox.getTriggerAxis(Hand.kRight), 2);
+		double rotateLeft = Math.pow(xbox.getTriggerAxis(Hand.kLeft), 2);
+		double howMuchToRotate = rotateRight - rotateLeft;
+		if (xbox.getYButton()) {
+			//System.out.println("b button");
+			pid.update();
+			pid.updatePID();
+			
+		} else if (Math.abs(howMuchToRotate) > 0.05) {
+			// System.out.println("trigger: " + howMuchToRotate / 2);
+			swerve.setWithAngularVelocity(0, 0, howMuchToRotate / 2);
+		} else {
+			swerve.setWithAngularVelocity(0, 0, 0);
+		}
+		swerve.updateAutonomous();
+		
 		if (xbox.getStartButton()) {
 			visionToggleOn();
 		}
-		else if (xbox.getBackButtonPressed()) {
+		if (xbox.getBackButtonPressed()) {
 			visionToggleOff();
 		}
-		else if(xbox.getAButtonPressed()) {
+		if(xbox.getAButtonPressed()) {
 			switchLinkagePlacement();
 		}
-		else if(xbox.getBButtonPressed()) {
-			scaleLinkagePlacement();
+		if(xbox.getBButtonPressed()) {
+			//scaleLinkagePlacement();
 		}
-		else if(xbox.getYButtonPressed()) {
+		if(xbox.getYButtonPressed()) {
 			groundLinkagePlacement();
-		}else if(xbox.getXButtonPressed()) {
-			climb();
-		}else if(xbox.getXButtonReleased()) {
-			stopClimb();
 		}
+		if(xbox.getXButtonPressed()) {
+			//climb();
+		}
+		if(xbox.getXButtonReleased()) {
+			//stopClimb();
+		}if(xbox.getTriggerAxis(Hand.kRight) > 0) {
+			// System.out.println(Double.toString(xbox.getTriggerAxis(Hand.kRight)));						
+		}
+		if(xbox.getAButtonPressed()) {
+			this.pickupState = RobotState.StartPickupState;
+			
+			switch(this.pickupState) {
+			case NothingState:
+				break;
+			case StartPickupState:
+				groundLinkagePlacement();
+				intakeDown();
+				intake();
+				//visionon
+				//getvisiondata
+				
+//				if(getvisiondata) {
+					this.pickupState = RobotState.MovingToBlock;
+//				}
+			case MovingToBlock:
+//				getvisiondata
+//				if (visiondatareturn == movingorsomething) { PID?
+//					x = new pseudoJoystick
+//					getPseudoJoystick(visioninfo, x)
+//					sendtoswerve(joystick)
+//				}else if (visiondatareturn = reachedDestination){
+//				this.pickupState = RobotState.PickingUpBlock;
+//				}
+			case PickingUpBlock:
+				if (intakeVision()) {
+					this.pickupState = RobotState.EndPickup;
+				}
+			case EndPickup:
+//				visionoff;
+			}
+			
+		}
+		
+		/*
+		if (xbox.getAButton()) {
+			SmartDashboard.putNumber("blockLocation", SmartDashboard.getNumber("blockLocation", 320) + 1);
+		}
+		if (xbox.getBButton()) {
+			SmartDashboard.putNumber("blockLocation", SmartDashboard.getNumber("blockLocation", 320) - 1);
+		}
+		*/
+
 	}
 	
 	public void visionToggleOn() {
@@ -96,12 +198,20 @@ public class Teleop {
 		linkage.moveToGroundPosition();
 	}
 	
+	public void intakeDown() {
+		intake.rollDown();
+	}
+	
+	public void intakeUp() {
+		intake.rollUp();
+	}
+	
 	public void intake() {
-		intake.intake();
+		intake.takeIn();
 	}
 	
 	public void reverseIntake() {
-		intake.reverseIntake();
+		intake.reverse();
 	}
 	
 	public void climb() {
@@ -112,13 +222,11 @@ public class Teleop {
 		climber.stopClimb();
 	}
 	
-	public void blockVisionPickup() {
-		
-		
-	}
-	
-	public void exchangeVision() {
-		
+	public boolean exchangeVision() { //true if succeed, false if fails
+		return false;
 	}
 
+	public boolean intakeVision() { //true if succeed, false if fails
+		return false;
+	}
 }

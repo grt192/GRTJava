@@ -7,11 +7,10 @@ import java.util.*;
 
 public class VisionTracking {
 	
-	protected org.opencv.core.Point centroid;
-	protected int width, height;
-	protected Mode visionMode;
+	protected static org.opencv.core.Point centroid;
+	protected static int width, height;
 	
-	protected enum Mode {
+	public enum Mode {
 		CUBE, TAPE, EXCHANGE;
 	}
 	
@@ -22,24 +21,16 @@ public class VisionTracking {
 	public int getArea() {
 		return width * height;
 	}
-	
-	public void setVisionMode(int x) {
-		if (x == 0)
-			visionMode = Mode.CUBE;
-		else if (x == 1)
-			visionMode = Mode.TAPE;
-		else if (x == 2)
-			visionMode = Mode.EXCHANGE;		
-	}
     
-    public Mat maskImageForTape(Mat img) 
+    public static Mat maskImageForTape(Mode visionMode, Mat img) 
     {
-    	Scalar lower = new Scalar(0, 0, 0);
-    	Scalar upper = new Scalar(0, 0, 0);
+    		Imgproc.cvtColor(img, img, Imgproc.COLOR_BGR2HSV);
+    		Scalar lower = new Scalar(0, 0, 0);
+    		Scalar upper = new Scalar(0, 0, 0);
     	
         if (visionMode == Mode.CUBE) {
-        	lower = new Scalar(100, 180, 170);
-    		upper = new Scalar(150, 255, 215);
+        	lower = new Scalar(29, 30, 170);
+    		upper = new Scalar(90, 160, 300);
         }
         else if (visionMode == Mode.TAPE) {
         	lower = new Scalar(0, 0, 0);
@@ -49,23 +40,19 @@ public class VisionTracking {
         	lower = new Scalar(0, 0, 170);
         	upper = new Scalar(60, 60, 255);
         }
-        
         Core.inRange(img, lower, upper, img);         
         return img;
     }
     
-    public Mat findContoursOfTape(Mat img) 
+    
+    public static Mat findContoursOfTape(Mat img) 
     {	
-    		Mat imgIn32SC1 = new Mat();
-    		Mat binary = new Mat();
-    		Mat edges = new Mat();
-    		Mat blurred = new Mat();
-    		Imgproc.cvtColor(img, imgIn32SC1, Imgproc.COLOR_BGR2GRAY);
-    		Imgproc.threshold(imgIn32SC1,  binary,  100,  255,  Imgproc.THRESH_BINARY);
+    		Imgproc.cvtColor(img, img, Imgproc.COLOR_BGR2GRAY);
+    		Imgproc.threshold(img,  img,  100,  255,  Imgproc.THRESH_BINARY);
     		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
-    		Imgproc.blur(binary,  blurred,  new Size(3,3));
-    		Imgproc.Canny(blurred, edges, 300, 600, 3, true);
-    		Imgproc.findContours(edges, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+    		Imgproc.blur(img,  img,  new Size(3,3));
+    		Imgproc.Canny(img, img, 300, 600, 3, true);
+    		Imgproc.findContours(img, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
     		
     		Scalar x = new Scalar(255, 0, 0, 255);
     		org.opencv.core.Point start = new org.opencv.core.Point(500,500);
@@ -90,11 +77,11 @@ public class VisionTracking {
     	
     		width = (int) (end.x - start.x);
     		height = (int) (end.y - start.y);
-    		Imgproc.rectangle(edges, start, end, x, 3); 		
-    		return edges;   		
+    		Imgproc.rectangle(img, start, end, x, 3); 		
+    		return img;   		
     }
     
-    public org.opencv.core.Point findCentroid(Mat img) 
+    public static org.opencv.core.Point findCentroid(Mat img) 
     {   
     		Moments moments = Imgproc.moments(img); 
     		org.opencv.core.Point centroid2 = new org.opencv.core.Point();
@@ -104,4 +91,3 @@ public class VisionTracking {
     		return centroid2;
     }
 }
-
