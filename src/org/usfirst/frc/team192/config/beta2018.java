@@ -14,16 +14,16 @@
 //
 // fl_rotate_port=1
 // fl_drive_port=2
-// fl_offset=-321
+// fl_offset=-212
 // fr_rotate_port=15
 // fr_drive_port=16
-// fr_offset=820
+// fr_offset=-254
 // bl_rotate_port=6
 // bl_drive_port=7
-// bl_offset=-448
+// bl_offset=-691
 // br_rotate_port=10
 // br_drive_port=11
-// br_offset=91
+// br_offset=8
 //
 // ticks_per_rotation=1024
 // name=beta2018

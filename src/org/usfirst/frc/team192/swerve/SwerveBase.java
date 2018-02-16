@@ -10,7 +10,7 @@ public abstract class SwerveBase {
 	protected final double robotWidth;
 	protected final double robotHeight;
 
-	protected final double SPEED_SCALE = 1.0 / 3;
+	protected final double SPEED_SCALE = 1.0 / 2;
 
 	public SwerveBase() {
 		wheels = new Wheel[4];
