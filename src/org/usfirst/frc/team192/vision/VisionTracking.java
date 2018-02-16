@@ -55,7 +55,7 @@ public class VisionTracking {
     		Imgproc.findContours(img, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
     		
     		Scalar x = new Scalar(255, 0, 0, 255);
-    		org.opencv.core.Point start = new org.opencv.core.Point(500,500);
+    		org.opencv.core.Point start = new org.opencv.core.Point(640,480);
     		org.opencv.core.Point end = new org.opencv.core.Point(0,0);
     		
     		for (int i=0; i<contours.size(); i++) {
@@ -64,7 +64,7 @@ public class VisionTracking {
         		Imgproc.approxPolyDP(contour2f, contour2f, approxDistance, true);
         		MatOfPoint points = new MatOfPoint(contour2f.toArray());
         		Rect rect = Imgproc.boundingRect(points);
-        		if (rect.width<10 || rect.height<10) {
+        		if (rect.width<35 || rect.height<35) {
         			continue;
         		}
         		else {
@@ -81,6 +81,58 @@ public class VisionTracking {
     		return img;   		
     }
     
+    /*//gets contours and finds extreme points
+    //using logic statements, determines whether to rotate left, right, or well-aligned for pickup
+    //return -1 for rotate left, 0 for aligned, 1 for rotate right
+    public static int processTopDownVision(Mat img) {
+    		Imgproc.cvtColor(img, img, Imgproc.COLOR_BGR2GRAY);
+		Imgproc.threshold(img,  img,  100,  255,  Imgproc.THRESH_BINARY);
+		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+		Imgproc.blur(img,  img,  new Size(3,3));
+		Imgproc.Canny(img, img, 300, 600, 3, true);
+		Imgproc.findContours(img, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+		
+		Scalar x = new Scalar(255, 0, 0, 255);
+		org.opencv.core.Point start = new org.opencv.core.Point(500,500);
+		org.opencv.core.Point end = new org.opencv.core.Point(0,0);
+		
+		int xMin = 640;
+		int yMin = 480;
+		int xMax = 0; 
+		int yMax = 0;
+		
+		for (int i=0; i<contours.size(); i++) {
+			MatOfPoint2f contour2f = new MatOfPoint2f(contours.get(i).toArray());
+			double approxDistance = Imgproc.arcLength(contour2f, true)*0.02;
+			Imgproc.approxPolyDP(contour2f, contour2f, approxDistance, true);
+			MatOfPoint points = new MatOfPoint(contour2f.toArray());
+			
+			int xVal = contours.get(i).x;
+			int yVal = contours.get(i).y;
+			
+			if (xVal < xMin) xMin = xVal;
+			else if (xVal > xMax) xMax = xVal;
+			if (yVal < yMin) yMin = yVal;
+			else if (yVal > yMax) yMax = yVal;
+			
+			org.opencv.core.Point a = new org.opencv.core.Point();
+			org.opencv.core.Point b = new org.opencv.core.Point();
+			org.opencv.core.Point c = new org.opencv.core.Point();
+			org.opencv.core.Point d = new org.opencv.core.Point();
+			
+			
+			
+		}
+		
+		
+    		//find extreme points of contours and assign points
+    		//A = most left of 2 upper ys
+    		//B = most right of 2 upper ys
+    		//C = most right of 2 lower ys
+    		//D = most left of 2 lower ys
+    		return 0;
+    }*/
+   
     public static org.opencv.core.Point findCentroid(Mat img) 
     {   
     		Moments moments = Imgproc.moments(img); 
