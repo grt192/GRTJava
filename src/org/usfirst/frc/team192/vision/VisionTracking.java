@@ -1,27 +1,31 @@
 package org.usfirst.frc.team192.vision;
 
-import org.opencv.core.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
-import java.util.*;
 
 public class VisionTracking {
-	
-	protected static org.opencv.core.Point centroid;
+
 	protected static int width, height;
-	
+	protected static org.opencv.core.Point centroid;
+
 	public enum Mode {
 		CUBE, TAPE, EXCHANGE;
 	}
-	
-	public org.opencv.core.Point getCenter() {
-		return centroid;
-	}
-	
+
 	public int getArea() {
 		return width * height;
 	}
-    
+
     public static Mat maskImageForTape(Mode visionMode, Mat img) 
     {
     		Imgproc.cvtColor(img, img, Imgproc.COLOR_BGR2HSV);
