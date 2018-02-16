@@ -5,10 +5,11 @@ import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.Videoio;
+import org.usfirst.frc.team192.vision.VisionThread;
 
 import edu.wpi.first.wpilibj.Timer;
 
-public class RemoteVisionThread extends Thread {
+public class RemoteVisionThread extends VisionThread {
 
 	private RemoteVision vision;
 	private VideoCapture cap;
@@ -43,12 +44,9 @@ public class RemoteVisionThread extends Thread {
 		return vision.getCenter() != null;
 	}
 
-	public Point getTarget() {
-		Point p = vision.getCenter();
-		if (p == null)
-			return CENTER;
-		else
-			return p;
+	@Override
+	public Point getCenter() {
+		return vision.getCenter();
 	}
 
 	public void pause() {

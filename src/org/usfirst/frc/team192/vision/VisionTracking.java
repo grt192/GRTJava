@@ -15,15 +15,10 @@ import org.opencv.imgproc.Moments;
 
 public class VisionTracking {
 
-	protected static org.opencv.core.Point centroid;
 	protected static int width, height;
 
 	public enum Mode {
 		CUBE, TAPE, EXCHANGE;
-	}
-
-	public org.opencv.core.Point getCenter() {
-		return centroid;
 	}
 
 	public int getArea() {
@@ -93,7 +88,6 @@ public class VisionTracking {
 		org.opencv.core.Point centroid2 = new org.opencv.core.Point();
 		centroid2.x = (int) (moments.get_m10() / moments.get_m00());
 		centroid2.y = (int) (moments.get_m01() / moments.get_m00());
-		centroid = centroid2;
 		return centroid2;
 	}
 }
