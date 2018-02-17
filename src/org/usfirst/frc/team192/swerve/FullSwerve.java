@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class FullSwerve extends SwerveBase {
 
-	private GyroBase gyro;
+	protected GyroBase gyro;
 	private final double MAX_JOYSTICK_VALUE = Math.sqrt(2);
 	private final double MAX_ROTATE_VALUE = 1;
 	private double ROTATE_SCALE;
