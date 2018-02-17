@@ -5,20 +5,18 @@ import org.usfirst.frc.team192.swerve.FullSwervePID;
 import org.usfirst.frc.team192.swerve.NavXGyro;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 public class Robot extends IterativeRobot {
 
-	private NavXGyro gyro;
+	private Gyro gyro;
 	private FullSwervePID swerve;
 	private JoystickInput input;
 
 	@Override
 	public void robotInit() {
 		Config.start();
-		gyro = new NavXGyro(SPI.Port.kMXP);
-		gyro.resetDisplacement();
+		gyro = new NavXGyro();
 		swerve = new FullSwervePID(gyro);
 		input = new JoystickInput(0, 1);
 
@@ -41,8 +39,6 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		swerve.updateWithJoystick(input);
-		SmartDashboard.putNumber("X Displacement", gyro.getDisplacementX());
-		SmartDashboard.putNumber("Y Displacement", gyro.getDisplacementY());
 	}
 
 	@Override
