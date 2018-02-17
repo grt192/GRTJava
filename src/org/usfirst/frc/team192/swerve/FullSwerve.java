@@ -10,9 +10,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class FullSwerve extends SwerveBase {
 
 	private Gyro gyro;
-	private final double MAX_JOYSTICK_VALUE = Math.sqrt(2);
-	private final double MAX_ROTATE_VALUE = 1;
-	private double ROTATE_SCALE;
 
 	private final double RADIUS;
 	private final double WHEEL_ANGLE;
@@ -22,7 +19,6 @@ public class FullSwerve extends SwerveBase {
 		this.gyro = gyro;
 		RADIUS = Math.sqrt(robotWidth * robotWidth + robotHeight * robotHeight) / 2;
 		WHEEL_ANGLE = Math.atan2(robotWidth, robotHeight);
-		ROTATE_SCALE = (1 - SPEED_SCALE * MAX_JOYSTICK_VALUE) / (MAX_ROTATE_VALUE * RADIUS);
 		zero();
 	}
 
@@ -38,12 +34,13 @@ public class FullSwerve extends SwerveBase {
 	protected void changeMotors(double rv, double vx, double vy) {
 		double currentAngle = Math.toRadians(gyro.getAngle());
 		SmartDashboard.putNumber("gyro", currentAngle);
-		rv *= ROTATE_SCALE * -1;
-		vx *= SPEED_SCALE;
-		vy *= SPEED_SCALE;
+		rv *= -1;
 		SmartDashboard.putNumber("rv", rv);
 		SmartDashboard.putNumber("vx", vx);
 		SmartDashboard.putNumber("vy", vy);
+		double[] wheelSpeeds = new double[4];
+		double[] wheelAngles = new double[4];
+		double maxSpeed = 0;
 		for (int i = 0; i < 4; i++) {
 			double wheelAngle = getRelativeWheelAngle(i);
 			wheelAngle += currentAngle;
@@ -54,12 +51,20 @@ public class FullSwerve extends SwerveBase {
 			double wheelTheta = Math.atan2(actualvy, actualvx);
 			double speed = Math.sqrt(actualvx * actualvx + actualvy * actualvy);
 			double targetPosition = wheelTheta - currentAngle;
-			if (speed > 0.1) {
-				wheels[i].setDriveSpeed(speed);
-				SmartDashboard.putNumber("drive speed " + i, speed);
-				wheels[i].setTargetPosition(targetPosition);
-				SmartDashboard.putNumber("target position " + i, targetPosition);
-			} else {
+			wheelSpeeds[i] = speed;
+			wheelAngles[i] = targetPosition;
+			maxSpeed = Math.max(maxSpeed, speed);
+		}
+		if (maxSpeed > 0.1) {
+			double scale = 1 / Math.max(1, maxSpeed);
+			for (int i = 0; i < 4; i++) {
+				wheels[i].setDriveSpeed(scale * wheelSpeeds[i]);
+				SmartDashboard.putNumber("drive speed " + i, scale * wheelSpeeds[i]);
+				wheels[i].setTargetPosition(wheelAngles[i]);
+				SmartDashboard.putNumber("wheel angle  " + i, wheelAngles[i]);
+			}
+		} else {
+			for (int i = 0; i < 4; i++) {
 				wheels[i].setDriveSpeed(0);
 				SmartDashboard.putNumber("drive speed " + i, 0);
 			}
