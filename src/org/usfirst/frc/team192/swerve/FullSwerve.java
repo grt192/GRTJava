@@ -13,12 +13,14 @@ public class FullSwerve extends SwerveBase {
 
 	private final double RADIUS;
 	private final double WHEEL_ANGLE;
+	private final double ROTATE_SCALE;
 
 	public FullSwerve(Gyro gyro) {
 		super();
 		this.gyro = gyro;
 		RADIUS = Math.sqrt(robotWidth * robotWidth + robotHeight * robotHeight) / 2;
 		WHEEL_ANGLE = Math.atan2(robotWidth, robotHeight);
+		ROTATE_SCALE = 1 / RADIUS;
 		zero();
 	}
 
@@ -34,7 +36,7 @@ public class FullSwerve extends SwerveBase {
 	protected void changeMotors(double rv, double vx, double vy) {
 		double currentAngle = Math.toRadians(gyro.getAngle());
 		SmartDashboard.putNumber("gyro", currentAngle);
-		rv *= -1;
+		rv *= -1 * ROTATE_SCALE;
 		SmartDashboard.putNumber("rv", rv);
 		SmartDashboard.putNumber("vx", vx);
 		SmartDashboard.putNumber("vy", vy);
