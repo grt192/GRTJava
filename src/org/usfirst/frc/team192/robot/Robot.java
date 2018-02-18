@@ -2,11 +2,9 @@ package org.usfirst.frc.team192.robot;
 
 import org.usfirst.frc.team192.config.Config;
 import org.usfirst.frc.team192.swerve.FullSwervePID;
-import org.usfirst.frc.team192.vision.ImageThread;
-import org.usfirst.frc.team192.vision.Imshow;
-import org.usfirst.frc.team192.vision.VisionThread;
 import org.usfirst.frc.team192.swerve.NavXGyro;
-
+import org.usfirst.frc.team192.vision.VisionThread;
+import org.usfirst.frc.team192.vision.nn.RemoteVisionThread;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
@@ -17,9 +15,6 @@ public class Robot extends IterativeRobot {
 	private FullSwervePID swerve;
 	private JoystickInput input;
 	private VisionThread vision;
-	private Autonomous auto;
-	private Teleop teleop;
-	private Imshow imshow;
 
 	@Override
 	public void robotInit() {
@@ -27,11 +22,8 @@ public class Robot extends IterativeRobot {
 		gyro = new NavXGyro();
 		swerve = new FullSwervePID(gyro);
 		input = new JoystickInput(0, 1);
-		vision = new ImageThread();
+		vision = new RemoteVisionThread();
 		vision.start();
-
-		auto = new Autonomous(swerve);
-		teleop = new Teleop(vision, swerve, input, gyro);
 	}
 
 	@Override
@@ -44,14 +36,17 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void teleopInit() {
+		swerve.enable();
 	}
 
 	@Override
 	public void teleopPeriodic() {
+		swerve.updateWithJoystick(input);
 	}
 
 	@Override
 	public void disabledInit() {
+		swerve.disable();
 	}
 
 	@Override
