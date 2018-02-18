@@ -5,14 +5,15 @@ import org.usfirst.frc.team192.swerve.FullSwervePID;
 import org.usfirst.frc.team192.vision.ImageThread;
 import org.usfirst.frc.team192.vision.Imshow;
 import org.usfirst.frc.team192.vision.VisionThread;
+import org.usfirst.frc.team192.swerve.NavXGyro;
 
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
-import edu.wpi.first.wpilibj.GyroBase;
+
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 public class Robot extends IterativeRobot {
 
-	private GyroBase gyro;
+	private Gyro gyro;
 	private FullSwervePID swerve;
 	private JoystickInput input;
 	private VisionThread vision;
@@ -23,7 +24,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		Config.start();
-		gyro = new ADXRS450_Gyro();
+		gyro = new NavXGyro();
 		swerve = new FullSwervePID(gyro);
 		input = new JoystickInput(0, 1);
 		vision = new ImageThread();

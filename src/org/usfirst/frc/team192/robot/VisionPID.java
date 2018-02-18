@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class VisionPID implements PIDOutput, PIDSource {
@@ -17,7 +18,7 @@ public class VisionPID implements PIDOutput, PIDSource {
 	private VisionThread vision;
 	boolean changeoutput;
 	boolean runforward;
-	private GyroBase gyro;
+	private Gyro gyro;
 
 	private org.opencv.core.Point CAMCENTER;
 	private final int CAMERA_WIDTH = 640;
@@ -28,14 +29,14 @@ public class VisionPID implements PIDOutput, PIDSource {
 	private double initd;
 	private double initf;
 
-	public VisionPID(VisionThread vision, FullSwervePID swerve, GyroBase gyro) {
+	public VisionPID(VisionThread vision, FullSwervePID swerve, Gyro gyro2) {
 		runforward = false;
 		CAMCENTER = new org.opencv.core.Point();
 		CAMCENTER.x = CAMERA_WIDTH / 2;
 		CAMCENTER.y = CAMERA_HEIGHT / 2;
 		this.swerve = swerve;
 		this.vision = vision;
-		this.gyro = gyro;
+		this.gyro = gyro2;
 
 		initp = 0.003;
 		initi = 0.0;

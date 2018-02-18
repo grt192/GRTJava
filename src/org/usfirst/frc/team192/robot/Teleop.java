@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.GyroBase;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 public class Teleop {
 	private XboxController xbox;
@@ -32,7 +33,7 @@ public class Teleop {
 
 	private RobotState pickupState = RobotState.NothingState;
 
-	public Teleop(VisionThread vision, FullSwervePID swerve, JoystickInput input, GyroBase gyro) {
+	public Teleop(VisionThread vision, FullSwervePID swerve, JoystickInput input, Gyro gyro) {
 		xbox = input.getXboxController();
 		linkage = new Linkage(new TalonSRX(1));
 		climber = new Climber(new TalonSRX(8));

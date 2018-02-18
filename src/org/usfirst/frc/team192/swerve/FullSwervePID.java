@@ -5,10 +5,11 @@ import org.usfirst.frc.team192.robot.JoystickInput;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
-import edu.wpi.first.wpilibj.GyroBase;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
+import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class FullSwervePID extends FullSwerve implements PIDOutput {
@@ -23,7 +24,7 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 	private double vy;
 	private double rv;
 
-	public FullSwervePID(GyroBase gyro) {
+	public FullSwervePID(Gyro gyro) {
 		super(gyro);
 		double p = SmartDashboard.getNumber("p", 0.015);
 		double i = SmartDashboard.getNumber("i", 0.00);
@@ -33,9 +34,10 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 		SmartDashboard.putNumber("i", i);
 		SmartDashboard.putNumber("d", d);
 		SmartDashboard.putNumber("f", f);
-		pid = new PIDController(p, i, d, f, gyro, this, 0.01);
-		pid.setInputRange(0.0, 360.0);
+
+		pid = new PIDController(p, i, d, f, (PIDSource) gyro, this, 0.01);
 		pid.setContinuous();
+		pid.setInputRange(0.0, 360.0);
 		pid.setAbsoluteTolerance(3.0);
 		pid.setOutputRange(-1.0, 1.0);
 		pid.reset();

@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 class Wheel {
 
 	private final double TICKS_PER_ROTATION;
-	private final int OFFSET;
+	private int OFFSET;
 	private final double DRIVE_TICKS_TO_MPS;
 
 	private static final double TWO_PI = Math.PI * 2;
@@ -83,7 +83,7 @@ class Wheel {
 	}
 
 	public void zero() {
-		rotateMotor.getSensorCollection().setQuadraturePosition(0, 0);
+		OFFSET = rotateMotor.getSelectedSensorPosition(0);
 	}
 
 	public void disable() {
