@@ -1,8 +1,10 @@
 package org.usfirst.frc.team192.robot;
 
+import java.awt.Point;
+
 import org.usfirst.frc.team192.mechs.Climber;
+import org.usfirst.frc.team192.mechs.Elevator;
 import org.usfirst.frc.team192.mechs.Intake;
-import org.usfirst.frc.team192.mechs.Linkage;
 import org.usfirst.frc.team192.swerve.FullSwervePID;
 import org.usfirst.frc.team192.vision.ImageThread;
 import org.usfirst.frc.team192.vision.VisionThread;
@@ -10,9 +12,12 @@ import org.usfirst.frc.team192.vision.VisionThread;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.GyroBase;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.XboxController;
 public class Teleop {
 	private XboxController xbox;
@@ -26,12 +31,12 @@ public class Teleop {
 	DigitalInput outerLimitSwitch;
 	Encoder eencoder;
   
-  private Point centroid;
+	private Point centroid;
 	private int elevatorPos;
 	private double k;
-  private VisionPID pid;
+	private VisionPID pid;
 	private FullSwervePID swerve;
-  private boolean zeroing;
+	private boolean zeroing;
 	private int index;
   
 	public enum RobotState{
@@ -46,23 +51,27 @@ public class Teleop {
 
 	public Teleop(VisionThread vision, FullSwervePID swerve, JoystickInput input, GyroBase gyro) {
 		xbox = input.getXboxController();
-		elevator = new Elevator(new TalonSRX(1));
-		climber = new Climber(new TalonSRX(8));
-		intake = new Intake(new TalonSRX(0), new TalonSRX(2), new TalonSRX(3)); // add talon numbers for this
-		is_vision_toggled = false;
 		pid = new VisionPID(vision, swerve, gyro);
+		pid.PIDEnable();
+		
+		is_vision_toggled = false;
 		this.swerve = swerve;
-		init();
-
 		this.zeroing = false;
-
+		
+		init();
 	}
 
 	public void init() {
+		elevator = new Elevator(new TalonSRX(1));
+		climber = new Climber(new TalonSRX(1), new Solenoid(0));
+		intake = new Intake(new TalonSRX(3), new TalonSRX(4), new Solenoid(1), 
+				new Solenoid(2), new TalonSRX(5), new TalonSRX(6));
+		
 		elevatorPos = elevator.getElevatorPosition();
-		eencoder = new Encoder(0, 1, false, Encoder.EncodingType.k4X); // 0 and 1 are digital input ports
-																	  //false: don't invert counting direction
-		pid.PIDEnable();
+		 // 0 and 1 are digital input ports, false: don't invert counting direction
+		
+		
+		eencoder = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
 	}
 
 	public void periodic() {
@@ -140,7 +149,6 @@ public class Teleop {
 				break;
 			case StartPickupState:
 				groundElevatorPlacement();
-				intakeDown();
 				intake();
 				// visionon
 				// getvisiondata
@@ -219,14 +227,6 @@ public class Teleop {
 				elevatorPos--;
 			}
 		}
-	}
-
-	public void intakeDown() {
-		intake.rollDown();
-	}
-
-	public void intakeUp() {
-		intake.rollUp();
 	}
 
 	public void intake() {

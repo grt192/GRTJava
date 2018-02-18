@@ -3,9 +3,11 @@ package org.usfirst.frc.team192.mechs;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.Solenoid;
+
 public class Climber {
 	private TalonSRX winch;
-	public Climber(TalonSRX winchMotor) {
+	public Climber(TalonSRX winchMotor, Solenoid winchSol) {
 		winch = winchMotor;
 	}
 	

@@ -1,5 +1,7 @@
 package org.usfirst.frc.team192.mechs;
 
+import org.usfirst.frc.team192.robot.JoystickInput;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -25,6 +27,7 @@ public class Elevator {
 		elevator = elevatorMotor;
 		elevatorPos = ElevatorPosition.GROUND;
 	}
+	
 	public int getElevatorPosition() {
 		return ElevatorPosition.valueOf(elevatorPos.toString()).ordinal();
 	}
@@ -75,6 +78,11 @@ public class Elevator {
 			System.out.println("elevator moved to above ground position");
 		}
 	
+	}
+	
+	public void manualControl(JoystickInput input) {
+		double speed = input.getPolarRadius();
+		elevator.set(ControlMode.Velocity, speed);
 	}
 	
 }

@@ -38,10 +38,6 @@ public class JoystickInput {
 		return !ret.equals(null);
 	}
 
-	public boolean getClimberButton() { // changed getChalupaButton to getClimberButton
-		return xbox.getXButton();
-	}
-
 	public XboxController getXboxController() {
 		return xbox;
 	}
