@@ -27,7 +27,6 @@ class Wheel {
 
 	private TalonSRX rotateMotor;
 	private TalonSRX driveMotor;
-	private boolean useOffset;
 
 	private String name;
 
@@ -49,12 +48,10 @@ class Wheel {
 		switch (Config.getString("feedback_device")) {
 		case "Analog":
 			feedbackDevice = FeedbackDevice.Analog;
-			useOffset = true;
 			break;
 		case "QuadEncoder":
 		default:
 			feedbackDevice = FeedbackDevice.QuadEncoder;
-			useOffset = false;
 		}
 
 		boolean inverted = Config.getBoolean("swerve_inverted") ^ Config.getBoolean(name + "_inverted");
@@ -86,11 +83,7 @@ class Wheel {
 	}
 
 	public void zero() {
-		rotateMotor.getSensorCollection().setQuadraturePosition(0, 0);
-		if (useOffset)
-			OFFSET = rotateMotor.getSelectedSensorPosition(0);
-		else
-			OFFSET = 0;
+		OFFSET = rotateMotor.getSelectedSensorPosition(0);
 	}
 
 	public void disable() {
