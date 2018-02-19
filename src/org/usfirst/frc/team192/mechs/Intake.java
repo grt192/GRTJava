@@ -3,49 +3,118 @@ package org.usfirst.frc.team192.mechs;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.XboxController;
+
 public class Intake{
 
-	private TalonSRX left, right, vertical;
-	private int up_position = 0;
-	private int down_position = 0;
-	private int flywheel_speed = 0;
-	public enum IntakePosition{
-		RAISED,
-		LOWERED
-	}
-	public IntakePosition intakePos;
-	public Intake(TalonSRX leftMotor, TalonSRX rightMotor, TalonSRX verticalMotor) {
-		left = leftMotor;
-		right = rightMotor;
-		vertical = verticalMotor;
-		intakePos = IntakePosition.LOWERED;
+	private TalonSRX left, right, upper;
+	private Solenoid mainSol, leftSol, rightSol;
+	public boolean leftExtended;
+	public boolean rightExtended;
+	public boolean centerExtended;
+	public Intake(TalonSRX lowerLeftMotor, TalonSRX lowerRightMotor, TalonSRX upperMotors, Solenoid mainSolenoid, Solenoid leftSolenoid, Solenoid rightSolenoid) {
+		left = lowerLeftMotor;
+		right = lowerRightMotor;
+		upper = upperMotors;
+		mainSol = mainSolenoid;
+		leftSol = leftSolenoid;
+		rightSol = rightSolenoid;
+		
+		rightExtended = false;
+		leftExtended = false;
+		centerExtended = false;
 	}
 	
-	public void rollUp() {
-		if (intakePos == IntakePosition.LOWERED) {
-			vertical.set(ControlMode.Position, up_position);
-			intakePos = IntakePosition.RAISED;
+	public void spitOut(XboxController xbox) {
+		double speed = xbox.getTriggerAxis(Hand.kLeft);
+		if(speed > 0) {
+			upper.set(ControlMode.PercentOutput, -speed);
+			left.set(ControlMode.PercentOutput, speed);
+			right.set(ControlMode.PercentOutput, -speed);
 		}
 	}
 	
-	public void rollDown() {
-		if (intakePos == IntakePosition.RAISED) {
-		vertical.set(ControlMode.Position, down_position);
-		intakePos = IntakePosition.LOWERED;
+	public void moveInnerWheels(XboxController xbox) {
+		double speed = xbox.getTriggerAxis(Hand.kLeft);
+		upper.set(ControlMode.PercentOutput, speed);
+	}
+	
+	public void moveOuterWheels(XboxController xbox) {
+		double speed = xbox.getTriggerAxis(Hand.kRight);
+		right.set(ControlMode.PercentOutput, speed);
+		left.set(ControlMode.PercentOutput, -speed);
+	}
+	
+	public void moveLeftPickup(XboxController xbox) {
+		if (!leftExtended) {
+			leftSol.set(true);
+			leftExtended = true;
+		}else {
+			leftSol.set(false);
+			leftExtended = false;
 		}
 	}
 	
-	public void takeIn() {
-		left.set(ControlMode.PercentOutput, flywheel_speed);
-		right.set(ControlMode.PercentOutput, flywheel_speed);
+	public void moveRightPickup(XboxController xbox) {
+		if (!rightExtended) {
+			rightSol.set(true);
+			rightExtended = true;
+		}else {
+			rightSol.set(false);
+			rightExtended = false;
+		}
 	}
 	
-	public void reverse() {
-		left.set(ControlMode.PercentOutput, -flywheel_speed);
-		left.set(ControlMode.PercentOutput, -flywheel_speed);
+	public void moveCenterPickup(XboxController xbox) {
+		if (!centerExtended) {
+			mainSol.set(true);
+			centerExtended = true;
+		}else {
+			leftSol.set(false);
+			rightSol.set(false);
+			mainSol.set(false);
+			centerExtended = false;
+			rightExtended = false;
+			leftExtended = false;
+		}
 	}
 	
-	public IntakePosition getIntakePosition() {
-		return intakePos;
+	public void autonPickup() {
+		if (!centerExtended) {
+			mainSol.set(true);
+			centerExtended = true;
+		}
+		if (!rightExtended) {
+			rightSol.set(true);
+			rightExtended = true;
+		}
+		if (!leftExtended) {
+			leftSol.set(true);
+			leftExtended = true;
+		}
+		upper.set(ControlMode.PercentOutput, 1);
+		left.set(ControlMode.PercentOutput, -1);
+		right.set(ControlMode.PercentOutput, 1);
+		
 	}
+	
+	public void autonClamp() {
+		if (rightExtended) {
+			rightSol.set(false);
+			rightExtended = false;
+		}
+		if (leftExtended) {
+			leftSol.set(false);
+			leftExtended = false;
+		}
+	}
+	
+	public void stopAutonIntake() {
+		upper.set(ControlMode.PercentOutput, 0);
+		left.set(ControlMode.PercentOutput, 0);
+		right.set(ControlMode.PercentOutput, 0);
+	}
+	
 }

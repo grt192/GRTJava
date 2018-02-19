@@ -8,20 +8,18 @@ import org.usfirst.frc.team192.fieldMapping.FieldMapperNavXDisp;
 import org.usfirst.frc.team192.fieldMapping.FieldMapperNavXVel;
 import org.usfirst.frc.team192.swerve.FullSwervePID;
 import org.usfirst.frc.team192.swerve.NavXGyro;
-import org.usfirst.frc.team192.vision.VisionThread;
+import org.usfirst.frc.team192.vision.Imshow;
 import org.usfirst.frc.team192.vision.nn.RemoteVisionThread;
 
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 public class Robot extends IterativeRobot {
 
 	private NavXGyro gyro;
 	private FullSwervePID swerve;
-	private JoystickInput input;
 	private FieldMapperNavXAccel fieldMapperNavXAccel;
 	private FieldMapperNavXVel fieldMapperNavXVel;
 	private FieldMapperAccelerometer fieldMapperRoborio;
@@ -33,14 +31,17 @@ public class Robot extends IterativeRobot {
 	private double ROBORIO_X;
 	private double ROBORIO_Y;
 
-	private VisionThread vision;
+	private XboxController input;
+	private RemoteVisionThread vision;
+	private Autonomous auto;
+	private Teleop teleop;
+	private Imshow imshow;
 
 	@Override
 	public void robotInit() {
 		Config.start();
 		gyro = new NavXGyro();
 		swerve = new FullSwervePID(gyro);
-		input = new JoystickInput(0, 1);
 		NAVX_X = Config.getDouble("navx_x");
 		NAVX_Y = Config.getDouble("navx_y");
 		ROBORIO_X = Config.getDouble("roborio_x");
@@ -50,6 +51,11 @@ public class Robot extends IterativeRobot {
 		fieldMapperRoborio = new FieldMapperAccelerometer(gyro, new BuiltInAccelerometer(), ROBORIO_X, ROBORIO_Y);
 		fieldMapperNavXDisp = new FieldMapperNavXDisp(gyro, NAVX_X, NAVX_Y);
 		fieldMapperEncoder = new FieldMapperEncoder(gyro, swerve);
+		input = new XboxController(0);
+		vision = new RemoteVisionThread();
+		vision.start();
+		teleop = new Teleop(vision, swerve, gyro);
+		auto = new Autonomous(swerve);
 	}
 
 	@Override
@@ -69,6 +75,7 @@ public class Robot extends IterativeRobot {
 		fieldMapperNavXDisp.reset();
 		fieldMapperEncoder.reset();
 		gyro.resetDisplacement();
+		teleop.init();
 	}
 
 	@Override
@@ -89,6 +96,8 @@ public class Robot extends IterativeRobot {
 		fieldMapperRoborio.update();
 		fieldMapperNavXDisp.update();
 		fieldMapperEncoder.update();
+		swerve.updateWithJoystick(input);
+		teleop.periodic();
 	}
 
 	@Override
