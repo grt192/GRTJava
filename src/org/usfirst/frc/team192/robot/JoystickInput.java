@@ -27,24 +27,19 @@ public class JoystickInput {
 	}
 
 	// get button pressing info
-	public boolean getLinkageButton() {
-		return xbox.getXButton();
+	public boolean getLinkageButtons() {
+		return (xbox.getYButton() && xbox.getAButton() && xbox.getBButton());
 	}
 	
-	public boolean getIntakeButton() {
-		return xbox.getAButton(); //Is A button free?
-	}
-
-	public boolean getLeverButton() {
-		return xbox.getBButton();
+	public boolean getIntakeValues() {
+		Double[] ret = new Double[2];
+		ret[0] = xbox.getTriggerAxis(Hand.kLeft);
+		ret[1] = xbox.getTriggerAxis(Hand.kRight);
+		return !ret.equals(null);
 	}
 
 	public boolean getClimberButton() { // changed getChalupaButton to getClimberButton
 		return xbox.getXButton();
-	}
-
-	public boolean getCollectionButton() {
-		return xbox.getYButton();
 	}
 
 	public XboxController getXboxController() {

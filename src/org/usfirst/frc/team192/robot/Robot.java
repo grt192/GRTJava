@@ -8,11 +8,14 @@ import org.usfirst.frc.team192.fieldMapping.FieldMapperNavXDisp;
 import org.usfirst.frc.team192.fieldMapping.FieldMapperNavXVel;
 import org.usfirst.frc.team192.swerve.FullSwervePID;
 import org.usfirst.frc.team192.swerve.NavXGyro;
+import org.usfirst.frc.team192.vision.VisionThread;
+import org.usfirst.frc.team192.vision.nn.RemoteVisionThread;
 
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 public class Robot extends IterativeRobot {
 
@@ -28,11 +31,12 @@ public class Robot extends IterativeRobot {
 	private double NAVX_X = 0;
 	private double NAVX_Y = 0;
 
+	private VisionThread vision;
+
 	@Override
 	public void robotInit() {
 		Config.start();
-		gyro = new NavXGyro(SPI.Port.kMXP);
-		gyro.resetDisplacement();
+		gyro = new NavXGyro();
 		swerve = new FullSwervePID(gyro);
 		input = new JoystickInput(0, 1);
 		fieldMapperNavXAccel = new FieldMapperNavXAccel(gyro, NAVX_X, NAVX_Y);
@@ -93,5 +97,6 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void testPeriodic() {
+
 	}
 }

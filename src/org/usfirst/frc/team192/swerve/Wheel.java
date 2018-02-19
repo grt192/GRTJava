@@ -12,8 +12,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 class Wheel {
 
 	private final double TICKS_PER_ROTATION;
-	private final int OFFSET;
-	private final double DRIVE_TICKS_TO_MPS;
+	private int OFFSET;
+	private final double DRIVE_TICKS_TO_METERS;
 
 	private static final double TWO_PI = Math.PI * 2;
 
@@ -42,7 +42,7 @@ class Wheel {
 		driveMotor = new TalonSRX(Config.getInt(name + "_drive_port"));
 		TICKS_PER_ROTATION = Config.getDouble("ticks_per_rotation");
 		OFFSET = Config.getInt(name + "_offset");
-		DRIVE_TICKS_TO_MPS = Config.getDouble("drive_encoder_scale");
+		DRIVE_TICKS_TO_METERS = Config.getDouble("drive_encoder_scale");
 
 		FeedbackDevice feedbackDevice;
 		switch (Config.getString("feedback_device")) {
@@ -83,7 +83,7 @@ class Wheel {
 	}
 
 	public void zero() {
-		rotateMotor.getSensorCollection().setQuadraturePosition(0, 0);
+		OFFSET = rotateMotor.getSelectedSensorPosition(0);
 	}
 
 	public void disable() {
@@ -129,11 +129,20 @@ class Wheel {
 	}
 
 	public double getDriveSpeed() {
-		return driveMotor.getSelectedSensorVelocity(0) * DRIVE_TICKS_TO_MPS;
+		return driveMotor.getSelectedSensorVelocity(0) * DRIVE_TICKS_TO_METERS * 10 * (reversed ? -1 : 1);
+	}
+
+	public double getTotalDistance() {
+		return driveMotor.getSelectedSensorPosition(0) * DRIVE_TICKS_TO_METERS;
 	}
 
 	public double getCurrentPosition() {
-		return (((rotateMotor.getSelectedSensorPosition(0) * TWO_PI / TICKS_PER_ROTATION) % TWO_PI) + TWO_PI) % TWO_PI;
+		return (((((rotateMotor.getSelectedSensorPosition(0) - OFFSET) * TWO_PI / TICKS_PER_ROTATION)
+				+ (reversed ? Math.PI : 0)) % TWO_PI) + TWO_PI) % TWO_PI;
+	}
+
+	public TalonSRX getRotateMotor() {
+		return rotateMotor;
 	}
 	
 	public TalonSRX getRotateMotor() {

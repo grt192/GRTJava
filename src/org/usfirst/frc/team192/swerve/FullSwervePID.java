@@ -41,6 +41,7 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 		SmartDashboard.putNumber("i", i);
 		SmartDashboard.putNumber("d", d);
 		SmartDashboard.putNumber("f", f);
+
 		pid = new PIDController(p, i, d, f, (PIDSource) gyro, this, 0.01);
 		pid.setContinuous();
 		pid.setInputRange(0.0, 360.0);
@@ -52,20 +53,21 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 		mode = Mode.SWERVE;
 	}
 
-	@Override
-	public void enable() {
-		super.enable();
-		pid.reset();
-		pid.enable();
-		usePID = false;
-	}
-
 	private void updatePID() {
 		double p = SmartDashboard.getNumber("p", 0.015);
 		double i = SmartDashboard.getNumber("i", 0.0);
 		double d = SmartDashboard.getNumber("d", 0.1);
 		double f = SmartDashboard.getNumber("f", 0.1);
 		pid.setPID(p, i, d, f);
+	}
+
+	@Override
+	public void enable() {
+		super.enable();
+		pid.reset();
+		pid.enable();
+		rotateInput = 0.0;
+		usePID = false;
 	}
 
 	@Override
@@ -162,6 +164,11 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 		SmartDashboard.putNumber("PID Error", pid.getError());
 		SmartDashboard.putNumber("PID Output", pid.get());
 
+	}
+
+	// for zeroing
+	public void zeroWithInputs(int talonNumber, XboxController xbox) {
+		wheels[talonNumber].getRotateMotor().set(ControlMode.PercentOutput, xbox.getX(Hand.kLeft) / 3);
 	}
 
 }

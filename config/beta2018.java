@@ -1,8 +1,8 @@
 // # Config file for 2018 beta
 // # Domain: roborio-192-frc.local
 //
-// robot_width=0.6604
-// robot_height=0.5334
+// robot_width=0.5112
+// robot_height=0.6274
 //
 // swervepid_p=0.015
 // swervepid_i=0.0
@@ -14,17 +14,16 @@
 //
 // fl_rotate_port=1
 // fl_drive_port=2
-// fl_offset=-425
+// fl_offset=-321
 // fr_rotate_port=15
 // fr_drive_port=16
-// fr_offset=-234
-// bl_rotate_port=6
-// bl_drive_port=7
-// bl_offset=-178
-// br_rotate_port=10
+// fr_offset=5
+// bl_rotate_port=7
+// bl_drive_port=8
+// bl_offset=582
+// br_rotate_port=9
 // br_drive_port=11
-// br_offset=-1010
+// br_offset=275
 //
 // ticks_per_rotation=1024
-// drive_encoder_scale=0.2045308
 // name=beta2018
