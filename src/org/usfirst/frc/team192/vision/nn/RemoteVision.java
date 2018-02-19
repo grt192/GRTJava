@@ -64,7 +64,6 @@ class RemoteVision extends Thread {
 				continue;
 			}
 			point.set(data);
-			System.out.println(point);
 			timeOfLastData = System.currentTimeMillis();
 		}
 	}

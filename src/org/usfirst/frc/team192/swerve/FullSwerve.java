@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class FullSwerve extends SwerveBase {
 
-
 	private Gyro gyro;
 
 	private final double RADIUS;
@@ -21,7 +20,7 @@ public class FullSwerve extends SwerveBase {
 		this.gyro = gyro;
 		RADIUS = Math.sqrt(robotWidth * robotWidth + robotHeight * robotHeight) / 2;
 		WHEEL_ANGLE = Math.atan2(robotWidth, robotHeight);
-		ROTATE_SCALE = 1 / RADIUS;
+		ROTATE_SCALE = 0.5 / RADIUS;
 		zero();
 	}
 

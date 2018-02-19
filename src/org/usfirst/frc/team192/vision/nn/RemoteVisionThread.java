@@ -22,8 +22,8 @@ public class RemoteVisionThread extends VisionThread {
 		CENTER = new Point(320, 240);
 		vision = new RemoteVision(1920);
 		cap = new VideoCapture(0);
-		cap.set(Videoio.CAP_PROP_FRAME_HEIGHT, 480);
-		cap.set(Videoio.CAP_PROP_FRAME_WIDTH, 640);
+		cap.set(Videoio.CAP_PROP_FRAME_HEIGHT, 240);
+		cap.set(Videoio.CAP_PROP_FRAME_WIDTH, 320);
 		image = new Mat(480, 640, CvType.CV_8UC3);
 	}
 

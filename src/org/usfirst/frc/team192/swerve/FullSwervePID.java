@@ -54,6 +54,15 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 	}
 
 	@Override
+	public void enable() {
+		super.enable();
+		pid.reset();
+		pid.enable();
+		rotateInput = 0.0;
+		usePID = false;
+	}
+
+	@Override
 	public void disable() {
 		super.disable();
 		pid.disable();
@@ -130,7 +139,7 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 		SmartDashboard.putNumber("PID Output", pid.get());
 
 	}
-	
+
 	// for zeroing
 	public void zeroWithInputs(int talonNumber, XboxController xbox) {
 		wheels[talonNumber].getRotateMotor().set(ControlMode.PercentOutput, xbox.getX(Hand.kLeft) / 3);

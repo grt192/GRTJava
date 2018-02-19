@@ -26,4 +26,5 @@
 // br_offset=-1010
 //
 // ticks_per_rotation=1024
+// drive_encoder_scale=0.2045308
 // name=beta2018
