@@ -243,6 +243,7 @@ public class Teleop {
 			intakeContract();
 			System.out.println("RB pressed");
 		}
+		elevatorManualControl();
 	}
 
 
@@ -314,6 +315,9 @@ public class Teleop {
 	}
 	public void rightArmActuate() {
 		intake.rightActuate();
+	}
+	public void elevatorManualControl() {
+		elevator.manualControl(xbox);
 	}
 	public boolean exchangeVision() { // true if succeed, false if fails
 		return false;

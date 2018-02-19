@@ -52,7 +52,7 @@ public class Intake{
 		if (intakePos == IntakePosition.EXTENDED) {
 				left.set(ControlMode.PercentOutput, flywheel_speed);
 				right.set(ControlMode.PercentOutput, -flywheel_speed);
-				upper.set(ControlMode.PercentOutput, .75);
+				upper.set(ControlMode.PercentOutput, 1);
 				wheelsMoving = true;
 		}
 	}
@@ -65,7 +65,7 @@ public class Intake{
 		if (intakePos == IntakePosition.EXTENDED) {
 				left.set(ControlMode.PercentOutput, -flywheel_speed);
 				right.set(ControlMode.PercentOutput, flywheel_speed);
-				upper.set(ControlMode.PercentOutput, -.75);
+				upper.set(ControlMode.PercentOutput, -1);
 		}
 	}
 	

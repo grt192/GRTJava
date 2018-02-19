@@ -25,7 +25,7 @@ public class Robot extends IterativeRobot {
 		Config.start();
 		gyro = new NavXGyro();
 		swerve = new FullSwervePID(gyro);
-		input = new XboxController(1);
+		input = new XboxController(0);
 		vision = new RemoteVisionThread();
 		vision.start();
 		teleop = new Teleop(vision, swerve, gyro);

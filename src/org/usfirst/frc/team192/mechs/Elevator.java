@@ -3,6 +3,8 @@ package org.usfirst.frc.team192.mechs;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.XboxController;
 
 public class Elevator {
 
@@ -87,6 +89,11 @@ public class Elevator {
 			System.out.println("elevator moved to above ground position");
 		}
 	
+	}
+	
+	public void manualControl(XboxController xbox) {
+		double speed = xbox.getY(Hand.kRight);
+		elevator.set(ControlMode.PercentOutput, speed);
 	}
 	
 }
