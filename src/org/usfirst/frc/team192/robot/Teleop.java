@@ -32,7 +32,7 @@ public class Teleop {
 //  private boolean zeroing;
 //	private int index;
 	
-	private Point CAMCENTER;
+	//private Point CAMCENTER;
   
 	public enum RobotState{
 		NothingState,
@@ -46,18 +46,18 @@ public class Teleop {
 	private RobotState destination;
 	private RobotState pickupState = RobotState.NothingState;
 
-	public Teleop(RemoteVisionThread vision, FullSwervePID swerve, Gyro gyro) {
+	public Teleop(FullSwervePID swerve, Gyro gyro) {
 		xbox = new XboxController(1);
 		elevator = new Elevator(new TalonSRX(12), new TalonSRX(13));
 		climber = new Climber(new TalonSRX(8));
 		// 1 is the gear, 0 is main, 2 is the right
-		intake = new Intake(new TalonSRX(5), new TalonSRX(14), 
-				new TalonSRX(3), new Solenoid(0), new Solenoid(3), 
+		intake = new Intake(new TalonSRX(3), new TalonSRX(14), 
+				new TalonSRX(5), new Solenoid(0), new Solenoid(3), 
 				new Solenoid(2)); 
 		this.swerve = swerve;
 		this.vision = vision;
-		CAMCENTER.x = 320;
-		CAMCENTER.y = 240;
+		//CAMCENTER.x = 320;
+		//CAMCENTER.y = 240;
 		init();
 
 //		this.zeroing = false;
@@ -70,12 +70,12 @@ public class Teleop {
 
 	public void periodic() {
 		//climb code
-		if (xbox.getXButtonPressed()) {
-			climber.climb();
-		}
-		if (xbox.getXButtonReleased()) {
-			climber.stopClimb();
-		}
+//		if (xbox.getXButtonPressed()) {
+//			climber.climb();
+//		}
+//		if (xbox.getXButtonReleased()) {
+//			climber.stopClimb();
+//		}
 		//pickup code
 		if (xbox.getBumperPressed(Hand.kRight)) {
 			intake.moveRightPickup(xbox);
@@ -83,9 +83,14 @@ public class Teleop {
 		if (xbox.getBumperPressed(Hand.kLeft)) {
 			intake.moveLeftPickup(xbox);
 		}
-		if (xbox.getBumperPressed(Hand.kRight) && 
-				xbox.getBumperPressed(Hand.kLeft)) {
+		if (xbox.getAButtonPressed()) {
 			intake.moveCenterPickup(xbox);
+		}
+		if (xbox.getXButtonPressed()) {
+			intake.moveBothPickupsIn();
+		}
+		if (xbox.getYButtonPressed()) {
+			intake.moveBothPickupsOut();
 		}
 		//left xbox axis
 		intake.spitOut(xbox);
@@ -99,7 +104,7 @@ public class Teleop {
 		elevator.manualControl(xbox);
 		
 		//vision code
-		if (xbox.getAButtonPressed()) {
+	/*	if (xbox.getAButtonPressed()) {
 			pickupState = RobotState.StartPickupState;
 
 			switch (pickupState) {
@@ -134,7 +139,7 @@ public class Teleop {
 					System.out.println("block picked up");
 				}
 		}
-	
+*/	
 //	if (!zeroing && xbox.getAButton() && xbox.getXButton()) {
 //	zeroing = true;
 //	index = 0;

@@ -15,7 +15,7 @@ public class Robot extends IterativeRobot {
 	private Gyro gyro;
 	private FullSwervePID swerve;
 	private XboxController input;
-	private RemoteVisionThread vision;
+	//private RemoteVisionThread vision;
 	private Autonomous auto;
 	private Teleop teleop;
 	private Imshow imshow;
@@ -26,9 +26,9 @@ public class Robot extends IterativeRobot {
 		gyro = new NavXGyro();
 		swerve = new FullSwervePID(gyro);
 		input = new XboxController(0);
-		vision = new RemoteVisionThread();
-		vision.start();
-		teleop = new Teleop(vision, swerve, gyro);
+		//vision = new RemoteVisionThread();
+		//vision.start();
+		teleop = new Teleop(swerve, gyro);
 		auto = new Autonomous(swerve);
 	}
 
