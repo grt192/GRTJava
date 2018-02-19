@@ -41,7 +41,6 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 		pid.setAbsoluteTolerance(3.0);
 		pid.setOutputRange(-1.0, 1.0);
 		pid.reset();
-		pid.setSetpoint(0.0);
 	}
 
 	private void updatePID() {
@@ -58,8 +57,7 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 		pid.reset();
 		pid.enable();
 		rotateInput = 0.0;
-		usePID = true;
-		pid.setSetpoint(getGyroAngle());
+		holdAngle();
 	}
 
 	@Override
@@ -79,8 +77,8 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 	@Override
 	public void updateWithJoystick(JoystickInput input) {
 		XboxController xbox = input.getXboxController();
-		if (xbox.getAButtonPressed() && xbox.getYButtonPressed())
-			zero();
+		if (xbox.getAButtonPressed())
+			zeroGyro();
 		double y = xbox.getX(Hand.kRight);
 		double x = -xbox.getY(Hand.kRight);
 		if (Math.sqrt(x * x + y * y) > 0.7) {

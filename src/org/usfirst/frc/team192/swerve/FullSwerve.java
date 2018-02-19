@@ -26,11 +26,16 @@ public class FullSwerve extends SwerveBase {
 
 	@Override
 	public void zero() {
-		System.out.println("Zeroing gyro - DO NOT MOVE ROBOT");
 		for (Wheel wheel : wheels)
 			wheel.disable();
-		gyro.calibrate();
+		zeroGyro();
 		super.zero();
+	}
+
+	public void zeroGyro() {
+		System.out.println("Zeroing gyro - DO NOT MOVE ROBOT");
+		gyro.calibrate();
+		System.out.println("Done zeroing gyro");
 	}
 
 	protected void changeMotors(double rv, double vx, double vy) {
@@ -76,8 +81,8 @@ public class FullSwerve extends SwerveBase {
 	@Override
 	public void updateWithJoystick(JoystickInput input) {
 		XboxController xbox = input.getXboxController();
-		if (xbox.getAButton() && xbox.getYButton())
-			zero();
+		if (xbox.getAButtonPressed())
+			zeroGyro();
 		changeMotors(input.getClippedX(Hand.kRight), -input.getClippedY(Hand.kLeft), input.getClippedX(Hand.kLeft));
 	}
 
