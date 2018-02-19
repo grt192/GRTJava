@@ -26,6 +26,7 @@ public class FieldMapperNavXDisp extends FieldMapperGyro {
 		y = gyro.getDisplacementY() + dy;
 	}
 	
+	@Override
 	public double getAngle() {
 		return gyro.getAngle();
 	}
