@@ -28,8 +28,10 @@ public class Robot extends IterativeRobot {
 	private FieldMapperNavXDisp fieldMapperNavXDisp;
 	private FieldMapperEncoder fieldMapperEncoder;
 	
-	private double NAVX_X = 0;
-	private double NAVX_Y = 0;
+	private double NAVX_X;
+	private double NAVX_Y;
+	private double ROBORIO_X;
+	private double ROBORIO_Y;
 
 	private VisionThread vision;
 
@@ -39,9 +41,13 @@ public class Robot extends IterativeRobot {
 		gyro = new NavXGyro();
 		swerve = new FullSwervePID(gyro);
 		input = new JoystickInput(0, 1);
+		NAVX_X = Config.getDouble("navx_x");
+		NAVX_Y = Config.getDouble("navx_y");
+		ROBORIO_X = Config.getDouble("roborio_x");
+		ROBORIO_Y = Config.getDouble("roborio_y");
 		fieldMapperNavXAccel = new FieldMapperNavXAccel(gyro, NAVX_X, NAVX_Y);
 		fieldMapperNavXVel = new FieldMapperNavXVel(gyro, NAVX_X, NAVX_Y);
-		fieldMapperRoborio = new FieldMapperAccelerometer(gyro, new BuiltInAccelerometer(), NAVX_X, NAVX_Y);
+		fieldMapperRoborio = new FieldMapperAccelerometer(gyro, new BuiltInAccelerometer(), ROBORIO_X, ROBORIO_Y);
 		fieldMapperNavXDisp = new FieldMapperNavXDisp(gyro, NAVX_X, NAVX_Y);
 		fieldMapperEncoder = new FieldMapperEncoder(gyro, swerve);
 	}

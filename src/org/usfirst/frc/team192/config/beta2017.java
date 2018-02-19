@@ -24,5 +24,10 @@
 // br_drive_port=7
 // br_offset=0
 //
+// navx_x=0
+// navx_y=0
+// roborio_x=0
+// roborio_y=0
+//
 // ticks_per_rotation=8533
 // name=beta2017

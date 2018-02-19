@@ -25,6 +25,11 @@
 // br_drive_port=11
 // br_offset=-1010
 //
+// navx_x=0
+// navx_y=0
+// roborio_x=0
+// roborio_y=0
+//
 // ticks_per_rotation=1024
 // drive_encoder_scale=0.2045308
 // name=beta2018
