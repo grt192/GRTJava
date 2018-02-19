@@ -144,9 +144,5 @@ class Wheel {
 	public TalonSRX getRotateMotor() {
 		return rotateMotor;
 	}
-	
-	public TalonSRX getRotateMotor() {
-		return rotateMotor;
-	}
 
 }
