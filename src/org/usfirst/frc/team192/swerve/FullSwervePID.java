@@ -1,7 +1,5 @@
 package org.usfirst.frc.team192.swerve;
 
-import org.usfirst.frc.team192.robot.JoystickInput;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
@@ -75,19 +73,18 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 	}
 
 	@Override
-	public void updateWithJoystick(JoystickInput input) {
-		XboxController xbox = input.getXboxController();
-		if (xbox.getAButtonPressed())
+	public void updateWithJoystick(XboxController input) {
+		if (input.getAButtonPressed())
 			zeroGyro();
-		double y = xbox.getX(Hand.kRight);
-		double x = -xbox.getY(Hand.kRight);
+		double y = input.getX(Hand.kRight);
+		double x = -input.getY(Hand.kRight);
 		if (Math.sqrt(x * x + y * y) > 0.7) {
 			usePID = true;
 			pid.setSetpoint((Math.toDegrees(Math.atan2(y, x)) + 360.0) % 360.0);
 		}
 		double rotate = 0.0;
-		double lTrigger = xbox.getTriggerAxis(Hand.kLeft);
-		double rTrigger = xbox.getTriggerAxis(Hand.kRight);
+		double lTrigger = input.getTriggerAxis(Hand.kLeft);
+		double rTrigger = input.getTriggerAxis(Hand.kRight);
 		if (lTrigger + rTrigger > 0.05) {
 			rotate += Math.pow(rTrigger, 2);
 			rotate -= Math.pow(lTrigger, 2);
@@ -95,7 +92,7 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 		} else if (!usePID) {
 			holdAngle();
 		}
-		updateMovement(-input.getClippedY(Hand.kLeft), input.getClippedX(Hand.kLeft), rotate);
+		updateMovement(-input.getY(Hand.kLeft), input.getX(Hand.kLeft), rotate);
 	}
 
 	// for autonomous

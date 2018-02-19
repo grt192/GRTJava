@@ -1,7 +1,5 @@
 package org.usfirst.frc.team192.swerve;
 
-import org.usfirst.frc.team192.robot.JoystickInput;
-
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
@@ -79,11 +77,10 @@ public class FullSwerve extends SwerveBase {
 	}
 
 	@Override
-	public void updateWithJoystick(JoystickInput input) {
-		XboxController xbox = input.getXboxController();
-		if (xbox.getAButtonPressed())
+	public void updateWithJoystick(XboxController input) {
+		if (input.getAButtonPressed())
 			zeroGyro();
-		changeMotors(input.getClippedX(Hand.kRight), -input.getClippedY(Hand.kLeft), input.getClippedX(Hand.kLeft));
+		changeMotors(input.getX(Hand.kRight), -input.getY(Hand.kLeft), input.getX(Hand.kLeft));
 	}
 
 	private double getRelativeWheelAngle(int index) {

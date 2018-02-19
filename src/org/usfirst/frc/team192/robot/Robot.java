@@ -7,13 +7,14 @@ import org.usfirst.frc.team192.vision.VisionThread;
 import org.usfirst.frc.team192.vision.nn.RemoteVisionThread;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 public class Robot extends IterativeRobot {
 
 	private Gyro gyro;
 	private FullSwervePID swerve;
-	private JoystickInput input;
+	private XboxController input;
 	private VisionThread vision;
 
 	@Override
@@ -21,7 +22,7 @@ public class Robot extends IterativeRobot {
 		Config.start();
 		gyro = new NavXGyro();
 		swerve = new FullSwervePID(gyro);
-		input = new JoystickInput(0, 1);
+		input = new XboxController(1);
 		vision = new RemoteVisionThread();
 		vision.start();
 	}
