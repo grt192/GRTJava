@@ -2,6 +2,7 @@ package org.usfirst.frc.team192.robot;
 
 import org.usfirst.frc.team192.config.Config;
 import org.usfirst.frc.team192.fieldMapping.FieldMapperAccelerometer;
+import org.usfirst.frc.team192.fieldMapping.FieldMapperEncoder;
 import org.usfirst.frc.team192.fieldMapping.FieldMapperNavXAccel;
 import org.usfirst.frc.team192.fieldMapping.FieldMapperNavXDisp;
 import org.usfirst.frc.team192.fieldMapping.FieldMapperNavXVel;
@@ -22,6 +23,10 @@ public class Robot extends IterativeRobot {
 	private FieldMapperNavXVel fieldMapperNavXVel;
 	private FieldMapperAccelerometer fieldMapperRoborio;
 	private FieldMapperNavXDisp fieldMapperNavXDisp;
+	private FieldMapperEncoder fieldMapperEncoder;
+	
+	private double NAVX_X = 0;
+	private double NAVX_Y = 0;
 
 	@Override
 	public void robotInit() {
@@ -30,10 +35,11 @@ public class Robot extends IterativeRobot {
 		gyro.resetDisplacement();
 		swerve = new FullSwervePID(gyro);
 		input = new JoystickInput(0, 1);
-		fieldMapperNavXAccel = new FieldMapperNavXAccel(gyro);
-		fieldMapperNavXVel = new FieldMapperNavXVel(gyro);
-		fieldMapperRoborio = new FieldMapperAccelerometer(gyro, new BuiltInAccelerometer());
-		fieldMapperNavXDisp = new FieldMapperNavXDisp(gyro);
+		fieldMapperNavXAccel = new FieldMapperNavXAccel(gyro, NAVX_X, NAVX_Y);
+		fieldMapperNavXVel = new FieldMapperNavXVel(gyro, NAVX_X, NAVX_Y);
+		fieldMapperRoborio = new FieldMapperAccelerometer(gyro, new BuiltInAccelerometer(), NAVX_X, NAVX_Y);
+		fieldMapperNavXDisp = new FieldMapperNavXDisp(gyro, NAVX_X, NAVX_Y);
+		fieldMapperEncoder = new FieldMapperEncoder(gyro, swerve);
 	}
 
 	@Override
@@ -51,6 +57,7 @@ public class Robot extends IterativeRobot {
 		fieldMapperNavXVel.reset();
 		fieldMapperRoborio.reset();
 		fieldMapperNavXDisp.reset();
+		fieldMapperEncoder.reset();
 		gyro.resetDisplacement();
 	}
 
@@ -65,10 +72,13 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("Y Displacement (gyro acceleration)", fieldMapperNavXAccel.getY());
 		SmartDashboard.putNumber("X Displacement (roborio)", fieldMapperRoborio.getX());
 		SmartDashboard.putNumber("Y Displacement (roborio)", fieldMapperRoborio.getY());
+		SmartDashboard.putNumber("X Displacement (encoders)", fieldMapperEncoder.getX());
+		SmartDashboard.putNumber("Y Displacement (encoders)", fieldMapperEncoder.getY());
 		fieldMapperNavXVel.update();
 		fieldMapperNavXAccel.update();
 		fieldMapperRoborio.update();
 		fieldMapperNavXDisp.update();
+		fieldMapperEncoder.update();
 	}
 
 	@Override
