@@ -1,19 +1,27 @@
 package org.usfirst.frc.team192.robot;
 
 import org.usfirst.frc.team192.config.Config;
+import org.usfirst.frc.team192.fieldMapping.FieldMapperAccelerometer;
+import org.usfirst.frc.team192.fieldMapping.FieldMapperEncoder;
+import org.usfirst.frc.team192.fieldMapping.FieldMapperNavXAccel;
+import org.usfirst.frc.team192.fieldMapping.FieldMapperNavXDisp;
+import org.usfirst.frc.team192.fieldMapping.FieldMapperNavXVel;
 import org.usfirst.frc.team192.swerve.FullSwervePID;
 import org.usfirst.frc.team192.swerve.NavXGyro;
 import org.usfirst.frc.team192.vision.Imshow;
-import org.usfirst.frc.team192.vision.VisionThread;
 import org.usfirst.frc.team192.vision.nn.RemoteVisionThread;
 
+import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends IterativeRobot {
-	private Gyro gyro;
+
+	private NavXGyro gyro;
 	private FullSwervePID swerve;
+	private FieldMapperEncoder fieldMapperEncoder;
+	
 	private XboxController input;
 	//private RemoteVisionThread vision;
 	private Autonomous auto;
@@ -25,6 +33,7 @@ public class Robot extends IterativeRobot {
 		Config.start();
 		gyro = new NavXGyro();
 		swerve = new FullSwervePID(gyro);
+		fieldMapperEncoder = new FieldMapperEncoder(gyro, swerve);
 		input = new XboxController(0);
 		//vision = new RemoteVisionThread();
 		//vision.start();
@@ -43,13 +52,18 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopInit() {
 		swerve.enable();
+		fieldMapperEncoder.reset();
+		gyro.resetDisplacement();
 		teleop.init();
 	}
 
 	@Override
 	public void teleopPeriodic() {
 		swerve.updateWithJoystick(input);
-		teleop.periodic();	
+		SmartDashboard.putNumber("X Displacement (encoders)", fieldMapperEncoder.getX());
+		SmartDashboard.putNumber("Y Displacement (encoders)", fieldMapperEncoder.getY());
+		fieldMapperEncoder.update();
+		teleop.periodic();
 	}
 
 	@Override

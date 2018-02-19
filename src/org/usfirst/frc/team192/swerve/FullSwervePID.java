@@ -21,6 +21,13 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 	private double vx;
 	private double vy;
 	private double rv;
+	
+	private Mode mode;
+	private int index;
+	
+	private enum Mode {
+		SWERVE, ZERO
+	}
 
 	public FullSwervePID(Gyro gyro) {
 		super(gyro);
