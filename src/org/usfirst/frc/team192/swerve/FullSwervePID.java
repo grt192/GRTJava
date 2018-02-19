@@ -42,7 +42,6 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 		pid.setOutputRange(-1.0, 1.0);
 		pid.reset();
 		pid.setSetpoint(0.0);
-		usePID = false;
 	}
 
 	private void updatePID() {
@@ -59,7 +58,8 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 		pid.reset();
 		pid.enable();
 		rotateInput = 0.0;
-		usePID = false;
+		usePID = true;
+		pid.setSetpoint(getGyroAngle());
 	}
 
 	@Override
@@ -90,11 +90,12 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 		double rotate = 0.0;
 		double lTrigger = xbox.getTriggerAxis(Hand.kLeft);
 		double rTrigger = xbox.getTriggerAxis(Hand.kRight);
-		if (lTrigger + rTrigger > 0.05)
-			usePID = false;
-		if (!usePID) {
+		if (lTrigger + rTrigger > 0.05) {
 			rotate += Math.pow(rTrigger, 2);
 			rotate -= Math.pow(lTrigger, 2);
+			usePID = false;
+		} else if (!usePID) {
+			holdAngle();
 		}
 		updateMovement(-input.getClippedY(Hand.kLeft), input.getClippedX(Hand.kLeft), rotate);
 	}
@@ -110,6 +111,11 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 		pid.setSetpoint(((Math.toDegrees(radians) % 360) + 360) % 360);
 	}
 
+	public void holdAngle() {
+		usePID = true;
+		pid.setSetpoint(getGyroAngle());
+	}
+
 	public void setWithAngularVelocity(double vx, double vy, double rv) {
 		this.vx = vx;
 		this.vy = vy;
@@ -121,6 +127,7 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 		vx = 0;
 		vy = 0;
 		rv = 0;
+		holdAngle();
 	}
 
 	public void updateAutonomous() {
