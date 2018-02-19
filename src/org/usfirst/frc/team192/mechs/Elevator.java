@@ -9,6 +9,7 @@ public class Elevator {
 	private final double FLYWHEEL_SPEED_SCALE = 1.0;
 
 	private TalonSRX elevator;
+	private TalonSRX follower;
 	private int ground_position = 0;
 	private int switch_position = 0;
 	private int scale_position = 0;
@@ -21,12 +22,17 @@ public class Elevator {
 	}
 	private ElevatorPosition elevatorPos;
 	
-	public Elevator(TalonSRX elevatorMotor) {
+	public Elevator(TalonSRX elevatorMotor, TalonSRX elevatorFollow) {
 		elevator = elevatorMotor;
+		follower = elevatorFollow;
 		elevatorPos = ElevatorPosition.GROUND;
 	}
 	public int getElevatorPosition() {
 		return ElevatorPosition.valueOf(elevatorPos.toString()).ordinal();
+	}
+	
+	public void setElevatorPosition(int i) {
+		elevatorPos = ElevatorPosition.values()[i];
 	}
 
 	public void moveToGroundPosition() {
@@ -36,8 +42,10 @@ public class Elevator {
 //		System.out.println("elevator moved to ground position");
 			if(elevatorPos == ElevatorPosition.SWITCH) {
 				elevator.set(ControlMode.Velocity, 0  /*negative? parabolic velocity thing from switch to ground*/);
+				follower.set(ControlMode.Follower, elevator.getDeviceID());
 			}else if(elevatorPos == ElevatorPosition.SCALE) {
 				elevator.set(ControlMode.Velocity, 0 /*negative? parabolic velocity thing from scale to ground*/);
+				follower.set(ControlMode.Follower, elevator.getDeviceID());
 			}
 		}
 	}
@@ -49,8 +57,10 @@ public class Elevator {
 //		System.out.println("elevator moved to switch position");
 			if(elevatorPos == ElevatorPosition.GROUND) {
 				elevator.set(ControlMode.Velocity, 0 /*positive? parabolic velocity thing from ground to switch*/);
+				follower.set(ControlMode.Follower, elevator.getDeviceID());
 			}else if(elevatorPos == ElevatorPosition.SCALE) {
 				elevator.set(ControlMode.Velocity, 0 /*negative? parabolic velocity thing from scale to switch*/);
+				follower.set(ControlMode.Follower, elevator.getDeviceID());
 			}
 		}
 	}
@@ -62,8 +72,10 @@ public class Elevator {
 //		System.out.println("elevator moved to scale position");
 			if(elevatorPos == ElevatorPosition.GROUND) {
 				elevator.set(ControlMode.Velocity, 0/*positive? parabolic velocity thing from ground to scale*/);
+				follower.set(ControlMode.Follower, elevator.getDeviceID());
 			}else if(elevatorPos == ElevatorPosition.SWITCH) {
 				elevator.set(ControlMode.Velocity, 0/*positive? parabolic velocity thing from switch to scale */);
+				follower.set(ControlMode.Follower, elevator.getDeviceID());
 			}
 		}
 	}
