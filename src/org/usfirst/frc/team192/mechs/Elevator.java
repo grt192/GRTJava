@@ -39,9 +39,6 @@ public class Elevator {
 
 	public void moveToGroundPosition() {
 		if (elevatorPos != ElevatorPosition.GROUND) {
-//		elevator.set(ControlMode.Position, ground_position);
-//		elevatorPos = ElevatorPosition.GROUND;
-//		System.out.println("elevator moved to ground position");
 			if(elevatorPos == ElevatorPosition.SWITCH) {
 				elevator.set(ControlMode.Velocity, 0  /*negative? parabolic velocity thing from switch to ground*/);
 				follower.set(ControlMode.Follower, elevator.getDeviceID());
@@ -54,9 +51,6 @@ public class Elevator {
 	
 	public void moveToSwitchPosition() {
 		if (elevatorPos != ElevatorPosition.SWITCH) {
-//		elevator.set(ControlMode.Position, switch_position);
-//		elevatorPos = ElevatorPosition.SWITCH;
-//		System.out.println("elevator moved to switch position");
 			if(elevatorPos == ElevatorPosition.GROUND) {
 				elevator.set(ControlMode.Velocity, 0 /*positive? parabolic velocity thing from ground to switch*/);
 				follower.set(ControlMode.Follower, elevator.getDeviceID());
@@ -69,9 +63,6 @@ public class Elevator {
 	
 	public void moveToScalePosition() {
 		if (elevatorPos != ElevatorPosition.SCALE) {
-//		elevator.set(ControlMode.Position, scale_position);
-//		elevatorPos = ElevatorPosition.SCALE;
-//		System.out.println("elevator moved to scale position");
 			if(elevatorPos == ElevatorPosition.GROUND) {
 				elevator.set(ControlMode.Velocity, 0/*positive? parabolic velocity thing from ground to scale*/);
 				follower.set(ControlMode.Follower, elevator.getDeviceID());
@@ -94,6 +85,7 @@ public class Elevator {
 	public void manualControl(XboxController xbox) {
 		double speed = xbox.getY(Hand.kRight);
 		elevator.set(ControlMode.PercentOutput, speed);
+		follower.set(ControlMode.Follower, elevator.getDeviceID());
 	}
 	
 }

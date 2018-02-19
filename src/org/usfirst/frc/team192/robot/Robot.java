@@ -15,7 +15,7 @@ public class Robot extends IterativeRobot {
 	private Gyro gyro;
 	private FullSwervePID swerve;
 	private XboxController input;
-	private VisionThread vision;
+	private RemoteVisionThread vision;
 	private Autonomous auto;
 	private Teleop teleop;
 	private Imshow imshow;
