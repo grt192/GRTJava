@@ -28,11 +28,11 @@ public class Intake{
 	}
 	
 	public void spitOut(XboxController xbox) {
-		double speed = xbox.getTriggerAxis(Hand.kLeft);
+		double speed = xbox.getY(Hand.kLeft);
 		if(speed > 0) {
-			upper.set(ControlMode.PercentOutput, -speed);
-			left.set(ControlMode.PercentOutput, speed);
-			right.set(ControlMode.PercentOutput, -speed);
+			upper.set(ControlMode.PercentOutput, speed);
+			left.set(ControlMode.PercentOutput, -speed);
+			right.set(ControlMode.PercentOutput, speed);
 		}
 	}
 	
@@ -43,8 +43,8 @@ public class Intake{
 	
 	public void moveOuterWheels(XboxController xbox) {
 		double speed = xbox.getTriggerAxis(Hand.kRight);
-		right.set(ControlMode.PercentOutput, speed);
-		left.set(ControlMode.PercentOutput, -speed);
+		right.set(ControlMode.PercentOutput, -speed);
+		left.set(ControlMode.PercentOutput, speed);
 	}
 	
 	public void moveLeftPickup(XboxController xbox) {
@@ -64,6 +64,28 @@ public class Intake{
 		}else {
 			rightSol.set(false);
 			rightExtended = false;
+		}
+	}
+	
+	public void moveBothPickupsOut() {
+		if (!rightExtended) {
+			rightSol.set(true);
+			rightExtended = true;
+		}
+		if (!leftExtended) {
+			leftSol.set(true);
+			leftExtended = true;
+		}
+	}
+	
+	public void moveBothPickupsIn() {
+		if (rightExtended) {
+			rightSol.set(false);
+			rightExtended = false;
+		}
+		if (leftExtended) {
+			leftSol.set(false);
+			leftExtended = false;
 		}
 	}
 	

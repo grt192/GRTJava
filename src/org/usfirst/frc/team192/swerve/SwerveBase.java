@@ -30,6 +30,10 @@ public abstract class SwerveBase {
 			if (wheel != null)
 				wheel.enable();
 	}
+	
+	public double clip(double x) {
+		return (Math.abs(x) > 0.1 ? x : 0);
+	}
 
 	public void disable() {
 		for (int i = 0; i < wheels.length; i++) {

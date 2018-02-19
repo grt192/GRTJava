@@ -33,16 +33,16 @@ public class VisionTracking {
     		Scalar upper = new Scalar(0, 0, 0);
     	
         if (visionMode == Mode.CUBE) {
-        	lower = new Scalar(29, 30, 170);
-    		upper = new Scalar(90, 160, 300);
+        		lower = new Scalar(29, 30, 170);
+        		upper = new Scalar(90, 160, 300);
         }
         else if (visionMode == Mode.TAPE) {
-        	lower = new Scalar(0, 0, 0);
-        	upper = new Scalar(0, 0, 0);
+        		lower = new Scalar(0, 0, 0);
+        		upper = new Scalar(0, 0, 0);
         }
         else if (visionMode == Mode.EXCHANGE) {
-        	lower = new Scalar(0, 0, 170);
-        	upper = new Scalar(60, 60, 255);
+        		lower = new Scalar(0, 0, 170);
+        		upper = new Scalar(60, 60, 255);
         }
         Core.inRange(img, lower, upper, img);         
         return img;

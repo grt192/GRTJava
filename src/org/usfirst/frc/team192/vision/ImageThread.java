@@ -47,7 +47,7 @@ public class ImageThread extends VisionThread {
 				centroid = VisionTracking.findCentroid(image);
 				System.out.println("x: " + centroid.x + " y: " + centroid.y);
 				Scalar white = new Scalar(255, 255, 255);
-				Imgproc.circle(image, centroid, 1, white);
+				Imgproc.circle(image, centroid, 5, white);
 				outputStream.putFrame(image);
 
 			} catch (Exception e) {

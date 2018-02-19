@@ -92,7 +92,7 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 		} else if (!usePID) {
 			holdAngle();
 		}
-		updateMovement(-input.getY(Hand.kLeft), input.getX(Hand.kLeft), rotate);
+		updateMovement(clip(-input.getY(Hand.kLeft)), clip(input.getX(Hand.kLeft)), rotate);
 	}
 
 	// for autonomous
