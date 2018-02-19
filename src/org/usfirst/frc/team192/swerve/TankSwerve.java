@@ -1,6 +1,7 @@
 package org.usfirst.frc.team192.swerve;
 
-import org.usfirst.frc.team192.robot.JoystickInput;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.XboxController;
 
 public class TankSwerve extends SwerveBase {
 
@@ -11,9 +12,9 @@ public class TankSwerve extends SwerveBase {
 	}
 
 	@Override
-	public void updateWithJoystick(JoystickInput input) {
-		double xSpeed = -input.getTurnStickY();
-		double zRotation = input.getTurnStickX();
+	public void updateWithJoystick(XboxController input) {
+		double xSpeed = -input.getY(Hand.kLeft);
+		double zRotation = input.getX(Hand.kLeft);
 
 		// Square the inputs (while preserving the sign) to increase fine control
 		// while permitting full power.

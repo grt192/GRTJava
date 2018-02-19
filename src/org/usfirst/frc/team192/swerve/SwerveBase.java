@@ -1,7 +1,8 @@
 package org.usfirst.frc.team192.swerve;
 
 import org.usfirst.frc.team192.config.Config;
-import org.usfirst.frc.team192.robot.JoystickInput;
+
+import edu.wpi.first.wpilibj.XboxController;
 
 public abstract class SwerveBase {
 
@@ -49,6 +50,6 @@ public abstract class SwerveBase {
 		return (Math.atan2(x, -y) + 2 * Math.PI) % (2 * Math.PI);
 	}
 
-	public abstract void updateWithJoystick(JoystickInput input);
+	public abstract void updateWithJoystick(XboxController input);
 
 }

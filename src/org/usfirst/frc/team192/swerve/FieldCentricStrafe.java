@@ -1,8 +1,8 @@
 package org.usfirst.frc.team192.swerve;
 
-import org.usfirst.frc.team192.robot.JoystickInput;
-
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.GyroBase;
+import edu.wpi.first.wpilibj.XboxController;
 
 public class FieldCentricStrafe extends Strafe {
 
@@ -24,11 +24,13 @@ public class FieldCentricStrafe extends Strafe {
 	}
 
 	@Override
-	public void updateWithJoystick(JoystickInput input) {
+	public void updateWithJoystick(XboxController input) {
 		changeMode(input);
 		double gyroAngle = Math.toRadians(gyro.getAngle());
-		double radius = input.getPolarRadius();
-		double angle = input.getPolarAngle();
+		double x = -input.getY(Hand.kLeft);
+		double y = input.getX(Hand.kLeft);
+		double angle = Math.atan2(y, x);
+		double radius = Math.sqrt(x * x + y * y);
 		double speed = 0.0;
 		if (currentMode == Mode.STRAFE) {
 			angle -= gyroAngle;

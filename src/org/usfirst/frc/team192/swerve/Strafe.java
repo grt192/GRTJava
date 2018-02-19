@@ -1,8 +1,7 @@
 package org.usfirst.frc.team192.swerve;
 
-import org.usfirst.frc.team192.robot.JoystickInput;
-
-import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.XboxController;
 
 public class Strafe extends SwerveBase {
 
@@ -19,15 +18,14 @@ public class Strafe extends SwerveBase {
 
 	}
 
-	protected void changeMode(JoystickInput input) {
-		Joystick joystick = input.getJoystick();
+	protected void changeMode(XboxController input) {
 		Mode lastMode = currentMode;
-		if (joystick.getRawButton(6) && joystick.getRawButton(11) && currentMode == Mode.STRAFE)
+		if (input.getXButton() && input.getYButton() && currentMode == Mode.STRAFE)
 			zero();
 
-		if (joystick.getRawButton(2)) {
+		if (input.getAButtonPressed()) {
 			currentMode = Mode.STRAFE;
-		} else if (joystick.getRawButton(3)) {
+		} else if (input.getBButtonPressed()) {
 			currentMode = Mode.ROTATE;
 		}
 
@@ -41,11 +39,13 @@ public class Strafe extends SwerveBase {
 	}
 
 	@Override
-	public void updateWithJoystick(JoystickInput input) {
+	public void updateWithJoystick(XboxController input) {
 		changeMode(input);
 		if (currentMode == Mode.STRAFE) {
-			double speed = input.getPolarRadius();
-			double angle = input.getPolarAngle();
+			double x = -input.getY(Hand.kLeft);
+			double y = input.getX(Hand.kLeft);
+			double angle = Math.atan2(y, x);
+			double speed = Math.sqrt(x * x + y * y);
 			speed *= SPEED_SCALE;
 			for (Wheel wheel : wheels) {
 				if (wheel == null)
@@ -58,7 +58,7 @@ public class Strafe extends SwerveBase {
 					wheel.setDriveSpeed(speed);
 			}
 		} else if (currentMode == Mode.ROTATE) {
-			double speed = input.getJoystick().getX();
+			double speed = input.getX(Hand.kLeft);
 			speed *= SPEED_SCALE;
 			for (Wheel wheel : wheels) {
 				wheel.setDriveSpeed(speed);
