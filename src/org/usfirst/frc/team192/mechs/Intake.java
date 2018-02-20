@@ -1,5 +1,7 @@
 package org.usfirst.frc.team192.mechs;
 
+import org.usfirst.frc.team192.config.Config;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
@@ -14,26 +16,23 @@ public class Intake{
 	public boolean leftExtended;
 	public boolean rightExtended;
 	public boolean centerExtended;
-	public Intake(TalonSRX lowerLeftMotor, TalonSRX lowerRightMotor, TalonSRX upperMotors, Solenoid mainSolenoid, Solenoid leftSolenoid, Solenoid rightSolenoid) {
-		left = lowerLeftMotor;
-		right = lowerRightMotor;
-		upper = upperMotors;
-		mainSol = mainSolenoid;
-		leftSol = leftSolenoid;
-		rightSol = rightSolenoid;
+	public Intake() {
+		left = new TalonSRX(Config.getInt("lower_left_flywheel"));
+		right = new TalonSRX(Config.getInt("lower_right_flywheel"));
+		upper = new TalonSRX(Config.getInt("upper_flywheel"));
+		mainSol = new Solenoid(Config.getInt("centersol"));
+		leftSol = new Solenoid(Config.getInt("leftsol"));
+		rightSol = new Solenoid(Config.getInt("rightsol"));
 		
 		rightExtended = false;
 		leftExtended = false;
 		centerExtended = false;
 	}
 	
-	public void spitOut(XboxController xbox) {
-		double speed = xbox.getY(Hand.kLeft);
-		if(speed > 0) {
-			upper.set(ControlMode.PercentOutput, speed);
-			left.set(ControlMode.PercentOutput, -speed);
-			right.set(ControlMode.PercentOutput, speed);
-		}
+	public void spitOut() {
+		upper.set(ControlMode.PercentOutput, -1);
+		left.set(ControlMode.PercentOutput, -1);
+		right.set(ControlMode.PercentOutput, 1);
 	}
 	
 	public void moveInnerWheels(XboxController xbox) {

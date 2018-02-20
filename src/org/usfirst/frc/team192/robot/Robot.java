@@ -1,17 +1,14 @@
 package org.usfirst.frc.team192.robot;
 
 import org.usfirst.frc.team192.config.Config;
-import org.usfirst.frc.team192.fieldMapping.FieldMapperAccelerometer;
 import org.usfirst.frc.team192.fieldMapping.FieldMapperEncoder;
-import org.usfirst.frc.team192.fieldMapping.FieldMapperNavXAccel;
-import org.usfirst.frc.team192.fieldMapping.FieldMapperNavXDisp;
-import org.usfirst.frc.team192.fieldMapping.FieldMapperNavXVel;
+import org.usfirst.frc.team192.fieldMapping.FieldMapperThreadEncoder;
+import org.usfirst.frc.team192.mechs.Elevator;
+import org.usfirst.frc.team192.mechs.Intake;
 import org.usfirst.frc.team192.swerve.FullSwervePID;
 import org.usfirst.frc.team192.swerve.NavXGyro;
 import org.usfirst.frc.team192.vision.Imshow;
-import org.usfirst.frc.team192.vision.nn.RemoteVisionThread;
 
-import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -20,25 +17,29 @@ public class Robot extends IterativeRobot {
 
 	private NavXGyro gyro;
 	private FullSwervePID swerve;
-	private FieldMapperEncoder fieldMapperEncoder;
+	private FieldMapperThreadEncoder fieldMapperEncoder;
 	
 	private XboxController input;
 	//private RemoteVisionThread vision;
 	private Autonomous auto;
 	private Teleop teleop;
 	private Imshow imshow;
+	private Elevator elevator;
+	private Intake intake;
 
 	@Override
 	public void robotInit() {
 		Config.start();
 		gyro = new NavXGyro();
 		swerve = new FullSwervePID(gyro);
-		fieldMapperEncoder = new FieldMapperEncoder(gyro, swerve);
+		fieldMapperEncoder = new FieldMapperThreadEncoder(gyro, swerve);
 		input = new XboxController(0);
 		//vision = new RemoteVisionThread();
 		//vision.start();
-		teleop = new Teleop(swerve, gyro);
-		auto = new Autonomous(swerve);
+		teleop = new Teleop(swerve, intake, elevator);
+		auto = new Autonomous(swerve, intake, elevator);
+		elevator = new Elevator();
+		intake = new Intake(); 
 	}
 
 	@Override
@@ -53,17 +54,22 @@ public class Robot extends IterativeRobot {
 	public void teleopInit() {
 		swerve.enable();
 		fieldMapperEncoder.reset();
+		new Thread(fieldMapperEncoder).start();
 		gyro.resetDisplacement();
 		teleop.init();
 	}
+	
+	private long start = System.currentTimeMillis();
 
+	
 	@Override
 	public void teleopPeriodic() {
 		swerve.updateWithJoystick(input);
 		SmartDashboard.putNumber("X Displacement (encoders)", fieldMapperEncoder.getX());
 		SmartDashboard.putNumber("Y Displacement (encoders)", fieldMapperEncoder.getY());
-		fieldMapperEncoder.update();
 		teleop.periodic();
+		SmartDashboard.putNumber("Cycle time", (System.currentTimeMillis() - start) / 1000.0);
+		start = System.currentTimeMillis();
 	}
 
 	@Override

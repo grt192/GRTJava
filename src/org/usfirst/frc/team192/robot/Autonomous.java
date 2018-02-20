@@ -1,6 +1,8 @@
 package org.usfirst.frc.team192.robot;
 
 import org.usfirst.frc.team192.config.Config;
+import org.usfirst.frc.team192.mechs.Elevator;
+import org.usfirst.frc.team192.mechs.Intake;
 import org.usfirst.frc.team192.swerve.FullSwervePID;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -28,6 +30,9 @@ public class Autonomous {
 	
 	private final double robotWidth;
 	
+	private Elevator elevator;
+	private Intake intake;
+	
 	private static double FIELD_LENGTH = 264; //inches
 	private static double WALL_TO_SWITCH = 73.031; //y distance from left side of leftmost driver station to center of left switch plate
 	
@@ -51,9 +56,11 @@ public class Autonomous {
 		}
 	}
 
-	public Autonomous(FullSwervePID swerve) {
+	public Autonomous(FullSwervePID swerve, Intake intake, Elevator elevator) {
 		this.ds = DriverStation.getInstance();
 		this.swerve = swerve;
+		this.elevator = elevator;
+		this.intake = intake;
 		
 		this.robotWidth = Config.getDouble("robot_width") * 39.37007874; //converting to inches
 		

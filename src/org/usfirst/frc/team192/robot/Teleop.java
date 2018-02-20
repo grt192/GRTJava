@@ -2,6 +2,7 @@ package org.usfirst.frc.team192.robot;
 
 import java.awt.Point;
 
+import org.usfirst.frc.team192.config.Config;
 import org.usfirst.frc.team192.mechs.Climber;
 import org.usfirst.frc.team192.mechs.Intake;
 import org.usfirst.frc.team192.mechs.Elevator;
@@ -15,7 +16,6 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 public class Teleop {
 	private XboxController xbox;
@@ -46,18 +46,16 @@ public class Teleop {
 	private RobotState destination;
 	private RobotState pickupState = RobotState.NothingState;
 
-	public Teleop(FullSwervePID swerve, Gyro gyro) {
+	public Teleop(FullSwervePID swerve, Intake intake, Elevator elevator) {
 		xbox = new XboxController(1);
-		elevator = new Elevator(new TalonSRX(12), new TalonSRX(13));
-		climber = new Climber(new TalonSRX(8));
+		//climber = new Climber());
 		// 1 is the gear, 0 is main, 2 is the right
-		intake = new Intake(new TalonSRX(3), new TalonSRX(14), 
-				new TalonSRX(5), new Solenoid(0), new Solenoid(3), 
-				new Solenoid(2)); 
 		this.swerve = swerve;
 		this.vision = vision;
 		//CAMCENTER.x = 320;
 		//CAMCENTER.y = 240;
+		this.intake = intake;
+		this.elevator = elevator;
 		init();
 
 //		this.zeroing = false;
@@ -92,12 +90,15 @@ public class Teleop {
 		if (xbox.getYButtonPressed()) {
 			intake.moveBothPickupsOut();
 		}
-		//left xbox axis
-		intake.spitOut(xbox);
 		//left trigger
 		intake.moveInnerWheels(xbox);
 		//right trigger
 		intake.moveOuterWheels(xbox);
+		
+		if (xbox.getBackButton()) {
+//			System.out.println("back button pressed");
+			intake.spitOut();
+		}
 		
 		//elevator code
 		//right xbox axis

@@ -31,5 +31,16 @@
 // roborio_y=0
 //
 // ticks_per_rotation=1024
-// drive_encoder_scale=0.2045308
+// drive_encoder_scale=0.02045308
 // name=beta2018
+
+// upper_flywheel=5
+// lower_right_flywheel=14
+// lower_left_flywheel=3
+// winch_motor=12
+// winch_motor_follower=13
+
+// rightsol=2
+// leftsol=3
+// centersol=0
+// winchsol=1
