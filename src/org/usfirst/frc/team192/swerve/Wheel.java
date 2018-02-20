@@ -61,7 +61,9 @@ class Wheel {
 		rotateMotor.configReverseSoftLimitEnable(false, 0);
 		driveMotor.setNeutralMode(NeutralMode.Brake);
 		rotateMotor.configSelectedFeedbackSensor(feedbackDevice, 0, 0);
+		rotateMotor.getSensorCollection().setQuadraturePosition(0, 0);
 		driveMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
+
 		rotateMotor.config_kP(0, kP / TICKS_PER_ROTATION, 0);
 		rotateMotor.config_kI(0, kI / TICKS_PER_ROTATION, 0);
 		rotateMotor.config_kD(0, kD / TICKS_PER_ROTATION, 0);

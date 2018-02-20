@@ -30,10 +30,6 @@ public abstract class SwerveBase {
 			if (wheel != null)
 				wheel.enable();
 	}
-	
-	public double clip(double x) {
-		return (Math.abs(x) > 0.1 ? x : 0);
-	}
 
 	public void disable() {
 		for (int i = 0; i < wheels.length; i++) {
@@ -50,10 +46,18 @@ public abstract class SwerveBase {
 		System.out.println("Done zeroing");
 	}
 
-	public double realAtan(double x, double y) {
-		return (Math.atan2(x, -y) + 2 * Math.PI) % (2 * Math.PI);
+	public abstract void updateWithJoystick(XboxController input);
+
+	public static double clip(double x) {
+		return (Math.abs(x) > 0.1 ? x : 0);
 	}
 
-	public abstract void updateWithJoystick(XboxController input);
+	public double getMaxDistanceTraveled() {
+		double max = Double.NEGATIVE_INFINITY;
+		for (Wheel w : wheels) {
+			max = Math.max(max, Math.abs(w.getTotalDistance()));
+		}
+		return max;
+	}
 
 }
