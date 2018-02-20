@@ -28,16 +28,24 @@ public class Autonomous {
 	private double distanceFromLeft;
 	private boolean startLeft;
 	
+	private double switchCenterToLeft;
+	
+	private Double start = null; //for driving distance
+	
 	private final double robotWidth;
+	private final double robotHeight;
 	
 	private Elevator elevator;
 	private Intake intake;
 	
-	private static double FIELD_LENGTH = 264; //inches
-	private static double WALL_TO_SWITCH = 73.031; //y distance from left side of leftmost driver station to center of left switch plate
+	private static double FIELD_LENGTH = 324; //inches
+	private static double WALL_TO_SWITCH = 103.3; //y distance from left side of leftmost driver station to center of left switch plate
+	
+	private static double METERS_TO_INCHES = 39.37;
 	
 	private enum Mode {
-		ONLY_FORWARD ("drive forward only"),
+		ONLY_FORWARD_TIME ("drive forward for 4 seconds"),
+		ONLY_FORWARD_ENCODERS ("drive forward based on drive encoders"),
 		FORWARD_AND_PLACE_SWITCH ("drive forward only and place in switch (50% chance)"),  //50% chance of right side
 		FORWARD_AND_PLACE_SWITCH_SIDE ("drive forward and then to the side and place in switch (50% chance)"),  //50% chance of right side
 		FORWARD_AND_PLACE_SCALE_SIDE ("drive forward and then to the side to place in scale (50% chance)"),
@@ -62,7 +70,8 @@ public class Autonomous {
 		this.elevator = elevator;
 		this.intake = intake;
 		
-		this.robotWidth = Config.getDouble("robot_width") * 39.37007874; //converting to inches
+		this.robotWidth = Config.getDouble("robot_width") * METERS_TO_INCHES;
+		this.robotHeight = Config.getDouble("robot_height") * METERS_TO_INCHES;
 		
 //		SmartDashboard.putNumber("autonomous_delay_ms", 1.0);
 //		SmartDashboard.putNumber("autonomous_distance_from_left_edge_inches", FIELD_LENGTH/2 - robotWidth/2);
@@ -90,7 +99,7 @@ public class Autonomous {
 
 		delay = SmartDashboard.getNumber("autonomous_delay_ms", 0.0);
 
-		distanceFromLeft = SmartDashboard.getNumber("autonomous_distance_from_left_edge_inches", FIELD_LENGTH/2 - robotWidth/2);
+		distanceFromLeft = 30 + SmartDashboard.getNumber("autonomous_distance_from_left_edge_inches", FIELD_LENGTH/2 - robotWidth/2);
 		
 		switchLeft = (fieldPositions.charAt(0) == 'L');
 		scaleLeft = (fieldPositions.charAt(1) == 'L');
@@ -118,31 +127,54 @@ public class Autonomous {
 		double timeAfterDelay = timeAfterDelay();
 		
 		switch (selectedMode) {
-		case ONLY_FORWARD:
+		case ONLY_FORWARD_TIME:
 			if (timeAfterDelay < 4000) {
 //				System.out.println("driving");
-				swerve.setVelocity(1.0, 0.0);
+				swerve.setVelocity(0.5, 0.0);
 			} else {
 //				System.out.println("not driving");
 				swerve.setVelocity(0.0, 0.0);
 			}
 			break;
-		case FORWARD_AND_PLACE_SWITCH:
-			if (timeAfterDelay < 4000) { //determine exact timings
-				swerve.setVelocity(1.0, 0.0);
-			} else if (timeAfterDelay < 4050) {
+		case ONLY_FORWARD_ENCODERS:
+			if (start == null) {
+				start = getEncoderValue();
+			}
+			double traveled = getEncoderValue() - start;
+			if (traveled < 110) {
+				swerve.setVelocity(0.5, 0.0);
+			} else if (traveled < 120) { //start to auto line x axis
+				swerve.setVelocity(0.15, 0.0);
+			} else {
 				swerve.setVelocity(0.0, 0.0);
-			} else if (startLeft == switchLeft) {
-				if (timeAfterDelay < 5000) {
-					//place block
-					//move elevator back
-					System.out.println("place block");
+			}
+		case FORWARD_AND_PLACE_SWITCH:
+			if (start == null) {
+				start = getEncoderValue();
+			}
+			double traveled2 = getEncoderValue() - start;
+			if (traveled2 < 160) {
+				swerve.setVelocity(0.5, 0.0);
+			} else if (traveled2 < 166 - robotHeight) { //start to middle of switch x axis
+				swerve.setVelocity(0.15, 0.0);
+			} else {
+				double leftToSwitch = WALL_TO_SWITCH - robotWidth/2;
+				if (!switchLeft) {
+					leftToSwitch = FIELD_LENGTH - leftToSwitch;
+				}
+				swerve.setVelocity(0.0, 0.0);
+				if (startLeft == switchLeft) {
+					if (timeAfterDelay < 5000) {
+						//place block
+						//move elevator back
+						System.out.println("place block");
+					}
 				}
 			}
 			break;
 		case FORWARD_AND_PLACE_SWITCH_SIDE:
 			if (timeAfterDelay < 4000) {
-				swerve.setVelocity(1.0, 0.0);
+				swerve.setVelocity(0.5, 0.0);
 			} else if (timeAfterDelay < 4050) {
 				swerve.setVelocity(0.0, 0.0);
 			} else if (startLeft == switchLeft) {
@@ -161,7 +193,7 @@ public class Autonomous {
 			break;
 		case FORWARD_AND_PLACE_SCALE_SIDE:
 			if (timeAfterDelay < 7000) {
-				swerve.setVelocity(1.0, 0.0);
+				swerve.setVelocity(0.5, 0.0);
 			} else if (timeAfterDelay < 7050) {
 				swerve.setVelocity(0.0, 0.0);
 			} else if (startLeft == scaleLeft) {
@@ -192,7 +224,7 @@ public class Autonomous {
 				swerve.setVelocity(0.0, 0.0);
 			}
 			if (timeAfterDelay < timeForY + 3500) {
-				swerve.setVelocity(1.0, 0.0);
+				swerve.setVelocity(0.5, 0.0);
 			}
 			if (timeAfterDelay < timeForY + 4000) {
 				swerve.setVelocity(0.0, 0.0);
@@ -210,7 +242,7 @@ public class Autonomous {
 //				swerve.setVelocity(0.0, 0.0);
 //			}
 //			if (timeAfterDelay < timeForY + 3500) {
-//				swerve.setVelocity(1.0, 0.0);
+//				swerve.setVelocity(0.5, 0.0);
 //			}
 //			if (timeAfterDelay < timeForY + 4000) {
 //				swerve.setVelocity(0.0, 0.0);
@@ -242,6 +274,10 @@ public class Autonomous {
 	// time until autonomous 15 seconds ends
 	public double timeLeft() {
 		return (15 * 1000) - timeElapsed();
+	}
+	
+	public double getEncoderValue() {
+		return swerve.getMaxDistanceTraveled() * METERS_TO_INCHES;
 	}
 
 }
