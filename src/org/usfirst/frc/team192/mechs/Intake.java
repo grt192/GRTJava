@@ -19,6 +19,7 @@ public class Intake{
 	public Intake() {
 		left = new TalonSRX(Config.getInt("lower_left_flywheel"));
 		right = new TalonSRX(Config.getInt("lower_right_flywheel"));
+		right.setInverted(true);
 		upper = new TalonSRX(Config.getInt("upper_flywheel"));
 		mainSol = new Solenoid(Config.getInt("centersol"));
 		leftSol = new Solenoid(Config.getInt("leftsol"));
@@ -32,17 +33,13 @@ public class Intake{
 	public void spitOut() {
 		upper.set(ControlMode.PercentOutput, -1);
 		left.set(ControlMode.PercentOutput, -1);
-		right.set(ControlMode.PercentOutput, 1);
+		right.set(ControlMode.PercentOutput, -1);
 	}
 	
-	public void moveInnerWheels(XboxController xbox) {
-		double speed = xbox.getTriggerAxis(Hand.kLeft);
+	public void moveWheels(XboxController xbox) {
+		double speed = xbox.getY(Hand.kLeft);
 		upper.set(ControlMode.PercentOutput, speed);
-	}
-	
-	public void moveOuterWheels(XboxController xbox) {
-		double speed = xbox.getTriggerAxis(Hand.kRight);
-		right.set(ControlMode.PercentOutput, -speed);
+		right.set(ControlMode.PercentOutput, speed);
 		left.set(ControlMode.PercentOutput, speed);
 	}
 	
@@ -67,25 +64,22 @@ public class Intake{
 	}
 	
 	public void moveBothPickupsOut() {
-		if (!rightExtended) {
+			mainSol.set(true);
+			centerExtended = true;
 			rightSol.set(true);
 			rightExtended = true;
-		}
-		if (!leftExtended) {
 			leftSol.set(true);
 			leftExtended = true;
-		}
 	}
 	
 	public void moveBothPickupsIn() {
-		if (rightExtended) {
+
 			rightSol.set(false);
 			rightExtended = false;
-		}
-		if (leftExtended) {
+
 			leftSol.set(false);
 			leftExtended = false;
-		}
+
 	}
 	
 	public void moveCenterPickup(XboxController xbox) {
@@ -116,7 +110,7 @@ public class Intake{
 			leftExtended = true;
 		}
 		upper.set(ControlMode.PercentOutput, 1);
-		left.set(ControlMode.PercentOutput, -1);
+		left.set(ControlMode.PercentOutput, 1);
 		right.set(ControlMode.PercentOutput, 1);
 		
 	}

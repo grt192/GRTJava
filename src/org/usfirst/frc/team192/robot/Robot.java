@@ -34,12 +34,12 @@ public class Robot extends IterativeRobot {
 		swerve = new FullSwervePID(gyro);
 		fieldMapperEncoder = new FieldMapperThreadEncoder(gyro, swerve);
 		input = new XboxController(0);
+		elevator = new Elevator();
+		intake = new Intake(); 
 		//vision = new RemoteVisionThread();
 		//vision.start();
 		teleop = new Teleop(swerve, intake, elevator);
 		auto = new Autonomous(swerve, intake, elevator);
-		elevator = new Elevator();
-		intake = new Intake(); 
 	}
 
 	@Override
