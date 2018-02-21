@@ -114,7 +114,7 @@ public class FullSwerve extends SwerveBase {
 	}
 
 	public double getGyroAngle() {
-		return gyro.getAngle();
+		return ((gyro.getAngle() % 360) + 360) % 360;
 	}
 
 	public double getGyroRate() {

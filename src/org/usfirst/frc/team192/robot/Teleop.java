@@ -78,24 +78,22 @@ public class Teleop {
 		if (xbox.getXButtonPressed()) {
 			intake.moveCenterPickup(xbox);
 		}
-		if (xbox.getBButtonPressed()) {
-			intake.moveBothPickupsIn();
-		}
-		if (xbox.getAButtonPressed()) {
-			intake.moveBothPickupsOut();
+		if (xbox.getBumperPressed(Hand.kRight)) {
+			intake.movePickup();
 		}
 		if (xbox.getBumperPressed(Hand.kLeft)) {
 			elevator.breakElevator();
 		}
-
-		//left trigger
-		intake.moveWheels(xbox);
+		
 		//right trigger
 		intake.moveWheels(xbox);
 		
 		//elevator code
 		//right xbox axis
 		elevator.manualControl(xbox);
+		if (xbox.getY() < -.1) {
+			intake.movePickupOut();
+		}
 		
 		//vision code
 	/*	if (xbox.getAButtonPressed()) {
