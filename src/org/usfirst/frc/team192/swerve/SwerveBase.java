@@ -52,6 +52,11 @@ public abstract class SwerveBase {
 		return (Math.abs(x) > 0.1 ? x : 0);
 	}
 
+	public static double clipAndSquare(double x) {
+		x = clip(x);
+		return x * x;
+	}
+
 	public double getMaxDistanceTraveled() {
 		double max = Double.NEGATIVE_INFINITY;
 		for (Wheel w : wheels) {
