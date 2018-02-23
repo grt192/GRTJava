@@ -13,8 +13,7 @@ public class Intake{
 
 	private TalonSRX left, right, upper;
 	private Solenoid mainSol, leftSol, rightSol;
-	public boolean leftExtended;
-	public boolean rightExtended;
+	public boolean armsExtended;
 	public boolean centerExtended;
 	public Intake() {
 		left = new TalonSRX(Config.getInt("lower_left_flywheel"));
@@ -25,8 +24,7 @@ public class Intake{
 		leftSol = new Solenoid(Config.getInt("leftsol"));
 		rightSol = new Solenoid(Config.getInt("rightsol"));
 		
-		rightExtended = false;
-		leftExtended = false;
+		armsExtended = false;
 		centerExtended = false;
 	}
 	
@@ -35,7 +33,7 @@ public class Intake{
 		left.set(ControlMode.PercentOutput, -1);
 		right.set(ControlMode.PercentOutput, -1);
 	}
-	
+
 	public void moveWheels(XboxController xbox) {
 		double speed = xbox.getY(Hand.kLeft);
 		upper.set(ControlMode.PercentOutput, speed);
@@ -43,43 +41,35 @@ public class Intake{
 		left.set(ControlMode.PercentOutput, speed);
 	}
 	
-	public void moveLeftPickup(XboxController xbox) {
-		if (!leftExtended) {
-			leftSol.set(true);
-			leftExtended = true;
-		}else {
-			leftSol.set(false);
-			leftExtended = false;
-		}
+	
+	public void movePickupOut() {
+		mainSol.set(true);
+		centerExtended = true;
+		rightSol.set(true);
+		leftSol.set(true);
+		armsExtended = true;
 	}
 	
-	public void moveRightPickup(XboxController xbox) {
-		if (!rightExtended) {
-			rightSol.set(true);
-			rightExtended = true;
-		}else {
-			rightSol.set(false);
-			rightExtended = false;
-		}
+	public void autonMovePickupOut() {
+		rightSol.set(true);
+		leftSol.set(true);
+		armsExtended = true;
 	}
-	
-	public void moveBothPickupsOut() {
-			mainSol.set(true);
-			centerExtended = true;
-			rightSol.set(true);
-			rightExtended = true;
-			leftSol.set(true);
-			leftExtended = true;
-	}
-	
-	public void moveBothPickupsIn() {
 
-			rightSol.set(false);
-			rightExtended = false;
-
-			leftSol.set(false);
-			leftExtended = false;
-
+	public void movePickup() {
+		armsExtended = !armsExtended;
+		rightSol.set(armsExtended);
+		leftSol.set(armsExtended);
+		System.out.println(armsExtended);
+//		if (armsExtended) {
+//			rightSol.set(false);
+//			leftSol.set(false);
+//			armsExtended = false;
+//		} else {
+//			rightSol.set(true);
+//			leftSol.set(true);
+//			armsExtended = true;
+//		}
 	}
 	
 	public void moveCenterPickup(XboxController xbox) {
@@ -91,8 +81,7 @@ public class Intake{
 			rightSol.set(false);
 			mainSol.set(false);
 			centerExtended = false;
-			rightExtended = false;
-			leftExtended = false;
+			armsExtended = false;
 		}
 	}
 	
@@ -101,13 +90,10 @@ public class Intake{
 			mainSol.set(true);
 			centerExtended = true;
 		}
-		if (!rightExtended) {
+		if (!armsExtended) {
 			rightSol.set(true);
-			rightExtended = true;
-		}
-		if (!leftExtended) {
 			leftSol.set(true);
-			leftExtended = true;
+			armsExtended = true;
 		}
 		upper.set(ControlMode.PercentOutput, 1);
 		left.set(ControlMode.PercentOutput, 1);
@@ -116,13 +102,10 @@ public class Intake{
 	}
 	
 	public void autonClamp() {
-		if (rightExtended) {
+		if (armsExtended) {
 			rightSol.set(false);
-			rightExtended = false;
-		}
-		if (leftExtended) {
 			leftSol.set(false);
-			leftExtended = false;
+			armsExtended = false;
 		}
 	}
 	
