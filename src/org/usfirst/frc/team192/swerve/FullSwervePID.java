@@ -93,8 +93,8 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 		double lTrigger = input.getTriggerAxis(Hand.kLeft);
 		double rTrigger = input.getTriggerAxis(Hand.kRight);
 		if (lTrigger + rTrigger > 0.05) {
-			rotate += Math.pow(rTrigger, 2);
-			rotate -= Math.pow(lTrigger, 2);
+			rotate += rTrigger * rTrigger;
+			rotate -= lTrigger * lTrigger;
 			usePID = false;
 		} else if (!usePID) {
 			holdAngle();
