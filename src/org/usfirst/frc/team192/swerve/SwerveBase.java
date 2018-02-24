@@ -54,7 +54,7 @@ public abstract class SwerveBase {
 
 	public static double clipAndSquare(double x) {
 		x = clip(x);
-		return x * x;
+		return Math.copySign(x * x, x);
 	}
 
 	public double getMaxDistanceTraveled() {
