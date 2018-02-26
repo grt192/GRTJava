@@ -2,14 +2,15 @@ package org.usfirst.frc.team192.robot;
 
 import org.usfirst.frc.team192.config.Config;
 import org.usfirst.frc.team192.swerve.FullSwervePID;
-import org.usfirst.frc.team192.swerve.NavXGyro;
 
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 public class Robot extends IterativeRobot {
 
-	private NavXGyro gyro;
+	private Gyro gyro;
 	private FullSwervePID swerve;
 	// private FieldMapperThreadEncoder fieldMapperEncoder;
 	
@@ -26,7 +27,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		Config.start();
-		gyro = new NavXGyro();
+		gyro = new ADXRS450_Gyro();
 		swerve = new FullSwervePID(gyro);
 		// fieldMapperEncoder = new FieldMapperThreadEncoder(gyro, swerve);
 		input = new XboxController(1);
@@ -81,11 +82,10 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void testInit() {
-
 	}
-
+	
 	@Override
 	public void testPeriodic() {
-
+		swerve.controllerZero(input);
 	}
 }

@@ -3,6 +3,8 @@
 // 
 // robot_width=0.6604
 // robot_height=0.5334
+//
+// swerve_inverted=true
 // 
 // fl_rotate_port=16
 // fl_drive_port=15
