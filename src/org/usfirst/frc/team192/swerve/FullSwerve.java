@@ -26,14 +26,15 @@ public class FullSwerve extends SwerveBase {
 	public void zero() {
 		for (Wheel wheel : wheels)
 			wheel.disable();
+		System.out.println("Zeroing gyro - DO NOT MOVE ROBOT");
+		gyro.calibrate();
+		System.out.println("Done zeroing gyro");
 		zeroGyro();
 		super.zero();
 	}
 
 	public void zeroGyro() {
-		System.out.println("Zeroing gyro - DO NOT MOVE ROBOT");
-		gyro.calibrate();
-		System.out.println("Done zeroing gyro");
+		gyro.reset();
 	}
 
 	protected void changeMotors(double rv, double vx, double vy) {
