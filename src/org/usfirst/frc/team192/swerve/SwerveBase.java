@@ -26,6 +26,7 @@ public abstract class SwerveBase {
 		this.robotWidth = Config.getDouble("robot_width");
 		this.robotHeight = Config.getDouble("robot_height");
 		index = 0;
+		printed = false;
 
 	}
 
@@ -70,11 +71,16 @@ public abstract class SwerveBase {
 	}
 	
 	private int index;
+	private boolean printed;
 	
 	public void controllerZero(XboxController xbox) {
+		if (!printed) {
+			System.out.println("zeroing " + wheels[index].getName());
+		}
 		if (xbox.getAButtonPressed()) {
 			index++;
 			index %= 4;
+			printed = false;
 		} else if (xbox.getBButtonPressed()) {
 			zero();
 		}

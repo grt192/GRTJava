@@ -147,5 +147,9 @@ class Wheel {
 	public TalonSRX getRotateMotor() {
 		return rotateMotor;
 	}
+	
+	public String getName() {
+		return name;
+	}
 
 }
