@@ -1,16 +1,16 @@
 package org.usfirst.frc.team192.robot;
 
 import org.usfirst.frc.team192.config.Config;
-import org.usfirst.frc.team192.fieldMapping.FieldMapperEncoder;
 import org.usfirst.frc.team192.fieldMapping.FieldMapperThreadEncoder;
 import org.usfirst.frc.team192.mechs.Elevator;
 import org.usfirst.frc.team192.mechs.Intake;
 import org.usfirst.frc.team192.swerve.FullSwervePID;
 import org.usfirst.frc.team192.swerve.NavXGyro;
 import org.usfirst.frc.team192.vision.Imshow;
+import org.usfirst.frc.team192.vision.VisionThread;
+import org.usfirst.frc.team192.vision.nn.RemoteVisionThread;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends IterativeRobot {
@@ -19,7 +19,6 @@ public class Robot extends IterativeRobot {
 	private FullSwervePID swerve;
 	private FieldMapperThreadEncoder fieldMapperEncoder;
 	
-	private XboxController input;
 	//private RemoteVisionThread vision;
 	private Autonomous auto;
 	private Teleop teleop;
@@ -33,12 +32,12 @@ public class Robot extends IterativeRobot {
 		gyro = new NavXGyro();
 		swerve = new FullSwervePID(gyro);
 		fieldMapperEncoder = new FieldMapperThreadEncoder(gyro, swerve);
-		input = new XboxController(0);
 		elevator = new Elevator();
 		intake = new Intake(); 
-		//vision = new RemoteVisionThread();
-		//vision.start();
-		teleop = new Teleop(swerve, intake, elevator);
+		VisionThread vision = new RemoteVisionThread(640, 480);
+		vision.start();
+		VisionSwerve visionSwerve = new VisionSwerve(vision, swerve);
+		teleop = new Teleop(swerve, intake, elevator, visionSwerve);
 		auto = new Autonomous(swerve, intake, elevator);
 	}
 
@@ -64,7 +63,6 @@ public class Robot extends IterativeRobot {
 	
 	@Override
 	public void teleopPeriodic() {
-		swerve.updateWithJoystick(input);
 		SmartDashboard.putNumber("X Displacement (encoders)", fieldMapperEncoder.getX());
 		SmartDashboard.putNumber("Y Displacement (encoders)", fieldMapperEncoder.getY());
 		teleop.periodic();

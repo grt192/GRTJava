@@ -1,28 +1,25 @@
 package org.usfirst.frc.team192.robot;
 
-import java.awt.Point;
-
-import org.usfirst.frc.team192.config.Config;
 import org.usfirst.frc.team192.mechs.Climber;
-import org.usfirst.frc.team192.mechs.Intake;
 import org.usfirst.frc.team192.mechs.Elevator;
+import org.usfirst.frc.team192.mechs.Intake;
 import org.usfirst.frc.team192.swerve.FullSwervePID;
-import org.usfirst.frc.team192.vision.ImageThread;
 import org.usfirst.frc.team192.vision.nn.RemoteVisionThread;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 
 public class Teleop {
-	private XboxController xbox;
+	private XboxController xboxMechs;
+	private XboxController xboxSwerve;
 	private Elevator elevator;
 	private Climber climber;
 	private Intake intake;
 	private RemoteVisionThread vision;
+	private VisionSwerve visionSwerve;
+	private boolean usingController;
 
 	DigitalInput innerLimitSwitch;
 	DigitalInput outerLimitSwitch;
@@ -46,8 +43,9 @@ public class Teleop {
 	private RobotState destination;
 	private RobotState pickupState = RobotState.NothingState;
 
-	public Teleop(FullSwervePID swerve, Intake intake, Elevator elevator) {
-		xbox = new XboxController(1);
+	public Teleop(FullSwervePID swerve, Intake intake, Elevator elevator, VisionSwerve visionSwerve) {
+		xboxSwerve = new XboxController(0);
+		xboxMechs = new XboxController(1);
 		//climber = new Climber());
 		// 1 is the gear, 0 is main, 2 is the right
 		this.swerve = swerve;
@@ -56,6 +54,8 @@ public class Teleop {
 		//CAMCENTER.y = 240;
 		this.intake = intake;
 		this.elevator = elevator;
+		this.visionSwerve = visionSwerve;
+		usingController = true;
 		init();
 
 //		this.zeroing = false;
@@ -75,83 +75,42 @@ public class Teleop {
 //			climber.stopClimb();
 //		}
 		//pickup code
-		if (xbox.getXButtonPressed()) {
-			intake.moveCenterPickup(xbox);
+		if (xboxMechs.getXButtonPressed()) {
+			intake.moveCenterPickup(xboxMechs);
 		}
-		if (xbox.getBumperPressed(Hand.kRight)) {
+		if (xboxMechs.getBumperPressed(Hand.kRight)) {
 			intake.movePickup();
 		}
-		if (xbox.getBumperPressed(Hand.kLeft)) {
+		if (xboxMechs.getBumperPressed(Hand.kLeft)) {
 			elevator.breakElevator();
 		}
 		
 		//right trigger
-		intake.moveWheels(xbox);
+		intake.moveWheels(xboxMechs);
 		
 		//elevator code
 		//right xbox axis
-		elevator.manualControl(xbox);
-		if (xbox.getY() < -.1) {
+		elevator.manualControl(xboxMechs);
+		if (xboxMechs.getY() < -.1) {
 			intake.movePickupOut();
 		}
 		
-		//vision code
-	/*	if (xbox.getAButtonPressed()) {
-			pickupState = RobotState.StartPickupState;
-
-			switch (pickupState) {
-				case NothingState:
-					break;
-				case StartPickupState:
-					elevator.moveToGroundPosition();
-					if (vision.hasTarget()) {
-						pickupState = RobotState.MovingToBlock;
-					}
-				case MovingToBlock:
-					double errorx = vision.getCenter().x - CAMCENTER.x;
-					swerve.setWithAngularVelocity(0, 0, errorx);
-					swerve.updateAutonomous();
-					if (Math.abs(errorx) < 10) {
-						pickupState = RobotState.PickingUpBlock;
-					}
-				case PickingUpBlock:
-					double errory = vision.getCenter().y - CAMCENTER.y;
-					intake.autonPickup();
-					swerve.setWithAngularVelocity(0, errory, 0);
-					if (Math.abs(errory) < 10) {
-						pickupState = RobotState.ClampBlock;
-					}
-				case ClampBlock:
-					double errory2 = vision.getCenter().y - CAMCENTER.y;
-					intake.autonClamp();
-					if (errory2 < -10) {
-						pickupState = RobotState.EndPickup;
-					}
-				case EndPickup:
-					System.out.println("block picked up");
-				}
+		if (xboxSwerve.getBButtonPressed()) {
+			usingController = !usingController;
+			if (usingController) {
+				visionSwerve.kill();
+			}
 		}
-*/	
-//	if (!zeroing && xbox.getAButton() && xbox.getXButton()) {
-//	zeroing = true;
-//	index = 0;
-//	System.out.println("zeroing");
-//	return;
-//}
-//
-//if (zeroing && xbox.getBButtonPressed()) {
-//	index++;
-//	System.out.println("changing wheels");
-//	if (index == 4) {
-//		zeroing = false;
-//		swerve.zero();
-//		return;
-//	}
-//}
-//
-//if (zeroing) {
-//	swerve.zeroWithInputs(index, xbox);
-//	return;
-//}
+		
+		if (usingController) {
+			swerve.updateWithJoystick(xboxSwerve);
+		} else {
+			usingController = !visionSwerve.update();
+			if (usingController) {
+				visionSwerve.kill();
+				xboxMechs.setRumble(RumbleType.kLeftRumble, 0.5);
+				xboxSwerve.setRumble(RumbleType.kLeftRumble, 0.5);
+			}
+		}
 	}
 }
