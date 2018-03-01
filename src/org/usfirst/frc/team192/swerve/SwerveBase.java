@@ -84,7 +84,8 @@ public abstract class SwerveBase {
 		} else if (xbox.getBButtonPressed()) {
 			zero();
 		}
-		wheels[index].getRotateMotor().set(ControlMode.PercentOutput, Math.pow(xbox.getX(Hand.kLeft), 3));
+		double x = xbox.getX(Hand.kLeft);
+		wheels[index].getRotateMotor().set(ControlMode.PercentOutput, Math.copySign(x * x, x) / 2);
 	}
 
 }

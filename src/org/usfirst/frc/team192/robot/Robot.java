@@ -30,7 +30,7 @@ public class Robot extends IterativeRobot {
 		gyro = new ADXRS450_Gyro();
 		swerve = new FullSwervePID(gyro);
 		// fieldMapperEncoder = new FieldMapperThreadEncoder(gyro, swerve);
-		input = new XboxController(1);
+		input = new XboxController(0);
 		/*
 		elevator = new Elevator();
 		intake = new Intake(); 
