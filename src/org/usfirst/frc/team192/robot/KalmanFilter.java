@@ -37,7 +37,7 @@ public class KalmanFilter {
 		System.out.println(duration);
 	}
 	
-	public void equations(Point center, double velo) {
+	public double equations(Point center, double velo) {
 		u[0][0] = velo;
 		x[0][0] =  center.x;
 		x[1][0] = 320;
@@ -50,6 +50,7 @@ public class KalmanFilter {
 		P = multiplicar(matrixAdd(I, multiplicar(neg, K)), (matrixAdd(multiplicar(multiplicar(F, P), 
 				transposeMatrix(F)), Q)));
 		
+		return x[0][0];
 	}
 	
 	public static double[][] matrixAdd(double[][] A, double[][] B){

@@ -38,7 +38,7 @@ public class Robot extends IterativeRobot {
 		intake = new Intake(); 
 		//vision = new RemoteVisionThread();
 		//vision.start();
-		teleop = new Teleop(swerve, intake, elevator);
+		teleop = new Teleop(swerve, intake, elevator, gyro);
 		auto = new Autonomous(swerve, intake, elevator);
 	}
 

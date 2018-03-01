@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 public class Teleop {
 	private XboxController xbox;
@@ -23,6 +24,9 @@ public class Teleop {
 	private Climber climber;
 	private Intake intake;
 	private RemoteVisionThread vision;
+	private KalmanFilter filter;
+	private Point CAMCENTER = new Point(320, 240);
+	private VisionPID pid;
 
 	DigitalInput innerLimitSwitch;
 	DigitalInput outerLimitSwitch;
@@ -46,7 +50,7 @@ public class Teleop {
 	private RobotState destination;
 	private RobotState pickupState = RobotState.NothingState;
 
-	public Teleop(FullSwervePID swerve, Intake intake, Elevator elevator) {
+	public Teleop(FullSwervePID swerve, Intake intake, Elevator elevator, Gyro gyro) {
 		xbox = new XboxController(1);
 		//climber = new Climber());
 		// 1 is the gear, 0 is main, 2 is the right
@@ -56,6 +60,8 @@ public class Teleop {
 		//CAMCENTER.y = 240;
 		this.intake = intake;
 		this.elevator = elevator;
+		filter = new KalmanFilter();
+		pid = new VisionPID(vision, swerve, gyro);
 		init();
 
 //		this.zeroing = false;
@@ -96,7 +102,7 @@ public class Teleop {
 		}
 		
 		//vision code
-	/*	if (xbox.getAButtonPressed()) {
+		if (xbox.getAButtonPressed()) {
 			pickupState = RobotState.StartPickupState;
 
 			switch (pickupState) {
@@ -108,7 +114,7 @@ public class Teleop {
 						pickupState = RobotState.MovingToBlock;
 					}
 				case MovingToBlock:
-					double errorx = vision.getCenter().x - CAMCENTER.x;
+					double errorx = filter.equations(vision.getCenter(), swerve.returnrv());
 					swerve.setWithAngularVelocity(0, 0, errorx);
 					swerve.updateAutonomous();
 					if (Math.abs(errorx) < 10) {
@@ -131,7 +137,7 @@ public class Teleop {
 					System.out.println("block picked up");
 				}
 		}
-*/	
+	
 //	if (!zeroing && xbox.getAButton() && xbox.getXButton()) {
 //	zeroing = true;
 //	index = 0;
