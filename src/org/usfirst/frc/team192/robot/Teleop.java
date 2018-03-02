@@ -101,42 +101,42 @@ public class Teleop {
 			intake.movePickupOut();
 		}
 		
-		//vision code
-		if (xbox.getAButtonPressed()) {
-			pickupState = RobotState.StartPickupState;
-
-			switch (pickupState) {
-				case NothingState:
-					break;
-				case StartPickupState:
-					elevator.moveToGroundPosition();
-					if (vision.hasTarget()) {
-						pickupState = RobotState.MovingToBlock;
-					}
-				case MovingToBlock:
-					double errorx = filter.equations(vision.getCenter(), swerve.returnrv());
-					swerve.setWithAngularVelocity(0, 0, errorx);
-					swerve.updateAutonomous();
-					if (Math.abs(errorx) < 10) {
-						pickupState = RobotState.PickingUpBlock;
-					}
-				case PickingUpBlock:
-					double errory = vision.getCenter().y - CAMCENTER.y;
-					intake.autonPickup();
-					swerve.setWithAngularVelocity(0, errory, 0);
-					if (Math.abs(errory) < 10) {
-						pickupState = RobotState.ClampBlock;
-					}
-				case ClampBlock:
-					double errory2 = vision.getCenter().y - CAMCENTER.y;
-					intake.autonClamp();
-					if (errory2 < -10) {
-						pickupState = RobotState.EndPickup;
-					}
-				case EndPickup:
-					System.out.println("block picked up");
-				}
-		}
+//		//vision code
+//		if (xbox.getAButtonPressed()) {
+//			pickupState = RobotState.StartPickupState;
+//
+//			switch (pickupState) {
+//				case NothingState:
+//					break;
+//				case StartPickupState:
+//					elevator.moveToGroundPosition();
+//					if (vision.hasTarget()) {
+//						pickupState = RobotState.MovingToBlock;
+//					}
+//				case MovingToBlock:
+//					double errorx = filter.equations(vision.getCenter(), swerve.returnrv());
+//					swerve.setWithAngularVelocity(0, 0, errorx);
+//					swerve.updateAutonomous();
+//					if (Math.abs(errorx) < 10) {
+//						pickupState = RobotState.PickingUpBlock;
+//					}
+//				case PickingUpBlock:
+//					double errory = vision.getCenter().y - CAMCENTER.y;
+//					intake.autonPickup();
+//					swerve.setWithAngularVelocity(0, errory, 0);
+//					if (Math.abs(errory) < 10) {
+//						pickupState = RobotState.ClampBlock;
+//					}
+//				case ClampBlock:
+//					double errory2 = vision.getCenter().y - CAMCENTER.y;
+//					intake.autonClamp();
+//					if (errory2 < -10) {
+//						pickupState = RobotState.EndPickup;
+//					}
+//				case EndPickup:
+//					System.out.println("block picked up");
+//				}
+//		}
 	
 //	if (!zeroing && xbox.getAButton() && xbox.getXButton()) {
 //	zeroing = true;

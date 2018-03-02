@@ -106,5 +106,9 @@ public class Elevator {
 		locked = !locked;
 		winchLock.set(locked);
 	}
+	
+	public void autonSetSpeed(double speed) {
+		elevator.set(ControlMode.PercentOutput, speed);
+	}
 
 }

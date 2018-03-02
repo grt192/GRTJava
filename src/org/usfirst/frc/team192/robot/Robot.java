@@ -8,6 +8,7 @@ import org.usfirst.frc.team192.mechs.Intake;
 import org.usfirst.frc.team192.swerve.FullSwervePID;
 import org.usfirst.frc.team192.swerve.NavXGyro;
 import org.usfirst.frc.team192.vision.Imshow;
+import org.usfirst.frc.team192.vision.nn.RemoteVisionThread;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.XboxController;
@@ -44,10 +45,12 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void autonomousInit() {
+		auto.init();
 	}
 
 	@Override
 	public void autonomousPeriodic() {
+		auto.periodic();
 	}
 
 	@Override

@@ -108,11 +108,18 @@ public class Intake{
 			armsExtended = false;
 		}
 	}
-	
+
 	public void stopAutonIntake() {
 		upper.set(ControlMode.PercentOutput, 0);
 		left.set(ControlMode.PercentOutput, 0);
 		right.set(ControlMode.PercentOutput, 0);
 	}
+
+	public void autonrelease() {
+		upper.set(ControlMode.PercentOutput, -.75);
+		left.set(ControlMode.PercentOutput, -.75);
+		right.set(ControlMode.PercentOutput, -.75);
+	}
+	
 	
 }
