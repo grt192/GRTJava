@@ -1,18 +1,20 @@
 package org.usfirst.frc.team192.robot;
 
 import org.usfirst.frc.team192.config.Config;
+import org.usfirst.frc.team192.fieldMapping.FieldMapperThreadEncoder;
 import org.usfirst.frc.team192.swerve.FullSwervePID;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends IterativeRobot {
 
 	private Gyro gyro;
 	private FullSwervePID swerve;
-	// private FieldMapperThreadEncoder fieldMapperEncoder;
+	private FieldMapperThreadEncoder fieldMapperEncoder;
 	
 	private XboxController input;
 	//private RemoteVisionThread vision;
@@ -29,7 +31,7 @@ public class Robot extends IterativeRobot {
 		Config.start();
 		gyro = new ADXRS450_Gyro();
 		swerve = new FullSwervePID(gyro);
-		// fieldMapperEncoder = new FieldMapperThreadEncoder(gyro, swerve);
+		fieldMapperEncoder = new FieldMapperThreadEncoder(gyro, swerve);
 		input = new XboxController(0);
 		/*
 		elevator = new Elevator();
@@ -52,9 +54,14 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopInit() {
 		swerve.enable();
-		/*
 		fieldMapperEncoder.reset();
+		try {
+			Thread.sleep(50);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		new Thread(fieldMapperEncoder).start();
+		/*
 		gyro.resetDisplacement();
 		teleop.init();
 		*/
@@ -66,9 +73,9 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		swerve.updateWithJoystick(input);
-		/*
 		SmartDashboard.putNumber("X Displacement (encoders)", fieldMapperEncoder.getX());
 		SmartDashboard.putNumber("Y Displacement (encoders)", fieldMapperEncoder.getY());
+		/*
 		teleop.periodic();
 		SmartDashboard.putNumber("Cycle time", (System.currentTimeMillis() - start) / 1000.0);
 		start = System.currentTimeMillis();

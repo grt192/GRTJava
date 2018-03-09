@@ -114,8 +114,10 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 	}
 
 	public void holdAngle() {
-		usePID = true;
-		pid.setSetpoint(getGyroAngle());
+		if (pid != null) {
+			usePID = true;
+			pid.setSetpoint(getGyroAngle());
+		}
 	}
 
 	public void setWithAngularVelocity(double vx, double vy, double rv) {
@@ -152,6 +154,12 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 	// for zeroing
 	public void zeroWithInputs(int talonNumber, XboxController xbox) {
 		wheels[talonNumber].getRotateMotor().set(ControlMode.PercentOutput, xbox.getX(Hand.kLeft) / 3);
+	}
+	
+	@Override
+	public void zeroGyro() {
+		super.zeroGyro();
+		holdAngle();
 	}
 
 }

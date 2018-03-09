@@ -76,6 +76,7 @@ public abstract class SwerveBase {
 	public void controllerZero(XboxController xbox) {
 		if (!printed) {
 			System.out.println("zeroing " + wheels[index].getName());
+			printed = true;
 		}
 		if (xbox.getAButtonPressed()) {
 			index++;

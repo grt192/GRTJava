@@ -4,6 +4,7 @@ import org.usfirst.frc.team192.swerve.FullSwerve;
 import org.usfirst.frc.team192.swerve.SwerveData;
 
 import edu.wpi.first.wpilibj.interfaces.Gyro;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class FieldMapperThreadEncoder extends FieldMapperThreadVel {
 	
@@ -16,11 +17,13 @@ public class FieldMapperThreadEncoder extends FieldMapperThreadVel {
 	
 	protected double getVx() {
 		SwerveData data = swerve.getSwerveData();
+		SmartDashboard.putNumber("encoders x", data.encoderVX);
 		return data.encoderVX;
 	}
 	
 	protected double getVy() {
 		SwerveData data = swerve.getSwerveData();
+		SmartDashboard.putNumber("encoders y", data.encoderVY);
 		return data.encoderVY;
 	}
 }

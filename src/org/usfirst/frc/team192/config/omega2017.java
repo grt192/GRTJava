@@ -30,5 +30,5 @@
 // roborio_y=0
 //
 // ticks_per_rotation=40215
-// drive_encoder_scale=0.02045308
+// drive_encoder_scale=0.0005984745974580505
 // name=omega2017

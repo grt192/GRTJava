@@ -4,9 +4,6 @@ import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 public abstract class FieldMapperThreadVel extends FieldMapperGyro implements Runnable {
 	
-	private double x;
-	private double y;
-	
 	public FieldMapperThreadVel(Gyro gyro, double relX, double relY) {
 		super(gyro, relX, relY);
 		reset();
@@ -26,6 +23,11 @@ public abstract class FieldMapperThreadVel extends FieldMapperGyro implements Ru
 			double dt = getDeltaTime();
 			x += getVx() * dt;
 			y += getVy() * dt;
+			try {
+				Thread.sleep(15);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
