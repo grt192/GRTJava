@@ -32,3 +32,9 @@
 // ticks_per_rotation=1024
 // drive_encoder_scale=0.02045308
 // name=omega22018
+
+// upper_flywheel=13
+// lower_right_flywheel=14
+// lower_left_flywheel=4
+// winch_motor=
+// winch_motor_follower=
