@@ -13,8 +13,8 @@
 // bl_rotate_port=5
 // bl_drive_port=7
 // bl_offset=0
-// br_rotate_port=10
-// br_drive_port=11
+// br_rotate_port=11
+// br_drive_port=10
 // br_offset=0
 //
 // swervepid_p=0.015
@@ -36,5 +36,10 @@
 // upper_flywheel=13
 // lower_right_flywheel=14
 // lower_left_flywheel=4
-// winch_motor=
-// winch_motor_follower=
+// winch_motor=3
+// winch_motor_follower=12
+
+// rightsol=2
+// leftsol=3
+// centersol=0
+// winchsol=1

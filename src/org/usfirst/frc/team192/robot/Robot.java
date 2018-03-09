@@ -1,15 +1,17 @@
 package org.usfirst.frc.team192.robot;
 
 import org.usfirst.frc.team192.config.Config;
-import org.usfirst.frc.team192.fieldMapping.FieldMapperEncoder;
 import org.usfirst.frc.team192.fieldMapping.FieldMapperThreadEncoder;
 import org.usfirst.frc.team192.mechs.Elevator;
 import org.usfirst.frc.team192.mechs.Intake;
 import org.usfirst.frc.team192.swerve.FullSwervePID;
 import org.usfirst.frc.team192.swerve.NavXGyro;
 import org.usfirst.frc.team192.vision.Imshow;
-import org.usfirst.frc.team192.vision.nn.RemoteVisionThread;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -79,14 +81,23 @@ public class Robot extends IterativeRobot {
 	public void disabledInit() {
 		swerve.disable();
 	}
-
+	
+	private int index;
+	
 	@Override
 	public void testInit() {
-
+		index = 0;
+		System.out.println(index + 1);
 	}
-
+	
 	@Override
 	public void testPeriodic() {
-
+		// swerve.controllerZero(input);
+		if (input.getAButtonPressed()) {
+			index++;
+			index %= 16;
+			System.out.println(index + 1);
+		}
+		new TalonSRX(index + 1).set(ControlMode.PercentOutput, input.getX(Hand.kLeft));
 	}
 }
