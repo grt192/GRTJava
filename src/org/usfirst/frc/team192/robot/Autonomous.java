@@ -1,4 +1,4 @@
-package org.usfirst.frc.team192.robot;
+     package org.usfirst.frc.team192.robot;
 
 import org.usfirst.frc.team192.config.Config;
 import org.usfirst.frc.team192.mechs.Elevator;
@@ -18,6 +18,8 @@ public class Autonomous {
 	private SendableChooser<Mode> modeChooser;
 
 	private int dsLocation;
+	private int robotLocation;
+	private String robotLocationString;
 
 	private boolean switchLeft;
 	private boolean scaleLeft;
@@ -73,7 +75,7 @@ public class Autonomous {
 		this.robotWidth = Config.getDouble("robot_width") * METERS_TO_INCHES;
 		this.robotHeight = Config.getDouble("robot_height") * METERS_TO_INCHES;
 		
-//		SmartDashboard.putNumber("autonomous_delay_ms", 1.0);
+		SmartDashboard.putString("location (l, c, r)", "c");
 //		SmartDashboard.putNumber("autonomous_distance_from_left_edge_inches", FIELD_LENGTH/2 - robotWidth/2);
 		
 		modeChooser = new SendableChooser<Mode>();
@@ -90,6 +92,17 @@ public class Autonomous {
 
 	public void init() {
 		startTime = System.currentTimeMillis();
+		robotLocationString = SmartDashboard.getString("location (l, c, r)", "c");
+		System.out.println(robotLocationString);
+		if (robotLocationString.contains("l")) {
+			robotLocation = 0;
+		} else if (robotLocationString.contains("c")) {
+			robotLocation = 1;
+		} else {
+			robotLocation = 2;
+		}
+		System.out.println(robotLocation);
+		
 
 		// get game information
 		dsLocation = ds.getLocation();
@@ -128,12 +141,12 @@ public class Autonomous {
 		
 		switch (selectedMode) {
 		case ONLY_FORWARD_TIME:
-			if (timeAfterDelay < 4000) {
-//				System.out.println("driving");
+			if (timeAfterDelay < 3000) {
+				System.out.println("driving");
 				swerve.setVelocity(0.5, 0.0);
-			} else {
-//				System.out.println("not driving");
-				swerve.setVelocity(0.0, 0.0);
+			} else if (timeAfterDelay < 3050){
+				System.out.println("not driving");
+				swerve.setVelocity(0, 0);
 			}
 			break;
 		case ONLY_FORWARD_ENCODERS:
@@ -149,28 +162,56 @@ public class Autonomous {
 				swerve.setVelocity(0.0, 0.0);
 			}
 		case FORWARD_AND_PLACE_SWITCH:
-			if (start == null) {
-				start = getEncoderValue();
-			}
-			double traveled2 = getEncoderValue() - start;
-			if (traveled2 < 160) {
+			if (timeAfterDelay < 4000) {
+				System.out.println("driving");
 				swerve.setVelocity(0.5, 0.0);
-			} else if (traveled2 < 166 - robotHeight) { //start to middle of switch x axis
-				swerve.setVelocity(0.15, 0.0);
-			} else {
-				double leftToSwitch = WALL_TO_SWITCH - robotWidth/2;
-				if (!switchLeft) {
-					leftToSwitch = FIELD_LENGTH - leftToSwitch;
-				}
-				swerve.setVelocity(0.0, 0.0);
-				if (startLeft == switchLeft) {
-					if (timeAfterDelay < 5000) {
-						//place block
-						//move elevator back
-						System.out.println("place block");
-					}
-				}
-			}
+			} else if (timeAfterDelay < 4050){
+				System.out.println("not driving");
+				swerve.setVelocity(0, 0);
+			} else if (timeAfterDelay < 7000){
+				System.out.println("rotating");
+				swerve.setWithAngularVelocity(0, 0, .5);
+				swerve.updateAutonomous();
+			} else if (timeAfterDelay < 7050){
+				System.out.println("not rotating");
+				swerve.setWithAngularVelocity(0, 0, 0);
+				swerve.updateAutonomous();
+//			} else if (timeAfterDelay < 10000){
+//				System.out.println("elevator up");
+//				elevator.autonSetSpeed(.5);
+//			} else if (timeAfterDelay < 10050){
+//				System.out.println("elevator stopped");
+//				elevator.autonSetSpeed(0);
+			} else if (timeAfterDelay < 13000){
+				System.out.println("spitting out");
+				intake.autonrelease();
+			} else if (timeAfterDelay < 13050){
+				System.out.println("stopped");
+				intake.stopAutonIntake();
+			} 
+		
+//			if (start == null) {
+//				start = getEncoderValue();
+//			}
+//			double traveled2 = getEncoderValue() - start;
+//			if (traveled2 < 160) {
+//				swerve.setVelocity(0.5, 0.0);
+//			} else if (traveled2 < 166 - robotHeight) { //start to middle of switch x axis
+//				swerve.setVelocity(0.15, 0.0);
+//			} else {
+//				double leftToSwitch = WALL_TO_SWITCH - robotWidth/2;
+//				if (!switchLeft) {
+//					leftToSwitch = FIELD_LENGTH - leftToSwitch;
+//				}
+//				swerve.setVelocity(0.0, 0.0);
+//				if (startLeft == switchLeft) {
+//					if (timeAfterDelay < 5000) {
+//						//place block
+//						//move elevator back
+//						System.out.println("place block");
+//					}
+//				}
+//			}
 			break;
 		case FORWARD_AND_PLACE_SWITCH_SIDE:
 			if (timeAfterDelay < 4000) {

@@ -135,6 +135,10 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 	public void updateAutonomous() {
 		updateMovement(vx, vy, rv);
 	}
+	
+	public double returnrv() {
+		return rv;
+	}
 
 	// for pid
 	@Override
