@@ -1,10 +1,12 @@
 package org.usfirst.frc.team192.fieldMapping;
 
+
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.video.KalmanFilter;
 import org.usfirst.frc.team192.config.Config;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 public abstract class FieldMapperThreadVel extends FieldMapperGyro implements Runnable {
@@ -31,11 +33,11 @@ public abstract class FieldMapperThreadVel extends FieldMapperGyro implements Ru
 		Mat Q = makeQ();
 		Mat R = makeR();
 		filter.set_transitionMatrix(F);
-		filter.set_processNoiseCov(P);
+		filter.set_errorCovPost(P);
 		filter.set_measurementMatrix(H);
 		filter.set_measurementNoiseCov(R);
 		filter.set_processNoiseCov(Q);
-		filter.set_statePre(Mat.zeros(stateSize, 1, TYPE));
+		filter.set_statePost(Mat.zeros(stateSize, 1, TYPE));
 		reset();
 	}
 	
@@ -50,6 +52,8 @@ public abstract class FieldMapperThreadVel extends FieldMapperGyro implements Ru
 	
 	private Mat makeP() {
 		Mat result = Mat.eye(stateSize, stateSize, TYPE);
+		result = result.mul(result, 1e-5);
+		/*
 		for (int i = 0; i < stateSize; i++) {
 			for (int j = 0; j < stateSize; j++) {
 				if ((i + j) % 2 == 0) {
@@ -57,6 +61,7 @@ public abstract class FieldMapperThreadVel extends FieldMapperGyro implements Ru
 				}
 			}
 		}
+		*/
 		return result;
 	}
 	
@@ -69,8 +74,8 @@ public abstract class FieldMapperThreadVel extends FieldMapperGyro implements Ru
 	
 	private Mat makeH() {
 		Mat result = Mat.zeros(stateSize, stateSize, TYPE);
-		result.put(0, 2, C);
-		result.put(1, 3, C);
+		result.put(0, 2, 1);
+		result.put(1, 3, 1);
 		return result;
 	}
 	
@@ -84,11 +89,8 @@ public abstract class FieldMapperThreadVel extends FieldMapperGyro implements Ru
 	}
 	
 	private Mat makeR() {
-		Mat result = Mat.eye(stateSize, stateSize, TYPE);
-		result.put(0, 0, .000001);
-		result.put(1, 1, .000001);
-		result.put(2, 2, .001);
-		result.put(3, 3, .001);
+		Mat result = Mat.eye(sensorSize, sensorSize, TYPE);
+		result = result.mul(result, 1e-3);
 		return result;
 	}
 	
@@ -101,10 +103,11 @@ public abstract class FieldMapperThreadVel extends FieldMapperGyro implements Ru
 	
 	public void run() {
 		while (true) {
-			filter.correct(getMeasurement());
 			Mat pos = filter.predict();
 			x = pos.get(0, 0)[0];
 			y = pos.get(0, 1)[0];
+			filter.correct(getMeasurement());
+			Timer.delay(dt);
 		}
 	}
 	
