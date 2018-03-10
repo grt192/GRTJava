@@ -6,7 +6,8 @@ import org.usfirst.frc.team192.mechs.Elevator;
 import org.usfirst.frc.team192.mechs.Intake;
 import org.usfirst.frc.team192.swerve.FullSwervePID;
 import org.usfirst.frc.team192.swerve.NavXGyro;
-import org.usfirst.frc.team192.vision.Imshow;
+import org.usfirst.frc.team192.vision.VisionThread;
+import org.usfirst.frc.team192.vision.nn.RemoteVisionThread;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -21,27 +22,27 @@ public class Robot extends IterativeRobot {
 	private NavXGyro gyro;
 	private FullSwervePID swerve;
 	private FieldMapperThreadEncoder fieldMapperEncoder;
-	
-	private XboxController input;
-	//private RemoteVisionThread vision;
+
+	// private RemoteVisionThread vision;
 	private Autonomous auto;
 	private Teleop teleop;
-	private Imshow imshow;
 	private Elevator elevator;
 	private Intake intake;
+	private XboxController input;
 
 	@Override
 	public void robotInit() {
 		Config.start();
+		input = new XboxController(0);
 		gyro = new NavXGyro();
 		swerve = new FullSwervePID(gyro);
 		fieldMapperEncoder = new FieldMapperThreadEncoder(gyro, swerve);
-		input = new XboxController(0);
 		elevator = new Elevator();
-		intake = new Intake(); 
-		//vision = new RemoteVisionThread();
-		//vision.start();
-		teleop = new Teleop(swerve, intake, elevator, gyro);
+		intake = new Intake();
+		VisionThread vision = new RemoteVisionThread(640, 480);
+		vision.start();
+		VisionSwerve visionSwerve = new VisionSwerve(vision, swerve);
+		teleop = new Teleop(swerve, intake, elevator, visionSwerve);
 		auto = new Autonomous(swerve, intake, elevator);
 	}
 
@@ -63,13 +64,11 @@ public class Robot extends IterativeRobot {
 		gyro.resetDisplacement();
 		teleop.init();
 	}
-	
+
 	private long start = System.currentTimeMillis();
 
-	
 	@Override
 	public void teleopPeriodic() {
-		swerve.updateWithJoystick(input);
 		SmartDashboard.putNumber("X Displacement (encoders)", fieldMapperEncoder.getX());
 		SmartDashboard.putNumber("Y Displacement (encoders)", fieldMapperEncoder.getY());
 		teleop.periodic();
@@ -81,15 +80,15 @@ public class Robot extends IterativeRobot {
 	public void disabledInit() {
 		swerve.disable();
 	}
-	
+
 	private int index;
-	
+
 	@Override
 	public void testInit() {
 		index = 0;
 		System.out.println(index + 1);
 	}
-	
+
 	@Override
 	public void testPeriodic() {
 		// swerve.controllerZero(input);

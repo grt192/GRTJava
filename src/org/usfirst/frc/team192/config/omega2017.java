@@ -1,4 +1,4 @@
-// # Config file for 2018 beta
+// # Config file for 2017 omega
 // # Domain: roborio-192-frc.local
 // 
 // robot_width=0.6604

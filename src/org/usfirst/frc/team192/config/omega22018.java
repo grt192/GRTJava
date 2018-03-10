@@ -1,12 +1,13 @@
 // # Config file for 2018 omega II
 // # Domain: roborio-192-frc.local
-// 
+//
 // robot_width=0.6604
 // robot_height=0.5334
-// 
+//
 // fl_rotate_port=1
 // fl_drive_port=2
 // fl_offset=0
+
 // fr_rotate_port=15
 // fr_drive_port=16
 // fr_offset=0
