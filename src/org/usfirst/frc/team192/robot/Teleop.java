@@ -1,6 +1,5 @@
 package org.usfirst.frc.team192.robot;
 
-import org.usfirst.frc.team192.mechs.Climber;
 import org.usfirst.frc.team192.mechs.Elevator;
 import org.usfirst.frc.team192.mechs.Intake;
 import org.usfirst.frc.team192.swerve.FullSwervePID;
@@ -13,7 +12,6 @@ public class Teleop {
 	private XboxController xboxMechs;
 	private XboxController xboxSwerve;
 	private Elevator elevator;
-	private Climber climber;
 	private Intake intake;
 
 	DigitalInput innerLimitSwitch;
@@ -21,7 +19,7 @@ public class Teleop {
 
 	private FullSwervePID swerve;
 
-	public Teleop(FullSwervePID swerve, Intake intake, Elevator elevator, VisionSwerve visionSwerve) {
+	public Teleop(FullSwervePID swerve, Intake intake, Elevator elevator) {
 		xboxSwerve = new XboxController(0);
 		xboxMechs = new XboxController(1);
 		this.swerve = swerve;
@@ -34,8 +32,7 @@ public class Teleop {
 
 	public void periodic() {
 		if (xboxMechs.getXButtonPressed()) {
-			intake.moveCenterPickup(xboxMechs);
-
+			intake.moveCenterPickup();
 		}
 		if (xboxMechs.getBumperPressed(Hand.kRight)) {
 			intake.movePickup();
@@ -44,7 +41,7 @@ public class Teleop {
 			elevator.breakElevator();
 		}
 
-		intake.moveWheels(xboxMechs);
+		intake.moveWheels(xboxMechs.getY(Hand.kLeft));
 		elevator.manualControl(xboxMechs);
 		if (xboxMechs.getY() < -.1) {
 			intake.movePickupOut();

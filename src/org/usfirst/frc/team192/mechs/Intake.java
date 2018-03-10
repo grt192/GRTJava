@@ -5,9 +5,7 @@ import org.usfirst.frc.team192.config.Config;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.XboxController;
 
 public class Intake {
 
@@ -35,8 +33,7 @@ public class Intake {
 		right.set(ControlMode.PercentOutput, -1);
 	}
 
-	public void moveWheels(XboxController xbox) {
-		double speed = xbox.getY(Hand.kLeft);
+	public void moveWheels(double speed) {
 		upper.set(ControlMode.PercentOutput, speed);
 		right.set(ControlMode.PercentOutput, speed);
 		left.set(ControlMode.PercentOutput, speed);
@@ -61,7 +58,7 @@ public class Intake {
 		System.out.println(armsExtended);
 	}
 
-	public void moveCenterPickup(XboxController xbox) {
+	public void moveCenterPickup() {
 		if (!centerExtended) {
 			mainSol.set(true);
 			centerExtended = true;
