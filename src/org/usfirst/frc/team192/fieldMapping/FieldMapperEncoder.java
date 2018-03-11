@@ -5,17 +5,38 @@ import org.usfirst.frc.team192.swerve.SwerveData;
 
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 
-public class FieldMapperEncoder extends FieldMapperVel {
+public class FieldMapperEncoder extends FieldMapperGyro {
 	private FullSwerve swerve;
+	private double lastVx;
+	private double lastVy;
 	
 	public FieldMapperEncoder(Gyro gyro, FullSwerve swerve) {
 		super(gyro, 0, 0);
 		this.swerve = swerve;
+		reset();
 	}
 	
 	public void update() {
 		SwerveData swerveData = swerve.getSwerveData();
 		updateVelocity(swerveData.encoderVX, swerveData.encoderVY);
+	}
+	
+	public void reset(double initX, double initY) {
+		x = initX;
+		y = initY;
+		lastUpdated = System.currentTimeMillis();
+	}
+	
+	public void reset() {
+		reset(0, 0);
+	}
+	
+	protected void updateVelocity(double vx, double vy) {
+		double dt = getDeltaTime();
+		x += (vx + lastVx) / 2 * dt;
+		y += (vy + lastVy) / 2 * dt;
+		lastVx = vx;
+		lastVy = vy;
 	}
 }
 
