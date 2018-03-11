@@ -24,6 +24,7 @@
 // swervepid_f=0.01
 //
 // feedback_device=Analog
+// swerve_inverted=true
 //
 // navx_x=0
 // navx_y=0

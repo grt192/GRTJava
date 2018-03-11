@@ -64,6 +64,11 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 		rotateInput = 0.0;
 		holdAngle();
 	}
+	
+	public void zeroGyro() {
+		super.zeroGyro();
+		holdAngle();
+	}
 
 	@Override
 	public void disable() {
@@ -115,7 +120,9 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 
 	public void holdAngle() {
 		usePID = true;
-		pid.setSetpoint(getGyroAngle());
+		if (pid != null) {
+			pid.setSetpoint(getGyroAngle());
+		}
 	}
 
 	public void setWithAngularVelocity(double vx, double vy, double rv) {

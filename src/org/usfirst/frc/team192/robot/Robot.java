@@ -1,22 +1,25 @@
 package org.usfirst.frc.team192.robot;
 
 import org.usfirst.frc.team192.config.Config;
+import org.usfirst.frc.team192.fieldMapping.FieldMapperEncoder;
+import org.usfirst.frc.team192.fieldMapping.FieldMapperThreadEncoder;
 import org.usfirst.frc.team192.mechs.Elevator;
 import org.usfirst.frc.team192.mechs.Intake;
 import org.usfirst.frc.team192.swerve.FullSwervePID;
-import org.usfirst.frc.team192.swerve.NavXGyro;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends IterativeRobot {
 
-	private NavXGyro gyro;
+	private Gyro gyro;
 	private FullSwervePID swerve;
 
 	// private RemoteVisionThread vision;
@@ -25,17 +28,22 @@ public class Robot extends IterativeRobot {
 	private Elevator elevator;
 	private Intake intake;
 	private XboxController input;
+	
+	private FieldMapperEncoder fieldMapperEncoder;
+	private FieldMapperThreadEncoder fieldMapperThreadEncoder;
 
 	@Override
 	public void robotInit() {
 		Config.start();
 		input = new XboxController(0);
-		gyro = new NavXGyro();
+		gyro = new ADXRS450_Gyro();
 		swerve = new FullSwervePID(gyro);
 		elevator = new Elevator();
 		intake = new Intake();
 		teleop = new Teleop(swerve, intake, elevator);
 		auto = new Autonomous(swerve, intake, elevator);
+		fieldMapperEncoder = new FieldMapperEncoder(gyro, swerve);
+		fieldMapperThreadEncoder = new FieldMapperThreadEncoder(gyro, swerve);
 	}
 
 	@Override
@@ -53,6 +61,8 @@ public class Robot extends IterativeRobot {
 	public void teleopInit() {
 		swerve.enable();
 		teleop.init();
+		fieldMapperEncoder.reset();
+		fieldMapperThreadEncoder.reset();
 	}
 
 	private long start = System.currentTimeMillis();
@@ -61,6 +71,11 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		teleop.periodic();
 		SmartDashboard.putNumber("Cycle time", (System.currentTimeMillis() - start) / 1000.0);
+		SmartDashboard.putNumber("X Displacement (kalman)", fieldMapperThreadEncoder.getX());
+		SmartDashboard.putNumber("Y Displacement (kalman)", fieldMapperThreadEncoder.getY());
+		SmartDashboard.putNumber("X Displacement (dead reckoning)", fieldMapperEncoder.getX());
+		SmartDashboard.putNumber("Y Displacement (dead reckoning)", fieldMapperEncoder.getY());
+		fieldMapperEncoder.update();
 		start = System.currentTimeMillis();
 	}
 
