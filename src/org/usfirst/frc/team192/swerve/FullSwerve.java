@@ -63,7 +63,7 @@ public class FullSwerve extends SwerveBase {
 			maxSpeed = Math.max(maxSpeed, speed);
 		}
 		if (maxSpeed > 0.1) {
-			double scale = 1 / Math.max(getMaxSpeed(), maxSpeed);
+			double scale = 1 / Math.max(1 / getMaxSpeed(), maxSpeed);
 			for (int i = 0; i < 4; i++) {
 				wheels[i].setDriveSpeed(scale * wheelSpeeds[i]);
 				SmartDashboard.putNumber("drive speed " + i, scale * wheelSpeeds[i]);
