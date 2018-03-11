@@ -26,14 +26,15 @@ public class FullSwerve extends SwerveBase {
 	public void zero() {
 		for (Wheel wheel : wheels)
 			wheel.disable();
+		System.out.println("Zeroing gyro - DO NOT MOVE ROBOT");
+		gyro.calibrate();
+		System.out.println("Done zeroing gyro");
 		zeroGyro();
 		super.zero();
 	}
 
 	public void zeroGyro() {
-		System.out.println("Zeroing gyro - DO NOT MOVE ROBOT");
-		gyro.calibrate();
-		System.out.println("Done zeroing gyro");
+		gyro.reset();
 	}
 
 	protected void changeMotors(double rv, double vx, double vy) {
@@ -113,8 +114,29 @@ public class FullSwerve extends SwerveBase {
 		return new SwerveData(gyroAngle, gyroRate, angVel / 4, vx / 4, vy / 4);
 	}
 
+	public SwerveData newGetSwerveData() {
+		double vx = 0.0;
+		double vy = 0.0;
+		double gyroAngle = Math.toRadians(gyro.getAngle());
+		double gyroRate = Math.toRadians(gyro.getRate());
+		for (int i = 0; i < 4; i++) {
+			double wheelAngle = getRelativeWheelAngle(i);
+			double wheelSpeed = wheels[i].getDriveSpeed();
+			double wheelPosition = wheels[i].getCurrentPosition();
+			double absoluteWheelPosition = wheelPosition + gyroAngle;
+			double dx = RADIUS * Math.cos(wheelAngle);
+			double dy = RADIUS * Math.sin(wheelAngle);
+			double wheelvx = wheelSpeed * Math.cos(absoluteWheelPosition);
+			double wheelvy = wheelSpeed * Math.sin(absoluteWheelPosition);
+			vx += wheelvx + gyroRate * dy;
+			vy += wheelvy - gyroRate * dx;
+		}
+		// divide by 4 to get average
+		return new SwerveData(gyroAngle, gyroRate, 0.0, vx / 4, vy / 4);
+	}
+
 	public double getGyroAngle() {
-		return gyro.getAngle();
+		return ((gyro.getAngle() % 360) + 360) % 360;
 	}
 
 	public double getGyroRate() {

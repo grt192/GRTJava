@@ -12,19 +12,12 @@ import edu.wpi.first.wpilibj.Timer;
 public class RemoteVisionThread extends VisionThread {
 
 	private RemoteVision vision;
-	private VideoCapture cap;
-	private Mat image;
-	private final Point CENTER;
 
 	private boolean running;
 
-	public RemoteVisionThread() {
-		CENTER = new Point(320, 240);
+	public RemoteVisionThread(int width, int height) {
+		super(width, height);
 		vision = new RemoteVision(1920);
-		cap = new VideoCapture(0);
-		cap.set(Videoio.CAP_PROP_FRAME_HEIGHT, 240);
-		cap.set(Videoio.CAP_PROP_FRAME_WIDTH, 320);
-		image = new Mat(480, 640, CvType.CV_8UC3);
 	}
 
 	@Override
@@ -35,7 +28,6 @@ public class RemoteVisionThread extends VisionThread {
 				cap.grab();
 				cap.read(image);
 				vision.sendImage(image);
-				Timer.delay(0.1);
 			}
 		}
 	}

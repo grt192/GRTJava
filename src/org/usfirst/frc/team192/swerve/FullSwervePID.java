@@ -21,10 +21,10 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 	private double vx;
 	private double vy;
 	private double rv;
-	
+
 	private Mode mode;
 	private int index;
-	
+
 	private enum Mode {
 		SWERVE, ZERO
 	}
@@ -93,13 +93,13 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 		double lTrigger = input.getTriggerAxis(Hand.kLeft);
 		double rTrigger = input.getTriggerAxis(Hand.kRight);
 		if (lTrigger + rTrigger > 0.05) {
-			rotate += Math.pow(rTrigger, 2);
-			rotate -= Math.pow(lTrigger, 2);
+			rotate += rTrigger * rTrigger;
+			rotate -= lTrigger * lTrigger;
 			usePID = false;
 		} else if (!usePID) {
 			holdAngle();
 		}
-		updateMovement(-input.getY(Hand.kLeft), input.getX(Hand.kLeft), rotate);
+		updateMovement(clipAndSquare(-input.getY(Hand.kLeft)), clipAndSquare(input.getX(Hand.kLeft)), rotate);
 	}
 
 	// for autonomous
@@ -134,6 +134,10 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 
 	public void updateAutonomous() {
 		updateMovement(vx, vy, rv);
+	}
+	
+	public double returnrv() {
+		return rv;
 	}
 
 	// for pid

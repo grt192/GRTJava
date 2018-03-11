@@ -1,120 +1,93 @@
 package org.usfirst.frc.team192.mechs;
 
+import org.usfirst.frc.team192.config.Config;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.XboxController;
 
-public class Intake{
+public class Intake {
 
 	private TalonSRX left, right, upper;
 	private Solenoid mainSol, leftSol, rightSol;
-	public boolean leftExtended;
-	public boolean rightExtended;
-	public boolean centerExtended;
-	public Intake(TalonSRX lowerLeftMotor, TalonSRX lowerRightMotor, TalonSRX upperMotors, Solenoid mainSolenoid, Solenoid leftSolenoid, Solenoid rightSolenoid) {
-		left = lowerLeftMotor;
-		right = lowerRightMotor;
-		upper = upperMotors;
-		mainSol = mainSolenoid;
-		leftSol = leftSolenoid;
-		rightSol = rightSolenoid;
-		
-		rightExtended = false;
-		leftExtended = false;
-		centerExtended = false;
+
+	public Intake() {
+		left = new TalonSRX(Config.getInt("lower_left_flywheel"));
+		right = new TalonSRX(Config.getInt("lower_right_flywheel"));
+		right.setInverted(true);
+		upper = new TalonSRX(Config.getInt("upper_flywheel"));
+		mainSol = new Solenoid(Config.getInt("centersol"));
+		leftSol = new Solenoid(Config.getInt("leftsol"));
+		rightSol = new Solenoid(Config.getInt("rightsol"));
 	}
-	
-	public void spitOut(XboxController xbox) {
-		double speed = xbox.getTriggerAxis(Hand.kLeft);
-		if(speed > 0) {
-			upper.set(ControlMode.PercentOutput, -speed);
-			left.set(ControlMode.PercentOutput, speed);
-			right.set(ControlMode.PercentOutput, -speed);
-		}
+
+	public void spitOut() {
+		upper.set(ControlMode.PercentOutput, -1);
+		left.set(ControlMode.PercentOutput, -1);
+		right.set(ControlMode.PercentOutput, -1);
 	}
-	
-	public void moveInnerWheels(XboxController xbox) {
-		double speed = xbox.getTriggerAxis(Hand.kLeft);
+
+	public void moveWheels(double speed) {
 		upper.set(ControlMode.PercentOutput, speed);
-	}
-	
-	public void moveOuterWheels(XboxController xbox) {
-		double speed = xbox.getTriggerAxis(Hand.kRight);
 		right.set(ControlMode.PercentOutput, speed);
-		left.set(ControlMode.PercentOutput, -speed);
+		left.set(ControlMode.PercentOutput, speed);
 	}
-	
-	public void moveLeftPickup(XboxController xbox) {
-		if (!leftExtended) {
-			leftSol.set(true);
-			leftExtended = true;
-		}else {
-			leftSol.set(false);
-			leftExtended = false;
-		}
+
+	public void movePickupOut() {
+		mainSol.set(true);
+		rightSol.set(true);
+		leftSol.set(true);
 	}
-	
-	public void moveRightPickup(XboxController xbox) {
-		if (!rightExtended) {
-			rightSol.set(true);
-			rightExtended = true;
-		}else {
-			rightSol.set(false);
-			rightExtended = false;
-		}
-	}
-	
-	public void moveCenterPickup(XboxController xbox) {
-		if (!centerExtended) {
+
+	public void movePickup() {
+		boolean armsExtended = !rightSol.get();
+		if (armsExtended) {
 			mainSol.set(true);
-			centerExtended = true;
-		}else {
+		}
+		rightSol.set(armsExtended);
+		leftSol.set(armsExtended);
+	}
+
+	public void moveCenterPickup() {
+		if (!mainSol.get()) {
+			mainSol.set(true);
+		} else {
 			leftSol.set(false);
 			rightSol.set(false);
 			mainSol.set(false);
-			centerExtended = false;
-			rightExtended = false;
-			leftExtended = false;
 		}
 	}
-	
+
 	public void autonPickup() {
-		if (!centerExtended) {
+		if (!mainSol.get()) {
 			mainSol.set(true);
-			centerExtended = true;
 		}
-		if (!rightExtended) {
+		if (!rightSol.get()) {
 			rightSol.set(true);
-			rightExtended = true;
-		}
-		if (!leftExtended) {
 			leftSol.set(true);
-			leftExtended = true;
 		}
 		upper.set(ControlMode.PercentOutput, 1);
-		left.set(ControlMode.PercentOutput, -1);
+		left.set(ControlMode.PercentOutput, 1);
 		right.set(ControlMode.PercentOutput, 1);
-		
+
 	}
-	
+
 	public void autonClamp() {
-		if (rightExtended) {
-			rightSol.set(false);
-			rightExtended = false;
-		}
-		if (leftExtended) {
-			leftSol.set(false);
-			leftExtended = false;
-		}
+		rightSol.set(false);
+		leftSol.set(false);
 	}
-	
+
 	public void stopAutonIntake() {
 		upper.set(ControlMode.PercentOutput, 0);
 		left.set(ControlMode.PercentOutput, 0);
 		right.set(ControlMode.PercentOutput, 0);
 	}
-	
+
+	public void autonrelease() {
+		upper.set(ControlMode.PercentOutput, -.75);
+		left.set(ControlMode.PercentOutput, -.75);
+		right.set(ControlMode.PercentOutput, -.75);
+	}
+
 }
