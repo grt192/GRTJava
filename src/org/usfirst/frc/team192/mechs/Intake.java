@@ -11,8 +11,6 @@ public class Intake {
 
 	private TalonSRX left, right, upper;
 	private Solenoid mainSol, leftSol, rightSol;
-	public boolean armsExtended;
-	public boolean centerExtended;
 
 	public Intake() {
 		left = new TalonSRX(Config.getInt("lower_left_flywheel"));
@@ -22,9 +20,6 @@ public class Intake {
 		mainSol = new Solenoid(Config.getInt("centersol"));
 		leftSol = new Solenoid(Config.getInt("leftsol"));
 		rightSol = new Solenoid(Config.getInt("rightsol"));
-
-		armsExtended = false;
-		centerExtended = false;
 	}
 
 	public void spitOut() {
@@ -41,45 +36,36 @@ public class Intake {
 
 	public void movePickupOut() {
 		mainSol.set(true);
-		centerExtended = true;
 		rightSol.set(true);
 		leftSol.set(true);
-		armsExtended = true;
 	}
 
 	public void movePickup() {
-		armsExtended = !armsExtended;
+		boolean armsExtended = !rightSol.get();
 		if (armsExtended) {
 			mainSol.set(true);
-			centerExtended = true;
 		}
 		rightSol.set(armsExtended);
 		leftSol.set(armsExtended);
-		System.out.println(armsExtended);
 	}
 
 	public void moveCenterPickup() {
-		if (!centerExtended) {
+		if (!mainSol.get()) {
 			mainSol.set(true);
-			centerExtended = true;
 		} else {
 			leftSol.set(false);
 			rightSol.set(false);
 			mainSol.set(false);
-			centerExtended = false;
-			armsExtended = false;
 		}
 	}
 
 	public void autonPickup() {
-		if (!centerExtended) {
+		if (!mainSol.get()) {
 			mainSol.set(true);
-			centerExtended = true;
 		}
-		if (!armsExtended) {
+		if (!rightSol.get()) {
 			rightSol.set(true);
 			leftSol.set(true);
-			armsExtended = true;
 		}
 		upper.set(ControlMode.PercentOutput, 1);
 		left.set(ControlMode.PercentOutput, 1);
@@ -88,11 +74,8 @@ public class Intake {
 	}
 
 	public void autonClamp() {
-		if (armsExtended) {
-			rightSol.set(false);
-			leftSol.set(false);
-			armsExtended = false;
-		}
+		rightSol.set(false);
+		leftSol.set(false);
 	}
 
 	public void stopAutonIntake() {

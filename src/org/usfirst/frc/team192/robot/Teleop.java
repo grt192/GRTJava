@@ -42,8 +42,9 @@ public class Teleop {
 		}
 
 		intake.moveWheels(xboxMechs.getY(Hand.kLeft));
-		elevator.manualControl(xboxMechs);
-		if (xboxMechs.getY() < -.1) {
+		double elevatorSpeed = -xboxMechs.getY(Hand.kRight);
+		elevator.setSpeed(elevatorSpeed);
+		if (elevatorSpeed > 0.1) {
 			intake.movePickupOut();
 		}
 		swerve.updateWithJoystick(xboxSwerve);

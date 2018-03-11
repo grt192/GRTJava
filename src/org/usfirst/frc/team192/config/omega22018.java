@@ -8,8 +8,8 @@
 // fl_drive_port=2
 // fl_offset=0
 
-// fr_rotate_port=15
-// fr_drive_port=16
+// fr_rotate_port=16
+// fr_drive_port=15
 // fr_offset=0
 // bl_rotate_port=5
 // bl_drive_port=7
@@ -41,6 +41,6 @@
 // winch_motor_follower=12
 
 // rightsol=2
-// leftsol=3
+// leftsol=1
 // centersol=0
-// winchsol=1
+// winchsol=3
