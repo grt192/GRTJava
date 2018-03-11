@@ -2,6 +2,7 @@ package org.usfirst.frc.team192.swerve;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.hal.PowerJNI;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -62,7 +63,7 @@ public class FullSwerve extends SwerveBase {
 			maxSpeed = Math.max(maxSpeed, speed);
 		}
 		if (maxSpeed > 0.1) {
-			double scale = 1 / Math.max(1, maxSpeed);
+			double scale = 1 / Math.max(getMaxSpeed(), maxSpeed);
 			for (int i = 0; i < 4; i++) {
 				wheels[i].setDriveSpeed(scale * wheelSpeeds[i]);
 				SmartDashboard.putNumber("drive speed " + i, scale * wheelSpeeds[i]);
@@ -141,6 +142,10 @@ public class FullSwerve extends SwerveBase {
 
 	public double getGyroRate() {
 		return gyro.getRate();
+	}
+
+	private double getMaxSpeed() {
+		return Math.min(1.0, (PowerJNI.getVinVoltage() - 7.0) / 2);
 	}
 
 }
