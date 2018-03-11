@@ -40,7 +40,7 @@
 // winch_motor=3
 // winch_motor_follower=12
 
-// rightsol=2
-// leftsol=1
-// centersol=0
-// winchsol=3
+// rightsol=0
+// leftsol=3
+// centersol=1
+// winchsol=2

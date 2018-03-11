@@ -6,10 +6,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.XboxController;
 
 public class Elevator {
 
@@ -90,23 +87,14 @@ public class Elevator {
 
 	}
 
-	public void manualControl(XboxController xbox) {
-		double speed = -xbox.getY(Hand.kRight);
-
-		setSpeed(speed);
-	}
-
 	public void setSpeed(double speed) {
 		elevator.set(ControlMode.PercentOutput, speed);
 	}
-	
-	private boolean locked;
 
 	public void breakElevator() {
-		locked = !locked;
-		winchLock.set(locked);
+		winchLock.set(!winchLock.get());
 	}
-	
+
 	public void autonSetSpeed(double speed) {
 		elevator.set(ControlMode.PercentOutput, speed);
 	}

@@ -3,6 +3,7 @@ package org.usfirst.frc.team192.robot;
 import org.usfirst.frc.team192.mechs.Elevator;
 import org.usfirst.frc.team192.mechs.Intake;
 import org.usfirst.frc.team192.swerve.FullSwervePID;
+import org.usfirst.frc.team192.swerve.SwerveBase;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
@@ -42,9 +43,9 @@ public class Teleop {
 		}
 
 		intake.moveWheels(xboxMechs.getY(Hand.kLeft));
-		double elevatorSpeed = -xboxMechs.getY(Hand.kRight);
+		double elevatorSpeed = SwerveBase.clip(-xboxMechs.getY(Hand.kRight));
 		elevator.setSpeed(elevatorSpeed);
-		if (elevatorSpeed > 0.1) {
+		if (elevatorSpeed != 0.0) {
 			intake.movePickupOut();
 		}
 		swerve.updateWithJoystick(xboxSwerve);
