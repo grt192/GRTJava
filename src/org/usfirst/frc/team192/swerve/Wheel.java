@@ -159,4 +159,8 @@ class Wheel {
 		return rotateMotor;
 	}
 
+	public String getName() {
+		return name;
+	}
+
 }

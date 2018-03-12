@@ -7,11 +7,7 @@ import org.usfirst.frc.team192.mechs.Elevator;
 import org.usfirst.frc.team192.mechs.Intake;
 import org.usfirst.frc.team192.swerve.FullSwervePID;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
@@ -87,22 +83,23 @@ public class Robot extends IterativeRobot {
 		swerve.disable();
 	}
 
-	private int index;
+	// private int index;
 
 	@Override
 	public void testInit() {
-		index = 0;
-		System.out.println(index + 1);
+		// index = 0;
+		// System.out.println(index + 1);
 	}
 
 	@Override
 	public void testPeriodic() {
-		// swerve.controllerZero(input);
-		if (input.getAButtonPressed()) {
-			index++;
-			index %= 16;
-			System.out.println(index + 1);
-		}
-		new TalonSRX(index + 1).set(ControlMode.PercentOutput, input.getX(Hand.kLeft));
+		swerve.controllerZero(input);
+		// if (input.getAButtonPressed()) {
+		// index++;
+		// index %= 16;
+		// System.out.println(index + 1);
+		// }
+		// new TalonSRX(index + 1).set(ControlMode.PercentOutput,
+		// input.getX(Hand.kLeft));
 	}
 }

@@ -2,6 +2,9 @@ package org.usfirst.frc.team192.swerve;
 
 import org.usfirst.frc.team192.config.Config;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.XboxController;
 
 public abstract class SwerveBase {
@@ -63,6 +66,25 @@ public abstract class SwerveBase {
 			max = Math.max(max, Math.abs(w.getTotalDistance()));
 		}
 		return max;
+	}
+
+	private int index;
+	private boolean printed;
+
+	public void controllerZero(XboxController xbox) {
+		if (!printed) {
+			System.out.println("zeroing " + wheels[index].getName());
+			printed = true;
+		}
+		if (xbox.getAButtonPressed()) {
+			index++;
+			index %= 4;
+			printed = false;
+		} else if (xbox.getBButtonPressed()) {
+			zero();
+		}
+		double x = xbox.getX(Hand.kLeft);
+		wheels[index].getRotateMotor().set(ControlMode.PercentOutput, Math.copySign(x * x, x) / 2);
 	}
 
 }
