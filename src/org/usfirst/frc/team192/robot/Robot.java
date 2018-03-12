@@ -28,7 +28,7 @@ public class Robot extends IterativeRobot {
 	private Elevator elevator;
 	private Intake intake;
 	private XboxController input;
-	
+
 	private FieldMapperEncoder fieldMapperEncoder;
 	private FieldMapperThreadEncoder fieldMapperThreadEncoder;
 
@@ -40,15 +40,16 @@ public class Robot extends IterativeRobot {
 		swerve = new FullSwervePID(gyro);
 		elevator = new Elevator();
 		intake = new Intake();
-		teleop = new Teleop(swerve, intake, elevator);
 		fieldMapperEncoder = new FieldMapperEncoder(gyro, swerve);
 		fieldMapperThreadEncoder = new FieldMapperThreadEncoder(gyro, swerve);
 		auto = new Autonomous(swerve, intake, elevator, fieldMapperEncoder);
+		teleop = new Teleop(swerve, intake, elevator);
 	}
 
 	@Override
 	public void autonomousInit() {
 		swerve.enable();
+		swerve.zeroGyro();
 		fieldMapperEncoder.reset();
 		auto.init();
 	}
