@@ -1,6 +1,7 @@
-     package org.usfirst.frc.team192.robot;
+package org.usfirst.frc.team192.robot;
 
 import org.usfirst.frc.team192.config.Config;
+import org.usfirst.frc.team192.fieldMapping.FieldMapperEncoder;
 import org.usfirst.frc.team192.mechs.Elevator;
 import org.usfirst.frc.team192.mechs.Intake;
 import org.usfirst.frc.team192.swerve.FullSwervePID;
@@ -39,6 +40,7 @@ public class Autonomous {
 	
 	private Elevator elevator;
 	private Intake intake;
+	private FieldMapperEncoder fieldMapping;
 	
 	private static double FIELD_LENGTH = 324; //inches
 	private static double WALL_TO_SWITCH = 103.3; //y distance from left side of leftmost driver station to center of left switch plate
@@ -48,7 +50,8 @@ public class Autonomous {
 	private enum Mode {
 		ONLY_FORWARD_TIME ("drive forward for 4 seconds"),
 		ONLY_FORWARD_ENCODERS ("drive forward based on drive encoders"),
-		FORWARD_AND_PLACE_SWITCH ("drive forward only and place in switch (50% chance)"),  //50% chance of right side
+		FORWARD_AND_PLACE_SWITCH_RIGHT ("robot starts in line with the right side of the switch, drives forward to place"),  //50% chance of right side
+		ANGLED_AND_PLACE_SWITCH ("move at an angle to the correct side of the switch"),
 		FORWARD_AND_PLACE_SWITCH_SIDE ("drive forward and then to the side and place in switch (50% chance)"),  //50% chance of right side
 		FORWARD_AND_PLACE_SCALE_SIDE ("drive forward and then to the side to place in scale (50% chance)"),
 		PLACE_SWITCH_BOTTOM ("move to correct part of bottom of switch to place"),
@@ -66,11 +69,12 @@ public class Autonomous {
 		}
 	}
 
-	public Autonomous(FullSwervePID swerve, Intake intake, Elevator elevator) {
+	public Autonomous(FullSwervePID swerve, Intake intake, Elevator elevator, FieldMapperEncoder fieldMapping) {
 		this.ds = DriverStation.getInstance();
 		this.swerve = swerve;
 		this.elevator = elevator;
 		this.intake = intake;
+		this.fieldMapping = fieldMapping;
 		
 		this.robotWidth = Config.getDouble("robot_width") * METERS_TO_INCHES;
 		this.robotHeight = Config.getDouble("robot_height") * METERS_TO_INCHES;
@@ -107,7 +111,8 @@ public class Autonomous {
 		// get game information
 		dsLocation = ds.getLocation();
 		String fieldPositions = ds.getGameSpecificMessage();
-		selectedMode = modeChooser.getSelected();
+//		selectedMode = modeChooser.getSelected();
+		selectedMode = Mode.ONLY_FORWARD_ENCODERS;
 		System.out.println(selectedMode.toString());
 
 		delay = SmartDashboard.getNumber("autonomous_delay_ms", 0.0);
@@ -151,9 +156,10 @@ public class Autonomous {
 			break;
 		case ONLY_FORWARD_ENCODERS:
 			if (start == null) {
-				start = getEncoderValue();
+				start = getRobotDisplacementX();
 			}
-			double traveled = getEncoderValue() - start;
+			double traveled = getRobotDisplacementX() - start;
+			System.out.println(traveled);
 			if (traveled < 110) {
 				swerve.setVelocity(0.5, 0.0);
 			} else if (traveled < 120) { //start to auto line x axis
@@ -161,57 +167,37 @@ public class Autonomous {
 			} else {
 				swerve.setVelocity(0.0, 0.0);
 			}
-		case FORWARD_AND_PLACE_SWITCH:
-			if (timeAfterDelay < 4000) {
+			break;
+		case FORWARD_AND_PLACE_SWITCH_RIGHT:
+			if (timeAfterDelay < 3000) {
 				System.out.println("driving");
 				swerve.setVelocity(0.5, 0.0);
-			} else if (timeAfterDelay < 4050){
+			} else if (timeAfterDelay < 3050) {
 				System.out.println("not driving");
 				swerve.setVelocity(0, 0);
-			} else if (timeAfterDelay < 7000){
-				System.out.println("rotating");
-				swerve.setWithAngularVelocity(0, 0, .5);
-				swerve.updateAutonomous();
-			} else if (timeAfterDelay < 7050){
-				System.out.println("not rotating");
-				swerve.setWithAngularVelocity(0, 0, 0);
-				swerve.updateAutonomous();
-//			} else if (timeAfterDelay < 10000){
-//				System.out.println("elevator up");
-//				elevator.autonSetSpeed(.5);
-//			} else if (timeAfterDelay < 10050){
-//				System.out.println("elevator stopped");
-//				elevator.autonSetSpeed(0);
-			} else if (timeAfterDelay < 13000){
-				System.out.println("spitting out");
+			} else if (!switchLeft) {
+				if (timeAfterDelay < 4000) {
+					System.out.println("spitting out");
+					intake.autonrelease();
+				} else if (timeAfterDelay < 4050) {
+					System.out.println("stopped");
+					intake.stopAutonIntake();
+				}
+			}
+			break;
+		case ANGLED_AND_PLACE_SWITCH:
+			double magnitudeX = switchLeft ? -0.5 : 0.5;
+			double magnitudeY = 0.5;
+			double scaleTheta = 0.397580235;
+			if (timeAfterDelay < 3000) {
+				swerve.setVelocity(magnitudeY * Math.cos(scaleTheta), magnitudeX * Math.sin(scaleTheta));
+			} else if (timeAfterDelay < 3050) {
+				swerve.setVelocity(0.0, 0.0);
+			} else if (timeAfterDelay < 4000) {
 				intake.autonrelease();
-			} else if (timeAfterDelay < 13050){
-				System.out.println("stopped");
+			} else if (timeAfterDelay < 4050) {
 				intake.stopAutonIntake();
-			} 
-		
-//			if (start == null) {
-//				start = getEncoderValue();
-//			}
-//			double traveled2 = getEncoderValue() - start;
-//			if (traveled2 < 160) {
-//				swerve.setVelocity(0.5, 0.0);
-//			} else if (traveled2 < 166 - robotHeight) { //start to middle of switch x axis
-//				swerve.setVelocity(0.15, 0.0);
-//			} else {
-//				double leftToSwitch = WALL_TO_SWITCH - robotWidth/2;
-//				if (!switchLeft) {
-//					leftToSwitch = FIELD_LENGTH - leftToSwitch;
-//				}
-//				swerve.setVelocity(0.0, 0.0);
-//				if (startLeft == switchLeft) {
-//					if (timeAfterDelay < 5000) {
-//						//place block
-//						//move elevator back
-//						System.out.println("place block");
-//					}
-//				}
-//			}
+			}
 			break;
 		case FORWARD_AND_PLACE_SWITCH_SIDE:
 			if (timeAfterDelay < 4000) {
@@ -319,6 +305,14 @@ public class Autonomous {
 	
 	public double getEncoderValue() {
 		return swerve.getMaxDistanceTraveled() * METERS_TO_INCHES;
+	}
+	
+	public double getRobotDisplacementX() {
+		return fieldMapping.getX() * METERS_TO_INCHES;
+	}
+	
+	public double getRobotDisplacementY() {
+		return fieldMapping.getY() * METERS_TO_INCHES;
 	}
 
 }
