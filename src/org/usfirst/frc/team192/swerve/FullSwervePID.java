@@ -1,7 +1,5 @@
 package org.usfirst.frc.team192.swerve;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
@@ -151,11 +149,6 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 
 	}
 
-	// for zeroing
-	public void zeroWithInputs(int talonNumber, XboxController xbox) {
-		wheels[talonNumber].getRotateMotor().set(ControlMode.PercentOutput, xbox.getX(Hand.kLeft) / 3);
-	}
-	
 	@Override
 	public void zeroGyro() {
 		super.zeroGyro();
