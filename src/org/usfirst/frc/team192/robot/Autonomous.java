@@ -34,6 +34,8 @@ public class Autonomous {
 	private double switchCenterToLeft;
 
 	private Double start = null; // for driving distance
+	private int step = 0;
+	private Double stepTime = null; // for keeping track of time since the end of previous step
 
 	private final double robotWidth;
 	private final double robotHeight;
@@ -49,19 +51,20 @@ public class Autonomous {
 	private static double METERS_TO_INCHES = 39.37;
 
 	private enum Mode {
-		ONLY_FORWARD_TIME("drive forward for 4 seconds"), ONLY_FORWARD_ENCODERS(
-				"drive forward based on drive encoders"), FORWARD_AND_PLACE_SWITCH_RIGHT(
-						"robot starts in line with the right side of the switch, drives forward to place"), // 50%
-																											// chance of
-																											// right
-																											// side
-		ANGLED_AND_PLACE_SWITCH("move at an angle to the correct side of the switch"), FORWARD_AND_PLACE_SWITCH_SIDE(
-				"drive forward and then to the side and place in switch (50% chance)"), // 50% chance of right side
-		FORWARD_AND_PLACE_SCALE_SIDE(
-				"drive forward and then to the side to place in scale (50% chance)"), PLACE_SWITCH_BOTTOM(
-						"move to correct part of bottom of switch to place"), PLACE_SWITCH_SIDE(
-								"move to correct side of switch to place"), PLACE_SCALE_SIDE(
-										"move to correct side of scale to place");
+		ONLY_FORWARD_TIME("drive forward for 4 seconds"),
+		ONLY_FORWARD_ENCODERS("drive forward based on drive encoders"),
+		FORWARD_AND_PLACE_SWITCH_RIGHT("robot starts in line with the right side of the switch, drives forward to place"),
+			// 50% chance of right side
+		
+		ANGLED_AND_PLACE_SWITCH("move at an angle to the correct side of the switch"),
+		ANGLED_AND_PLACE_SWITCH_ENCODERS("move at an angle to the correct side of the switch with drive encoder data"),
+		FORWARD_AND_PLACE_SWITCH_SIDE("drive forward and then to the side and place in switch (50% chance)"),
+			// 50% chance of right side
+		
+		FORWARD_AND_PLACE_SCALE_SIDE("drive forward and then to the side to place in scale (50% chance)"),
+		PLACE_SWITCH_BOTTOM("move to correct part of bottom of switch to place"),
+		PLACE_SWITCH_SIDE("move to correct side of switch to place"),
+		PLACE_SCALE_SIDE("move to correct side of scale to place");
 
 		String description;
 
@@ -116,8 +119,8 @@ public class Autonomous {
 		// get game information
 		dsLocation = ds.getLocation();
 		String fieldPositions = ds.getGameSpecificMessage();
-		// selectedMode = modeChooser.getSelected();
-		selectedMode = Mode.ONLY_FORWARD_ENCODERS;
+		selectedMode = modeChooser.getSelected();
+//		selectedMode = Mode.ONLY_FORWARD_ENCODERS;
 		System.out.println(selectedMode.toString());
 
 		delay = SmartDashboard.getNumber("autonomous_delay_ms", 0.0);
@@ -191,17 +194,50 @@ public class Autonomous {
 			}
 			break;
 		case ANGLED_AND_PLACE_SWITCH:
-			double magnitudeX = switchLeft ? -0.5 : 0.5;
-			double magnitudeY = 0.5;
+			double magnitudeX = 0.5;
+			double magnitudeY = switchLeft ? -0.5 : 0.5;
 			double scaleTheta = 0.397580235;
 			if (timeAfterDelay < 3000) {
-				swerve.setVelocity(magnitudeY * Math.cos(scaleTheta), magnitudeX * Math.sin(scaleTheta));
+				swerve.setVelocity(magnitudeX * Math.sin(scaleTheta), magnitudeY * Math.cos(scaleTheta));
 			} else if (timeAfterDelay < 3050) {
 				swerve.setVelocity(0.0, 0.0);
 			} else if (timeAfterDelay < 4000) {
 				intake.autonrelease();
 			} else if (timeAfterDelay < 4050) {
 				intake.stopAutonIntake();
+			}
+			break;
+		case ANGLED_AND_PLACE_SWITCH_ENCODERS:
+			System.out.println("ANGLED_AND_PLACE_SWITCH_ENCODERS");
+			double xDisplacement = getRobotDisplacementX();
+			double yDisplacement = getRobotDisplacementY();
+			
+			double magnitudeX2 = 0.5;
+			double magnitudeY2 = switchLeft ? -0.5 : 0.5;
+			double xDistance = 140 - robotHeight - xDisplacement;
+			double yDistance = 59 - Math.abs(yDisplacement);
+			double vectorMagnitude = Math.sqrt(xDistance*xDistance + yDistance*yDistance);
+			magnitudeX2 *= xDistance / vectorMagnitude;
+			magnitudeY2 *= yDistance / vectorMagnitude;
+			System.out.println("x " + xDisplacement);
+			System.out.println("y " + yDisplacement);
+			if (getRobotDisplacementX() < 140-robotHeight) {
+				swerve.setVelocity(magnitudeX2, magnitudeY2);
+			} else {
+				swerve.setVelocity(0.0, 0.0);
+				if (step < 1) {
+					step = 1;
+					stepTime = timeAfterDelay;
+				}
+				double timeSinceSwerve = timeAfterDelay - stepTime;
+				System.out.println(timeSinceSwerve);
+				if (timeSinceSwerve < 1000) {
+					intake.moveWheels(-1.0);
+					System.out.println("releasing");
+				} else if (timeSinceSwerve < 1050) {
+					intake.moveWheels(0.0);
+					System.out.println("stopping");
+				}
 			}
 			break;
 		case FORWARD_AND_PLACE_SWITCH_SIDE:
