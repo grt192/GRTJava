@@ -131,8 +131,19 @@ class Wheel {
 		}
 	}
 
+	private long lastUpdate;
+	private int lastDistance;
+
 	public double getDriveSpeed() {
-		return driveMotor.getSelectedSensorVelocity(0) * DRIVE_TICKS_TO_METERS * 10 * (reversed ? -1 : 1);
+		long tempT = lastUpdate;
+		int tempD = lastDistance;
+		lastUpdate = System.currentTimeMillis();
+		lastDistance = driveMotor.getSelectedSensorPosition(0);
+		if (tempT == 0)
+			return driveMotor.getSelectedSensorVelocity(0) * DRIVE_TICKS_TO_METERS * 10 * (reversed ? -1 : 1);
+		else {
+			return 1000 * DRIVE_TICKS_TO_METERS * (lastDistance - tempD) / (lastUpdate - tempT) * (reversed ? -1 : 1);
+		}
 	}
 
 	public double getTotalDistance() {
