@@ -44,6 +44,12 @@ public class FieldMapperThreadEncoder extends FieldMapperGyro implements Runnabl
 	public void reset(double x, double y) {
 		this.x = x;
 		this.y = y;
+		Mat state = new Mat(stateSize, 1, TYPE);
+		state.put(0, 0, x);
+		state.put(1, 0, y);
+		state.put(2, 0, 0);
+		state.put(3, 0, 0);
+		filter.set_statePost(state);
 	}
 	
 	public void reset() {
@@ -73,7 +79,7 @@ public class FieldMapperThreadEncoder extends FieldMapperGyro implements Runnabl
 	}
 	
 	private Mat makeH() {
-		Mat result = Mat.zeros(stateSize, stateSize, TYPE);
+		Mat result = Mat.zeros(sensorSize, stateSize, TYPE);
 		result.put(0, 2, 1);
 		result.put(1, 3, 1);
 		return result;
@@ -96,28 +102,19 @@ public class FieldMapperThreadEncoder extends FieldMapperGyro implements Runnabl
 	
 	private Mat getMeasurement() {
 		Mat result = new Mat(sensorSize, 1, TYPE);
-		result.put(0, 0, getVx());
-		result.put(1, 0, getVy());
+		SwerveData data = swerve.getSwerveData();
+		result.put(0, 0, data.encoderVX);
+		result.put(1, 0, data.encoderVY);
 		return result;
 	}
 	
 	public void run() {
 		while (true) {
 			Mat pos = filter.predict();
-			x = pos.get(0, 0)[0];
-			y = pos.get(0, 1)[0];
 			filter.correct(getMeasurement());
+			x = pos.get(0, 0)[0];
+			y = pos.get(1, 0)[0];
 			Timer.delay(dt);
 		}
-	}
-	
-	protected double getVx() {
-		SwerveData data = swerve.getSwerveData();
-		return data.encoderVX;
-	}
-	
-	protected double getVy() {
-		SwerveData data = swerve.getSwerveData();
-		return data.encoderVY;
 	}
 }
