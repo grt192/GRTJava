@@ -208,21 +208,42 @@ public class Autonomous {
 			}
 			break;
 		case ANGLED_AND_PLACE_SWITCH_ENCODERS:
-			System.out.println("ANGLED_AND_PLACE_SWITCH_ENCODERS");
-			double xDisplacement = getRobotDisplacementX();
-			double yDisplacement = getRobotDisplacementY();
+//			System.out.println("ANGLED_AND_PLACE_SWITCH_ENCODERS");
+//			double xDisplacement = getRobotDisplacementX();
+//			double yDisplacement = getRobotDisplacementY();
+//			
+//			double magnitudeX2 = 0.5;
+//			double magnitudeY2 = switchLeft ? -0.5 : 0.5;
+//			double xDistance = 140 - robotHeight - xDisplacement;
+//			double yDistance = 59 - Math.abs(yDisplacement);
+//			double vectorMagnitude = Math.sqrt(xDistance*xDistance + yDistance*yDistance);
+//			magnitudeX2 *= xDistance / vectorMagnitude;
+//			magnitudeY2 *= yDistance / vectorMagnitude;
+//			System.out.println("x " + xDisplacement);
+//			System.out.println("y " + yDisplacement);
+//			if (getRobotDisplacementX() < 140-robotHeight) {
+//				swerve.setVelocity(magnitudeX2, magnitudeY2);
+//			} else {
+//				swerve.setVelocity(0.0, 0.0);
+//				if (step < 1) {
+//					step = 1;
+//					stepTime = timeAfterDelay;
+//				}
+//				double timeSinceSwerve = timeAfterDelay - stepTime;
+//				System.out.println(timeSinceSwerve);
+//				if (timeSinceSwerve < 1000) {
+//					intake.moveWheels(-1.0);
+//					System.out.println("releasing");
+//				} else if (timeSinceSwerve < 1050) {
+//					intake.moveWheels(0.0);
+//					System.out.println("stopping");
+//				}
+//			}
 			
-			double magnitudeX2 = 0.5;
-			double magnitudeY2 = switchLeft ? -0.5 : 0.5;
-			double xDistance = 140 - robotHeight - xDisplacement;
-			double yDistance = 59 - Math.abs(yDisplacement);
-			double vectorMagnitude = Math.sqrt(xDistance*xDistance + yDistance*yDistance);
-			magnitudeX2 *= xDistance / vectorMagnitude;
-			magnitudeY2 *= yDistance / vectorMagnitude;
-			System.out.println("x " + xDisplacement);
-			System.out.println("y " + yDisplacement);
-			if (getRobotDisplacementX() < 140-robotHeight) {
-				swerve.setVelocity(magnitudeX2, magnitudeY2);
+			double xTarget = 140 - robotHeight;
+			double yTarget = switchLeft ? -59 : 59;
+			if (moveToTargetPosition(xTarget, yTarget, 0.5) > 10) {
+				break;
 			} else {
 				swerve.setVelocity(0.0, 0.0);
 				if (step < 1) {
@@ -239,6 +260,7 @@ public class Autonomous {
 					System.out.println("stopping");
 				}
 			}
+			
 			break;
 		case FORWARD_AND_PLACE_SWITCH_SIDE:
 			if (timeAfterDelay < 4000) {
@@ -323,6 +345,26 @@ public class Autonomous {
 		}
 
 		swerve.updateAutonomous();
+	}
+	
+	public double moveToTargetPosition(double xTargetDisplacement, double yTargetDisplacement, double speed) {
+		double xDisplacement = getRobotDisplacementX();
+		double yDisplacement = getRobotDisplacementY();
+		
+		double xDistance = xTargetDisplacement - xDisplacement;
+		double yDistance = yTargetDisplacement - yDisplacement;
+		
+		System.out.println(xDistance);
+		System.out.println(yDistance);
+		
+		double magnitudeNormal = Math.sqrt(xDistance*xDistance + yDistance*yDistance);
+		double magnitudeX = speed * xDistance / magnitudeNormal;
+		double magnitudeY = speed * yDistance / magnitudeNormal;
+		
+		swerve.setVelocity(magnitudeX, magnitudeY);
+		
+		System.out.println("normal "+magnitudeNormal);
+		return magnitudeNormal;
 	}
 
 	public double timeForDistance(double inches) {
