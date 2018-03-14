@@ -1,5 +1,7 @@
 package org.usfirst.frc.team192.swerve;
 
+import org.usfirst.frc.team192.robot.Robot;
+
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.hal.PowerJNI;
@@ -65,6 +67,7 @@ public class FullSwerve extends SwerveBase {
 		if (maxSpeed > 0.1) {
 			double speedCap = getMaxSpeed();
 			double scale = speedCap / Math.max(speedCap, maxSpeed);
+			scale *= Math.max(1.0, Robot.timeSinceLastBrownout() / 2000.0) * (2. / 3);
 			for (int i = 0; i < 4; i++) {
 				wheels[i].setDriveSpeed(scale * wheelSpeeds[i]);
 				SmartDashboard.putNumber("drive speed " + i, scale * wheelSpeeds[i]);

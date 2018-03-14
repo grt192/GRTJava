@@ -9,6 +9,7 @@ import org.usfirst.frc.team192.swerve.FullSwervePID;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -52,6 +53,7 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void autonomousPeriodic() {
+		checkForBrownout();
 		fieldMapperEncoder.update();
 		auto.periodic();
 	}
@@ -68,6 +70,8 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void teleopPeriodic() {
+		checkForBrownout();
+		System.out.println(timeSinceLastBrownout());
 		teleop.periodic();
 		SmartDashboard.putNumber("Cycle time", (System.currentTimeMillis() - start) / 1000.0);
 		SmartDashboard.putNumber("X Displacement (kalman)", fieldMapperThreadEncoder.getX());
@@ -91,8 +95,20 @@ public class Robot extends IterativeRobot {
 		// System.out.println(index + 1);
 	}
 
+	private static long lastBrownout;
+
+	private static void checkForBrownout() {
+		if (RobotController.isBrownedOut())
+			lastBrownout = System.currentTimeMillis();
+	}
+
+	public static long timeSinceLastBrownout() {
+		return System.currentTimeMillis() - lastBrownout;
+	}
+
 	@Override
 	public void testPeriodic() {
+		checkForBrownout();
 		swerve.controllerZero(input);
 		// if (input.getAButtonPressed()) {
 		// index++;

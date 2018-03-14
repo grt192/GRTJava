@@ -1,12 +1,14 @@
 package org.usfirst.frc.team192.mechs;
 
 import org.usfirst.frc.team192.config.Config;
+import org.usfirst.frc.team192.robot.Robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.hal.PowerJNI;
 
 public class Elevator {
 
@@ -88,6 +90,9 @@ public class Elevator {
 	}
 
 	public void setSpeed(double speed) {
+		if (PowerJNI.getVinVoltage() < 11 || Robot.timeSinceLastBrownout() < 500)
+			speed = 0;
+		speed *= Math.max(1.0, (Robot.timeSinceLastBrownout() - 500) / 2000.0);
 		elevator.set(ControlMode.PercentOutput, speed);
 	}
 
