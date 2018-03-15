@@ -114,14 +114,13 @@ public class Autonomous {
 //			}
 			double xTarget = 140 - robotHeight;
 			double yTarget = switchLeft ? -59 : 59;
-			if (moveToTargetPosition(xTarget, yTarget, 0.5) > 10) {
-				break;
-			} else {
-				swerve.setVelocity(0.0, 0.0);
-				if (step < 1) {
+			if (step < 1) {
+				if (moveToTargetPosition(xTarget, yTarget, 0.5) < 10) {
 					step = 1;
 					stepTime = timeAfterDelay;
+					swerve.setVelocity(0.0, 0.0);
 				}
+			} else {
 				double timeSinceSwerve = timeAfterDelay - stepTime;
 				System.out.println(timeSinceSwerve);
 				if (timeSinceSwerve < 1000) {
