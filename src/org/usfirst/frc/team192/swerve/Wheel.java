@@ -86,6 +86,7 @@ class Wheel {
 	}
 
 	public void zero() {
+		System.out.println("Zeroing "+name+"module");
 		OFFSET = rotateMotor.getSelectedSensorPosition(0);
 	}
 
