@@ -179,8 +179,7 @@ public class Autonomous {
 		double xDistance = xTargetDisplacement - xDisplacement;
 		double yDistance = yTargetDisplacement - yDisplacement;
 		
-		System.out.println(xDistance);
-		System.out.println(yDistance);
+		System.out.println("pos:"+xDisplacement+","+yDisplacement);
 		
 		double magnitudeNormal = Math.sqrt(xDistance*xDistance + yDistance*yDistance);
 		double magnitudeX = speed * xDistance / magnitudeNormal;

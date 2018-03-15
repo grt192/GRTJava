@@ -31,7 +31,7 @@
 // roborio_y=0
 //
 // ticks_per_rotation=1024
-// drive_encoder_scale=0.02045308
+// drive_encoder_scale=0.0005988488780068048
 // name=beta2018
 
 // upper_flywheel=5
