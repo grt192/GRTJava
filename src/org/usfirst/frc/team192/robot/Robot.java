@@ -27,7 +27,6 @@ public class Robot extends IterativeRobot {
 	private XboxController input;
 
 	private FieldMapperEncoder fieldMapperEncoder;
-	private FieldMapperThreadEncoder fieldMapperThreadEncoder;
 
 	@Override
 	public void robotInit() {
@@ -38,7 +37,6 @@ public class Robot extends IterativeRobot {
 		elevator = new Elevator();
 		intake = new Intake();
 		fieldMapperEncoder = new FieldMapperEncoder(gyro, swerve);
-		fieldMapperThreadEncoder = new FieldMapperThreadEncoder(gyro, swerve);
 		auto = new Autonomous(swerve, intake, elevator, fieldMapperEncoder);
 		teleop = new Teleop(swerve, intake, elevator);
 	}
@@ -62,24 +60,12 @@ public class Robot extends IterativeRobot {
 	public void teleopInit() {
 		swerve.enable();
 		teleop.init();
-		fieldMapperEncoder.reset();
-		fieldMapperThreadEncoder.reset();
 	}
-
-	private long start = System.currentTimeMillis();
 
 	@Override
 	public void teleopPeriodic() {
 		checkForBrownout();
-		System.out.println(timeSinceLastBrownout());
 		teleop.periodic();
-		SmartDashboard.putNumber("Cycle time", (System.currentTimeMillis() - start) / 1000.0);
-		SmartDashboard.putNumber("X Displacement (kalman)", fieldMapperThreadEncoder.getX());
-		SmartDashboard.putNumber("Y Displacement (kalman)", fieldMapperThreadEncoder.getY());
-		SmartDashboard.putNumber("X Displacement (dead reckoning)", fieldMapperEncoder.getX());
-		SmartDashboard.putNumber("Y Displacement (dead reckoning)", fieldMapperEncoder.getY());
-		fieldMapperEncoder.update();
-		start = System.currentTimeMillis();
 	}
 
 	@Override
