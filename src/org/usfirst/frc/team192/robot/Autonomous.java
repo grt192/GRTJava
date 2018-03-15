@@ -105,29 +105,13 @@ public class Autonomous {
 
 		switch (selectedMode) {
 		case ONLY_FORWARD_TIME:
-			if (timeAfterDelay < 3000) {
-				System.out.println("driving");
-				swerve.setVelocity(0.5, 0.0);
-			} else if (timeAfterDelay < 3050) {
-				System.out.println("not driving");
-				swerve.setVelocity(0, 0);
-			}
-			break;
-		case ONLY_FORWARD_ENCODERS:
-			if (start == null) {
-				start = getRobotDisplacementX();
-			}
-			double traveled = getRobotDisplacementX() - start;
-			System.out.println(traveled);
-			if (traveled < 110) {
-				swerve.setVelocity(0.5, 0.0);
-			} else if (traveled < 120) { // start to auto line x axis
-				swerve.setVelocity(0.15, 0.0);
-			} else {
-				swerve.setVelocity(0.0, 0.0);
-			}
-			break;
-		case ANGLED_AND_PLACE_SWITCH_ENCODERS:
+//			if (timeAfterDelay < 3000) {
+//				System.out.println("driving");
+//				swerve.setVelocity(0.5, 0.0);
+//			} else if (timeAfterDelay < 3050) {
+//				System.out.println("not driving");
+//				swerve.setVelocity(0, 0);
+//			}
 			double xTarget = 140 - robotHeight;
 			double yTarget = switchLeft ? -59 : 59;
 			if (moveToTargetPosition(xTarget, yTarget, 0.5) > 10) {
@@ -148,6 +132,42 @@ public class Autonomous {
 					System.out.println("stopping");
 				}
 			}
+			break;
+		case ONLY_FORWARD_ENCODERS:
+			if (start == null) {
+				start = getRobotDisplacementX();
+			}
+			double traveled = getRobotDisplacementX() - start;
+			System.out.println(traveled);
+			if (traveled < 110) {
+				swerve.setVelocity(0.5, 0.0);
+			} else if (traveled < 120) { // start to auto line x axis
+				swerve.setVelocity(0.15, 0.0);
+			} else {
+				swerve.setVelocity(0.0, 0.0);
+			}
+			break;
+		case ANGLED_AND_PLACE_SWITCH_ENCODERS:
+//			double xTarget = 140 - robotHeight;
+//			double yTarget = switchLeft ? -59 : 59;
+//			if (moveToTargetPosition(xTarget, yTarget, 0.5) > 10) {
+//				break;
+//			} else {
+//				swerve.setVelocity(0.0, 0.0);
+//				if (step < 1) {
+//					step = 1;
+//					stepTime = timeAfterDelay;
+//				}
+//				double timeSinceSwerve = timeAfterDelay - stepTime;
+//				System.out.println(timeSinceSwerve);
+//				if (timeSinceSwerve < 1000) {
+//					intake.moveWheels(-1.0);
+//					System.out.println("releasing");
+//				} else {
+//					intake.moveWheels(0.0);
+//					System.out.println("stopping");
+//				}
+//			}
 			break;
 		}
 		swerve.updateAutonomous();
