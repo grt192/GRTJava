@@ -62,8 +62,6 @@ public class Autonomous {
 		this.robotWidth = Config.getDouble("robot_width") * METERS_TO_INCHES;
 		this.robotHeight = Config.getDouble("robot_height") * METERS_TO_INCHES;
 
-		SmartDashboard.putString("location (l, c, r)", "c");
-
 		modeChooser = new SendableChooser<>();
 		Mode[] modes = Mode.values();
 		Mode defaultMode = modes[0];

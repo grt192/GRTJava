@@ -35,10 +35,10 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 		double i = SmartDashboard.getNumber("i", 0.00);
 		double d = SmartDashboard.getNumber("d", 0.01);
 		double f = SmartDashboard.getNumber("f", 0.01);
-		SmartDashboard.putNumber("p", p);
-		SmartDashboard.putNumber("i", i);
-		SmartDashboard.putNumber("d", d);
-		SmartDashboard.putNumber("f", f);
+//		SmartDashboard.putNumber("p", p);
+//		SmartDashboard.putNumber("i", i);
+//		SmartDashboard.putNumber("d", d);
+//		SmartDashboard.putNumber("f", f);
 
 		pid = new PIDController(p, i, d, f, (PIDSource) gyro, this, 0.01);
 		pid.setInputRange(0.0, 360.0);
@@ -154,9 +154,9 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 	}
 
 	private void logPID() {
-		SmartDashboard.putNumber("PID Setpoint", pid.getSetpoint());
-		SmartDashboard.putNumber("PID Error", pid.getError());
-		SmartDashboard.putNumber("PID Output", pid.get());
+//		SmartDashboard.putNumber("PID Setpoint", pid.getSetpoint());
+//		SmartDashboard.putNumber("PID Error", pid.getError());
+//		SmartDashboard.putNumber("PID Output", pid.get());
 
 	}
 
