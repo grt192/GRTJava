@@ -43,7 +43,7 @@ public class FullSwerve extends SwerveBase {
 	protected void changeMotors(double rv, double vx, double vy) {
 		double currentAngle = Math.toRadians(gyro.getAngle());
 		SmartDashboard.putNumber("gyro", currentAngle);
-		rv *= -1 * ROTATE_SCALE;
+		rv *= ROTATE_SCALE;
 //		SmartDashboard.putNumber("rv", rv);
 //		SmartDashboard.putNumber("vx", vx);
 //		SmartDashboard.putNumber("vy", vy);
@@ -55,8 +55,8 @@ public class FullSwerve extends SwerveBase {
 			wheelAngle += currentAngle;
 			double dx = RADIUS * Math.cos(wheelAngle);
 			double dy = RADIUS * Math.sin(wheelAngle);
-			double actualvx = vx + rv * dy;
-			double actualvy = vy - rv * dx;
+			double actualvx = vx - rv * dy;
+			double actualvy = vy + rv * dx;
 			double wheelTheta = Math.atan2(actualvy, actualvx);
 			double speed = Math.sqrt(actualvx * actualvx + actualvy * actualvy);
 			double targetPosition = wheelTheta - currentAngle;
@@ -66,8 +66,8 @@ public class FullSwerve extends SwerveBase {
 		}
 		if (maxSpeed > 0.1) {
 			double speedCap = getMaxSpeed();
-			double scale = speedCap / Math.max(speedCap, maxSpeed);
-			scale *= Math.max(1.0, Robot.timeSinceLastBrownout() / 2000.0) * (2. / 3);
+			double scale = 0.4 * speedCap / Math.max(speedCap, maxSpeed);
+			scale *= Math.max(1.0, Robot.timeSinceLastBrownout() / 2000.0);
 			for (int i = 0; i < 4; i++) {
 				wheels[i].setDriveSpeed(scale * wheelSpeeds[i]);
 //				SmartDashboard.putNumber("drive speed " + i, scale * wheelSpeeds[i]);
@@ -149,6 +149,56 @@ public class FullSwerve extends SwerveBase {
 	}
 
 	private double getMaxSpeed() {
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	
 		return Math.min(1.0, (PowerJNI.getVinVoltage() - 7.0) / 2);
 	}
 
