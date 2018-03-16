@@ -45,6 +45,14 @@ public class Elevator {
 	public void setElevatorPosition(int i) {
 		elevatorPos = ElevatorPosition.values()[i];
 	}
+	
+	public void setPosition(double height) {
+		elevator.set(ControlMode.Position, height);
+	}
+	
+	public int getHeight() {
+		return elevator.getSelectedSensorPosition(0);
+	}
 
 	public void moveToGroundPosition() {
 		if (elevatorPos != ElevatorPosition.GROUND) {

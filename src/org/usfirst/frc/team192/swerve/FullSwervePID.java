@@ -86,6 +86,10 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 
 	@Override
 	public void updateWithJoystick(XboxController input) {
+		if (input.getYButtonPressed())
+			SPEED_SCALE += 0.05;
+		if (input.getXButtonPressed())
+			SPEED_SCALE -= 0.05;
 		if (input.getAButtonPressed())
 			zeroGyro();
 		double y = input.getX(Hand.kRight);

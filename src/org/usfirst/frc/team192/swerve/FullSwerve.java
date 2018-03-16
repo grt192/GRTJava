@@ -64,9 +64,10 @@ public class FullSwerve extends SwerveBase {
 			wheelAngles[i] = targetPosition;
 			maxSpeed = Math.max(maxSpeed, speed);
 		}
+		SmartDashboard.putNumber("Swerve speed", SPEED_SCALE);
 		if (maxSpeed > 0.1) {
 			double speedCap = getMaxSpeed();
-			double scale = 0.4 * speedCap / Math.max(speedCap, maxSpeed);
+			double scale = SPEED_SCALE * speedCap / Math.max(speedCap, maxSpeed);
 			scale *= Math.max(1.0, Robot.timeSinceLastBrownout() / 2000.0);
 			for (int i = 0; i < 4; i++) {
 				wheels[i].setDriveSpeed(scale * wheelSpeeds[i]);
