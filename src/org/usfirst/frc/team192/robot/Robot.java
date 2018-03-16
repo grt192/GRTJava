@@ -2,18 +2,16 @@ package org.usfirst.frc.team192.robot;
 
 import org.usfirst.frc.team192.config.Config;
 import org.usfirst.frc.team192.fieldMapping.FieldMapperEncoder;
-import org.usfirst.frc.team192.fieldMapping.FieldMapperThreadEncoder;
 import org.usfirst.frc.team192.mechs.Elevator;
 import org.usfirst.frc.team192.mechs.Intake;
+import org.usfirst.frc.team192.networking.TestThread;
 import org.usfirst.frc.team192.swerve.FullSwervePID;
 import org.usfirst.frc.team192.swerve.NavXGyro;
 
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends IterativeRobot {
 
@@ -40,6 +38,8 @@ public class Robot extends IterativeRobot {
 		fieldMapperEncoder = new FieldMapperEncoder(gyro, swerve);
 		auto = new Autonomous(swerve, intake, elevator, fieldMapperEncoder);
 		teleop = new Teleop(swerve, intake, elevator);
+
+		new TestThread().start();
 	}
 
 	@Override

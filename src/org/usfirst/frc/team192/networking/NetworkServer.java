@@ -76,6 +76,11 @@ public class NetworkServer extends Thread {
 		return data;
 	}
 
+	public String receiveString(int n) throws IOException {
+		byte[] buf = receiveBytes(n);
+		return new String(buf);
+	}
+
 	public byte[] receiveBytes(int n) throws IOException {
 		checkConnection();
 		byte[] buffer = new byte[n];
@@ -112,6 +117,10 @@ public class NetworkServer extends Thread {
 			parser.putInt(message[i]);
 		}
 		sendBytes(buffer);
+	}
+
+	public void sendString(String s) throws IOException {
+		sendBytes(s.getBytes());
 	}
 
 	public void sendBytes(byte[] message) throws IOException {
