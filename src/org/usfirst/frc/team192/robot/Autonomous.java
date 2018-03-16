@@ -1,5 +1,7 @@
 package org.usfirst.frc.team192.robot;
 
+import java.util.Map;
+
 import org.usfirst.frc.team192.config.Config;
 import org.usfirst.frc.team192.fieldMapping.FieldMapperEncoder;
 import org.usfirst.frc.team192.mechs.Elevator;
@@ -42,7 +44,8 @@ public class Autonomous {
 	private enum Mode {
 		ONLY_FORWARD_TIME("drive forward for 4 seconds"),
 		ONLY_FORWARD_ENCODERS("drive forward based on drive encoders"),
-		ANGLED_AND_PLACE_SWITCH_ENCODERS("move at an angle to the correct side of the switch with drive encoder data");
+		ANGLED_AND_PLACE_SWITCH_ENCODERS("move at an angle to the correct side of the switch with drive encoder data"),
+		PLACE_SCALE("do the switch thing but for the scale");
 		
 		String description;
 		Mode(String description) {
@@ -52,6 +55,8 @@ public class Autonomous {
 			return description;
 		}
 	}
+	
+	private Map<String, Mode> modes;
 
 	public Autonomous(FullSwervePID swerve, Intake intake, Elevator elevator, FieldMapperEncoder fieldMapping) {
 		this.ds = DriverStation.getInstance();
@@ -61,7 +66,13 @@ public class Autonomous {
 		this.fieldMapping = fieldMapping;
 		this.robotWidth = Config.getDouble("robot_width") * METERS_TO_INCHES;
 		this.robotHeight = Config.getDouble("robot_height") * METERS_TO_INCHES;
-
+		
+		modes.put("only_forward_time", Mode.ONLY_FORWARD_TIME);
+		modes.put("only_forward_encoders", Mode.ONLY_FORWARD_ENCODERS);
+		modes.put("angled_and_place_switch_encoders", Mode.ANGLED_AND_PLACE_SWITCH_ENCODERS);
+		String modesString = getModesString();	
+		
+		/*
 		modeChooser = new SendableChooser<>();
 		Mode[] modes = Mode.values();
 		Mode defaultMode = modes[0];
@@ -72,6 +83,19 @@ public class Autonomous {
 		}
 
 		SmartDashboard.putData("autonomous_mode", modeChooser);
+		*/
+		
+		SmartDashboard.putString("autonomous_mode", "only_forward_time");
+		SmartDashboard.putString("available modes", modesString);
+	}
+	
+	private String getModesString() {
+		String result = "";
+		for (Map.Entry<String, Mode> modeEntry : modes.entrySet()) {
+			result += modeEntry.getKey();
+			result += ", ";
+		}
+		return result;
 	}
 
 	public void init() {
@@ -79,7 +103,8 @@ public class Autonomous {
 
 		// get game information
 		String fieldPositions = ds.getGameSpecificMessage();
-		selectedMode = modeChooser.getSelected();
+		// selectedMode = modeChooser.getSelected();
+		selectedMode = modes.get(SmartDashboard.getString("autonomous_mode", "only_forward_time"));
 //		selectedMode = Mode.ONLY_FORWARD_ENCODERS;
 		System.out.println(selectedMode.toString());
 
@@ -105,14 +130,30 @@ public class Autonomous {
 
 		switch (selectedMode) {
 		case ONLY_FORWARD_TIME:
-//			if (timeAfterDelay < 3000) {
-//				System.out.println("driving");
-//				swerve.setVelocity(0.5, 0.0);
-//			} else if (timeAfterDelay < 3050) {
-//				System.out.println("not driving");
-//				swerve.setVelocity(0, 0);
-//			}
-			double xTarget = 140 - robotHeight;
+			if (timeAfterDelay < 3000) {
+				System.out.println("driving");
+				swerve.setVelocity(0.5, 0.0);
+			} else if (timeAfterDelay < 3050) {
+				System.out.println("not driving");
+				swerve.setVelocity(0, 0);
+			}
+			break;
+		case ONLY_FORWARD_ENCODERS:
+			if (start == null) {
+				start = getRobotDisplacementX();
+			}
+			double traveled = getRobotDisplacementX() - start;
+			System.out.println(traveled);
+			if (traveled < 110) {
+				swerve.setVelocity(0.5, 0.0);
+			} else if (traveled < 120) { // start to auto line x axis
+				swerve.setVelocity(0.15, 0.0);
+			} else {
+				swerve.setVelocity(0.0, 0.0);
+			}
+			break;
+		case ANGLED_AND_PLACE_SWITCH_ENCODERS:
+		    double xTarget = 140 - robotHeight;
 			double yTarget = switchLeft ? -59 : 50;
 			if (step < 1) {
 				if (moveToTargetPosition(xTarget, yTarget, 0.5) < 30) {
@@ -132,43 +173,43 @@ public class Autonomous {
 				}
 			}
 			break;
-		case ONLY_FORWARD_ENCODERS:
-			if (start == null) {
-				start = getRobotDisplacementX();
-			}
-			double traveled = getRobotDisplacementX() - start;
-			System.out.println(traveled);
-			if (traveled < 110) {
-				swerve.setVelocity(0.5, 0.0);
-			} else if (traveled < 120) { // start to auto line x axis
-				swerve.setVelocity(0.15, 0.0);
-			} else {
-				swerve.setVelocity(0.0, 0.0);
+		case PLACE_SCALE:
+			double xTarget2 =  235.0 - robotHeight;
+			if (step < 1) {
+				if (moveToTargetPosition(xTarget2, 0, 0.5) < 30) {
+					step = 1;
+					stepTime = timeAfterDelay;
+					swerve.setVelocity(0.0, 0.0);
+				}
+			} else if (step < 2) {
+				swerve.setTargetPosition(scaleLeft ? Math.PI / 2 :  -Math.PI / 2);
+				if (scaleLeft) {
+					step++;
+					break;
+				}			
+				if (moveToTargetPosition(xTarget2, 264, 0.5) < 30) {
+					step++;
+					swerve.setVelocity(0.0, 0.0);
+				}				
+			} else if (step < 3) {
+				if (moveToTargetPosition(xTarget2 + 70, scaleLeft? 0 : 264, 0.5) < 30) {
+					step++;
+					stepTime = timeAfterDelay;
+					swerve.setVelocity(0.0, 0.0);
+					elevator.setElevatorPosition(0);
+				}
+			} else if (step < 4) {
+				double targetElevatorPosition = 10.0;
+				if (getElevatorPosition() - targetElevatorPosition > 10) {
+					elevator.
+				}
 			}
 			break;
-		case ANGLED_AND_PLACE_SWITCH_ENCODERS:
-//			double xTarget = 140 - robotHeight;
-//			double yTarget = switchLeft ? -59 : 59;
-//			if (moveToTargetPosition(xTarget, yTarget, 0.5) > 10) {
-//				break;
-//			} else {
-//				swerve.setVelocity(0.0, 0.0);
-//				if (step < 1) {
-//					step = 1;
-//					stepTime = timeAfterDelay;
-//				}
-//				double timeSinceSwerve = timeAfterDelay - stepTime;
-//				System.out.println(timeSinceSwerve);
-//				if (timeSinceSwerve < 1000) {
-//					intake.moveWheels(-1.0);
-//					System.out.println("releasing");
-//				} else {
-//					intake.moveWheels(0.0);
-//					System.out.println("stopping");
-//				}
-//			}
-			break;
+			
+			
 		}
+			
+			
 		swerve.updateAutonomous();
 	}
 	
@@ -221,6 +262,10 @@ public class Autonomous {
 
 	public double getRobotDisplacementY() {
 		return fieldMapping.getY() * METERS_TO_INCHES;
+	}
+	
+	public double getElevatorPosition() {
+		return elevator.getElevatorPosition() * 1.0;
 	}
 
 }
