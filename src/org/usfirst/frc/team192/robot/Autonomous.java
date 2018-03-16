@@ -113,7 +113,7 @@ public class Autonomous {
 //				swerve.setVelocity(0, 0);
 //			}
 			double xTarget = 140 - robotHeight;
-			double yTarget = switchLeft ? -59 : 59;
+			double yTarget = switchLeft ? -59 : 50;
 			if (step < 1) {
 				if (moveToTargetPosition(xTarget, yTarget, 0.5) < 30) {
 					step = 1;
