@@ -98,9 +98,7 @@ public class Elevator {
 	}
 
 	public void setSpeed(double speed) {
-		if (PowerJNI.getVinVoltage() < 11 || Robot.timeSinceLastBrownout() < 500)
-			speed = 0;
-		speed *= Math.max(1.0, (Robot.timeSinceLastBrownout() - 500) / 2000.0);
+		speed *= Math.max(1.0, Robot.timeSinceLastBrownout() / 2000.0);
 		elevator.set(ControlMode.PercentOutput, speed);
 	}
 
