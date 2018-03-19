@@ -131,7 +131,7 @@ public class Autonomous {
 		case ANGLED_AND_PLACE_SWITCH_ENCODERS:
 			double xTarget = 140 - robotHeight;
 			double yTarget = switchLeft ? -59 : 59;
-			if (moveToTargetPosition(xTarget, yTarget, 0.5) > 10) {
+			if (moveToTargetPosition(xTarget, yTarget, 0.5) > 20) {
 				break;
 			} else {
 				swerve.setVelocity(0.0, 0.0);
