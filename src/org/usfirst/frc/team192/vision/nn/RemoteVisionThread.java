@@ -21,7 +21,6 @@ public class RemoteVisionThread implements Runnable {
 		cap.set(Videoio.CAP_PROP_FRAME_WIDTH, width);
 		image = new Mat(height, width, CvType.CV_8UC3);
 		vision = new RemoteVision(1920, this);
-
 	}
 
 	@Override
