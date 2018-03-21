@@ -1,51 +1,97 @@
 package org.usfirst.frc.team192.robot;
 
 import org.opencv.core.Point;
+import org.usfirst.frc.team192.fieldMapping.FieldMapper;
+import org.usfirst.frc.team192.mechs.Intake;
 import org.usfirst.frc.team192.swerve.FullSwervePID;
-import org.usfirst.frc.team192.vision.VisionThread;
+import org.usfirst.frc.team192.vision.nn.RemoteVisionThread;
 
 public class VisionSwerve {
-	private VisionThread vision;
+
+	private RemoteVisionThread vision;
 	private FullSwervePID swerve;
+	private Intake intake;
 	private boolean blockFound;
-	
-	public VisionSwerve(VisionThread vision, FullSwervePID swerve) {
-		this.vision = vision;
+	private double targetAngle;
+
+	private Point corner;
+	private FieldMapper mapper;
+	private double xStart, yStart;
+
+	public VisionSwerve(FullSwervePID swerve, FieldMapper mapper, Intake intake) {
 		this.swerve = swerve;
+		this.intake = intake;
+		this.mapper = mapper;
+		vision = new RemoteVisionThread(320, 240);
 		blockFound = false;
 	}
-	
+
+	public void start() {
+		new Thread(vision).start();
+		swerve.setVelocity(0, 0);
+		swerve.holdAngle();
+	}
+
 	public void kill() {
 		blockFound = false;
 	}
-	
+
 	public boolean update() {
 		if (!blockFound) {
-			Point center = vision.getCenter();
-			if (center == null) {
-				blockFound = false;
-				return false;
+			if (vision.hasData()) {
+				if (!vision.hasTarget())
+					return false;
+				blockFound = true;
+				beginNavigation();
 			}
-			center.y = vision.getHeight() - center.y;
-			center.x -= vision.getWidth() / 2;
-			double angle = Math.atan(center.x / center.y);
-			swerve.setVelocity(0, 0);
-			swerve.setTargetPosition(angle + Math.toRadians(swerve.getGyroAngle()));
-			blockFound = true;
+		} else {
+			Point pos = getDisplacement();
+			double dx = corner.x - pos.x;
+			double dy = corner.y - pos.y;
+			double vx = 0.0;
+			if (Math.abs(dy) < 0.05) {
+				// intake.movePickupOut();
+				// intake.moveWheels(1.0);
+				vx = 0.2;
+			}
+			double vy = Math.max(dy * 0.5, 0.4);
+			double angle = -targetAngle;
+			double trueVX = vx * Math.cos(angle) - vy * Math.sin(angle);
+			double trueVY = vx * Math.sin(angle) + vy * Math.cos(angle);
+			swerve.setVelocity(trueVX, trueVY);
 		}
 		swerve.updateAutonomous();
 		return true;
 	}
+
+	private void beginNavigation() {
+		double initialAngle = Math.toRadians(swerve.getGyroAngle());
+		xStart = mapper.getX();
+		yStart = mapper.getY();
+		double angle = vision.getAngle();
+		corner = vision.getPoint();
+		if (angle > Math.PI / 2)
+			angle -= Math.PI;
+		if (angle < -Math.PI / 2)
+			angle += Math.PI;
+		targetAngle = initialAngle + angle;
+		swerve.setTargetPosition(targetAngle);
+
+		angle *= -1;
+		double x = corner.x;
+		double y = corner.y;
+		corner.x = x * Math.cos(angle) - y * Math.sin(angle);
+		corner.y = x * Math.sin(angle) + y * Math.cos(angle);
+	}
+
+	private Point getDisplacement() {
+		double dx = mapper.getX() - xStart;
+		double dy = mapper.getY() - yStart;
+		Point p = new Point();
+		double angle = -targetAngle;
+		p.x = dx * Math.cos(angle) - dy * Math.sin(angle);
+		p.y = dx * Math.sin(angle) + dy * Math.cos(angle);
+		return p;
+	}
+
 }
-
-
-
-
-
-
-
-
-
-
-
-

@@ -5,7 +5,6 @@ import java.io.IOException;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.core.MatOfInt;
-import org.opencv.core.Point;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.usfirst.frc.team192.networking.NetworkServer;
 
@@ -17,13 +16,12 @@ class RemoteVision extends Thread {
 
 	private int port;
 	private NetworkServer server;
-	private Point point;
+	private RemoteVisionThread rvt;
 
-	private long timeOfLastData;
 	private byte[] buffer;
 
-	public RemoteVision(int port) {
-		point = new Point();
+	public RemoteVision(int port, RemoteVisionThread rvt) {
+		this.rvt = rvt;
 		params = new MatOfInt(Imgcodecs.IMWRITE_JPEG_QUALITY, 0);
 		buffer = new byte[BUFFER_SIZE];
 		this.port = port;
@@ -58,13 +56,11 @@ class RemoteVision extends Thread {
 		double[] data;
 		while (true) {
 			try {
-				data = server.receiveDoubles(2);
+				data = server.receiveDoubles(3);
 			} catch (IOException e) {
 				e.printStackTrace();
 				continue;
 			}
-			point.set(data);
-			timeOfLastData = System.currentTimeMillis();
 		}
 	}
 
@@ -88,17 +84,6 @@ class RemoteVision extends Thread {
 			e.printStackTrace();
 		}
 
-	}
-
-	public long getAgeOfData() {
-		return System.currentTimeMillis() - timeOfLastData;
-	}
-
-	public Point getCenter() {
-		if (getAgeOfData() < 1000)
-			return point;
-		else
-			return null;
 	}
 
 }

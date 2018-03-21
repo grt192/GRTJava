@@ -6,13 +6,13 @@ import org.opencv.core.Point;
 import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.Videoio;
 
-public abstract class VisionThread extends Thread {
+public abstract class VisionThread implements Runnable {
 
 	private int width;
 	private int height;
 	protected VideoCapture cap;
 	protected Mat image;
-	
+
 	public VisionThread(int width, int height) {
 		this.width = width;
 		this.height = height;
@@ -21,13 +21,13 @@ public abstract class VisionThread extends Thread {
 		cap.set(Videoio.CAP_PROP_FRAME_WIDTH, width);
 		image = new Mat(height, width, CvType.CV_8UC3);
 	}
-	
+
 	public abstract Point getCenter();
-	
+
 	public double getWidth() {
 		return width;
 	}
-	
+
 	public double getHeight() {
 		return height;
 	}

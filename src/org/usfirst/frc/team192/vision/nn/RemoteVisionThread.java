@@ -5,47 +5,52 @@ import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.Videoio;
-import org.usfirst.frc.team192.vision.VisionThread;
 
-import edu.wpi.first.wpilibj.Timer;
-
-public class RemoteVisionThread extends VisionThread {
+public class RemoteVisionThread implements Runnable {
 
 	private RemoteVision vision;
+	private VideoCapture cap;
+	private Mat image;
 
 	private boolean running;
+	private double[] data;
 
 	public RemoteVisionThread(int width, int height) {
-		super(width, height);
-		vision = new RemoteVision(1920);
+		cap = new VideoCapture(0);
+		cap.set(Videoio.CAP_PROP_FRAME_HEIGHT, height);
+		cap.set(Videoio.CAP_PROP_FRAME_WIDTH, width);
+		image = new Mat(height, width, CvType.CV_8UC3);
+		vision = new RemoteVision(1920, this);
 	}
 
 	@Override
 	public void run() {
 		running = true;
-		while (true) {
-			if (running) {
-				cap.grab();
-				cap.read(image);
-				vision.sendImage(image);
-			}
+		data = null;
+		while (running) {
+			cap.grab();
+			cap.read(image);
+			vision.sendImage(image);
 		}
 	}
 
+	public void recieve(double[] data) {
+		this.data = data;
+	}
+
+	public boolean hasData() {
+		return data != null;
+	}
+
+	public Point getPoint() {
+		return new Point(data[0], data[1]);
+	}
+
+	public double getAngle() {
+		return data[2];
+	}
+
 	public boolean hasTarget() {
-		return vision.getCenter() != null;
-	}
-
-	@Override
-	public Point getCenter() {
-		return vision.getCenter();
-	}
-
-	public void pause() {
-		running = false;
-	}
-
-	public void restart() {
-		running = true;
+		return !Double.isNaN(data[0]);
 	}
 }
