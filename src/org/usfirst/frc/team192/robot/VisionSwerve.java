@@ -28,6 +28,7 @@ public class VisionSwerve {
 	}
 
 	public void start() {
+		System.out.println("Starting vision");
 		startTime = System.currentTimeMillis();
 		new Thread(vision).start();
 		swerve.setVelocity(0, 0);
@@ -37,16 +38,20 @@ public class VisionSwerve {
 	public void kill() {
 		blockFound = false;
 		vision.kill();
+		System.out.println("Stopping vision");
 	}
 
 	public boolean update() {
 		if (!blockFound) {
 			if (vision.hasData()) {
-				if (!vision.hasTarget())
+				if (!vision.hasTarget()) {
+					System.out.println("No block detected");
 					return false;
+				}
 				blockFound = true;
 				beginNavigation();
 			} else if (System.currentTimeMillis() - startTime > 2000) {
+				System.out.println("Vision timed out");
 				kill();
 				return false;
 			}
@@ -76,10 +81,11 @@ public class VisionSwerve {
 		yStart = mapper.getY();
 		double angle = vision.getAngle();
 		corner = vision.getPoint();
-		if (angle > Math.PI / 2)
-			angle -= Math.PI;
-		if (angle < -Math.PI / 2)
-			angle += Math.PI;
+		System.out.println("Block found at " + corner);
+		if (angle > Math.PI / 4)
+			angle -= Math.PI / 2;
+		if (angle < -Math.PI / 4)
+			angle += Math.PI / 2;
 		targetAngle = initialAngle + angle;
 		swerve.setTargetPosition(targetAngle);
 

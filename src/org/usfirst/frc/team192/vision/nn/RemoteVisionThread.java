@@ -35,7 +35,8 @@ public class RemoteVisionThread implements Runnable {
 	}
 
 	public void recieve(double[] data) {
-		this.data = data;
+		if (this.data == null)
+			this.data = data;
 		running = false;
 	}
 
