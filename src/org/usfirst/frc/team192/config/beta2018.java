@@ -44,3 +44,5 @@
 // leftsol=3
 // centersol=0
 // winchsol=1
+
+// gyro=navx
