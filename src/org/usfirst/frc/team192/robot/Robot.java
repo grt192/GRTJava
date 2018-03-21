@@ -5,12 +5,13 @@ import org.usfirst.frc.team192.fieldMapping.FieldMapperEncoder;
 import org.usfirst.frc.team192.mechs.Elevator;
 import org.usfirst.frc.team192.mechs.Intake;
 import org.usfirst.frc.team192.swerve.FullSwervePID;
-import org.usfirst.frc.team192.swerve.NavXGyro;
 
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends IterativeRobot {
 
@@ -30,7 +31,7 @@ public class Robot extends IterativeRobot {
 	public void robotInit() {
 		Config.start();
 		input = new XboxController(0);
-		gyro = new NavXGyro();
+		gyro = new ADXRS450_Gyro();
 		swerve = new FullSwervePID(gyro);
 		elevator = new Elevator();
 		intake = new Intake();
@@ -62,6 +63,7 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void teleopPeriodic() {
+		SmartDashboard.putNumber("elevator height", elevator.getHeight());
 		checkForBrownout();
 		teleop.periodic();
 	}
