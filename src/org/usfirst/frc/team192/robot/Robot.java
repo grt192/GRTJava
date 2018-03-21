@@ -35,8 +35,9 @@ public class Robot extends IterativeRobot {
 		elevator = new Elevator();
 		intake = new Intake();
 		fieldMapperEncoder = new FieldMapperEncoder(gyro, swerve);
+		VisionSwerve vision = new VisionSwerve(swerve, fieldMapperEncoder, intake);
 		auto = new Autonomous(swerve, intake, elevator, fieldMapperEncoder);
-		teleop = new Teleop(swerve, intake, elevator);
+		teleop = new Teleop(swerve, intake, elevator, vision);
 	}
 
 	@Override

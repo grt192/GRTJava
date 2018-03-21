@@ -12,8 +12,8 @@ public class RemoteVisionThread implements Runnable {
 	private VideoCapture cap;
 	private Mat image;
 
-	private boolean running;
-	private double[] data;
+	private volatile boolean running;
+	private volatile double[] data;
 
 	public RemoteVisionThread(int width, int height) {
 		cap = new VideoCapture(0);

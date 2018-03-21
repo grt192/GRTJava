@@ -17,6 +17,7 @@ public class VisionSwerve {
 	private Point corner;
 	private FieldMapper mapper;
 	private double xStart, yStart;
+	private long startTime;
 
 	public VisionSwerve(FullSwervePID swerve, FieldMapper mapper, Intake intake) {
 		this.swerve = swerve;
@@ -27,6 +28,7 @@ public class VisionSwerve {
 	}
 
 	public void start() {
+		startTime = System.currentTimeMillis();
 		new Thread(vision).start();
 		swerve.setVelocity(0, 0);
 		swerve.holdAngle();
@@ -44,6 +46,9 @@ public class VisionSwerve {
 					return false;
 				blockFound = true;
 				beginNavigation();
+			} else if (System.currentTimeMillis() - startTime > 2000) {
+				kill();
+				return false;
 			}
 		} else {
 			Point pos = getDisplacement();
