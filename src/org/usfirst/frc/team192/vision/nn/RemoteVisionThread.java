@@ -36,6 +36,11 @@ public class RemoteVisionThread implements Runnable {
 
 	public void recieve(double[] data) {
 		this.data = data;
+		running = false;
+	}
+
+	public void kill() {
+		running = false;
 	}
 
 	public boolean hasData() {

@@ -34,6 +34,7 @@ public class VisionSwerve {
 
 	public void kill() {
 		blockFound = false;
+		vision.kill();
 	}
 
 	public boolean update() {
