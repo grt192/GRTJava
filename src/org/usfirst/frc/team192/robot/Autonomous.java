@@ -153,33 +153,46 @@ public class Autonomous {
 		case PLACE_SCALE:
 			double xTarget2 =  235.0 - robotHeight;
 			if (step < 1) {
-				if (moveToTargetPosition(xTarget2, 0, 0.5) < 10) {
+				if (moveToTargetPosition(xTarget2, 0, 0.35) < 10) {
 					step++;
 					stepTime = timeAfterDelay;
 					swerve.setVelocity(0.0, 0.0);
 				}
-			} //else if (step < 2) {
-//				swerve.setTargetPosition(scaleLeft ? Math.PI / 2 : -Math.PI / 2);
-//				if (scaleLeft) {
-//					step++;
-//					break;
-//				}			
-//				if (moveToTargetPosition(xTarget2, 264, 0.5) < 30) {
-//					step++;
-//					swerve.setVelocity(0.0, 0.0);
-//				}				
-//			} else if (step < 3) {
-//				if (moveToTargetPosition(xTarget2 + 70, scaleLeft? 0 : 264, 0.5) < 30) {
-//					step++;
-//					swerve.setVelocity(0.0, 0.0);
-//				}
-//			} else if (step < 4) {
+			} else if (step < 2) {
+				swerve.setTargetPosition(scaleLeft ? Math.PI / 2 : -Math.PI / 2);
+				if (!scaleLeft) {
+					step++;
+					break;
+				}			
+				if (moveToTargetPosition(xTarget2, -264, 0.35) < 10) {
+					step++;
+					swerve.setVelocity(0.0, 0.0);
+				}				
+			} else if (step < 3) {
+				if (moveToTargetPosition(xTarget2 + 80, !scaleLeft ? 0 : -264, 0.35) < 10) {
+					step++;
+					swerve.setVelocity(0.0, 0.0);
+					stepTime = timeAfterDelay;
+				}
+			} else if (step < 4) {
+				double timeSinceSwerve = timeAfterDelay - stepTime;
+				if (timeSinceSwerve < 2600) {
+					double speed = 0.8;
+					
+					
+					elevator.setSpeed(0.8);
+				}
+			}
+			
+			// else if (step < 4) {
 //				double targetElevatorPosition = 10000;
 //				elevator.setPosition(targetElevatorPosition);
 //				if (elevator.getHeight() - targetElevatorPosition < 1000) {
 //					step++;
 //					stepTime = timeAfterDelay;
 //				}
+			
+			
 //			} else if (step < 5) {
 //				double timeSinceElevator = timeAfterDelay - stepTime;
 //				if (timeSinceElevator < 1500) {
