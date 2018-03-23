@@ -8,6 +8,7 @@ import org.usfirst.frc.team192.swerve.SwerveData;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class FieldMapperThreadEncoder extends FieldMapperGyro implements Runnable {
 	
@@ -26,7 +27,7 @@ public class FieldMapperThreadEncoder extends FieldMapperGyro implements Runnabl
 		sensorSize = 2;
 		TYPE = CvType.CV_64FC1;
 		filter = new KalmanFilter(stateSize, sensorSize);
-		dt = 0.005;
+		dt = 0.02;
 		Mat P = makeP();
 		Mat F = makeF();
 		Mat H = makeH();
@@ -111,10 +112,12 @@ public class FieldMapperThreadEncoder extends FieldMapperGyro implements Runnabl
 	public void run() {
 		while (true) {
 			Mat pos = filter.predict();
+			long start = System.currentTimeMillis();
 			filter.correct(getMeasurement());
+			SmartDashboard.putNumber("correct time (ms)", System.currentTimeMillis() - start);
 			x = pos.get(0, 0)[0];
 			y = pos.get(1, 0)[0];
-			Timer.delay(dt);
+			Timer.delay(dt - (System.currentTimeMillis() - start) / 1000);
 		}
 	}
 }

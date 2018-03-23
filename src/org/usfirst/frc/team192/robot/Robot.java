@@ -1,7 +1,9 @@
 package org.usfirst.frc.team192.robot;
 
 import org.usfirst.frc.team192.config.Config;
+import org.usfirst.frc.team192.fieldMapping.FieldMapper;
 import org.usfirst.frc.team192.fieldMapping.FieldMapperEncoder;
+import org.usfirst.frc.team192.fieldMapping.FieldMapperThreadEncoder;
 import org.usfirst.frc.team192.mechs.Elevator;
 import org.usfirst.frc.team192.mechs.Intake;
 import org.usfirst.frc.team192.swerve.FullSwervePID;
@@ -25,7 +27,7 @@ public class Robot extends IterativeRobot {
 	private Intake intake;
 	private XboxController input;
 
-	private FieldMapperEncoder fieldMapperEncoder;
+	private FieldMapper fieldMapper;
 
 	@Override
 	public void robotInit() {
@@ -35,8 +37,9 @@ public class Robot extends IterativeRobot {
 		swerve = new FullSwervePID(gyro);
 		elevator = new Elevator();
 		intake = new Intake();
-		fieldMapperEncoder = new FieldMapperEncoder(gyro, swerve);
-		auto = new Autonomous(swerve, intake, elevator, fieldMapperEncoder);
+		fieldMapper = new FieldMapperThreadEncoder(gyro, swerve);
+		new Thread((Runnable) fieldMapper).start();
+		auto = new Autonomous(swerve, intake, elevator, fieldMapper);
 		teleop = new Teleop(swerve, intake, elevator);
 	}
 
@@ -44,14 +47,14 @@ public class Robot extends IterativeRobot {
 	public void autonomousInit() {
 		swerve.enable();
 		swerve.zeroGyro();
-		fieldMapperEncoder.reset();
+		fieldMapper.reset();
 		auto.init();
 	}
 
 	@Override
 	public void autonomousPeriodic() {
 		checkForBrownout();
-		fieldMapperEncoder.update();
+		// ((FieldMapperEncoder) fieldMapper).update();
 		auto.periodic();
 	}
 
@@ -66,6 +69,8 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("elevator height", elevator.getHeight());
 		checkForBrownout();
 		teleop.periodic();
+		SmartDashboard.putNumber("x displacement", fieldMapper.getX() * 39.31);
+		SmartDashboard.putNumber("y displacement", fieldMapper.getY() * 39.31);
 	}
 
 	@Override
@@ -96,6 +101,9 @@ public class Robot extends IterativeRobot {
 	public void testPeriodic() {
 		checkForBrownout();
 		swerve.controllerZero(input);
+		if (input.getYButtonPressed()) {
+			fieldMapper.reset();
+		}
 		// if (input.getAButtonPressed()) {
 		// index++;
 		// index %= 16;
