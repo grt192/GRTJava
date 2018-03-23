@@ -32,26 +32,11 @@ public class Teleop {
 	}
 
 	public void init() {
+		useVision = false;
 		vision.kill();
 	}
 
 	public void periodic() {
-		if (xboxMechs.getXButtonPressed()) {
-			intake.moveCenterPickup();
-		}
-		if (xboxMechs.getBumperPressed(Hand.kRight)) {
-			intake.movePickup();
-		}
-		if (xboxMechs.getBumperPressed(Hand.kLeft)) {
-			elevator.breakElevator();
-		}
-
-		intake.moveWheels(xboxMechs.getY(Hand.kLeft));
-		double elevatorSpeed = SwerveBase.clip(-xboxMechs.getY(Hand.kRight));
-		elevator.setSpeed(elevatorSpeed);
-		if (elevatorSpeed != 0.0) {
-			intake.movePickupOut();
-		}
 		if (xboxSwerve.getBButtonPressed()) {
 			useVision = !useVision;
 			if (useVision)
@@ -61,7 +46,24 @@ public class Teleop {
 		}
 		if (useVision)
 			useVision = vision.update();
-		else
+		else {
+			if (xboxMechs.getXButtonPressed()) {
+				intake.moveCenterPickup();
+			}
+			if (xboxMechs.getBumperPressed(Hand.kRight)) {
+				intake.movePickup();
+			}
+			if (xboxMechs.getBumperPressed(Hand.kLeft)) {
+				elevator.breakElevator();
+			}
+
+			intake.moveWheels(xboxMechs.getY(Hand.kLeft));
+			double elevatorSpeed = SwerveBase.clip(-xboxMechs.getY(Hand.kRight));
+			elevator.setSpeed(elevatorSpeed);
+			if (elevatorSpeed != 0.0) {
+				intake.movePickupOut();
+			}
 			swerve.updateWithJoystick(xboxSwerve);
+		}
 	}
 }

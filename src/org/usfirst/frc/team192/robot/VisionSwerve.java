@@ -14,7 +14,7 @@ public class VisionSwerve {
 	private boolean blockFound;
 	private double targetAngle;
 
-	private Point corner;
+	private Point box;
 	private FieldMapper mapper;
 	private double xStart, yStart;
 	private long startTime;
@@ -30,7 +30,7 @@ public class VisionSwerve {
 	public void start() {
 		System.out.println("Starting vision");
 		startTime = System.currentTimeMillis();
-		new Thread(vision).start();
+		vision.start();
 		swerve.setVelocity(0, 0);
 		swerve.holdAngle();
 	}
@@ -57,16 +57,24 @@ public class VisionSwerve {
 			}
 		} else {
 			Point pos = getDisplacement();
-			double dx = corner.x - pos.x;
-			double dy = corner.y - pos.y;
+			double dx = box.x - pos.x;
+			double dy = box.y - pos.y;
 			double vx = 0.0;
+			System.out.println(dx + ", " + dy);
+			double vy = Math.max(Math.min(dy * 0.4, 0.4), -0.4);
 			if (Math.abs(dy) < 0.05) {
 				// intake.movePickupOut();
 				// intake.moveWheels(1.0);
 				vx = 0.2;
 			}
-			double vy = Math.max(dy * 0.5, 0.4);
-			double angle = -targetAngle;
+			if (dx < 0.01) {
+				vx = 0.0;
+				vy = 0.0;
+				System.out.println("Got block!");
+				// intake.autonClamp();
+				// intake.moveWheels(1.0);
+			}
+			double angle = targetAngle;
 			double trueVX = vx * Math.cos(angle) - vy * Math.sin(angle);
 			double trueVY = vx * Math.sin(angle) + vy * Math.cos(angle);
 			swerve.setVelocity(trueVX, trueVY);
@@ -80,20 +88,28 @@ public class VisionSwerve {
 		xStart = mapper.getX();
 		yStart = mapper.getY();
 		double angle = vision.getAngle();
-		corner = vision.getPoint();
-		System.out.println("Block found at " + corner);
-		if (angle > Math.PI / 4)
-			angle -= Math.PI / 2;
-		if (angle < -Math.PI / 4)
-			angle += Math.PI / 2;
+		double posAngle, negAngle;
+		box = vision.getPoint();
+		if (angle > 0) {
+			posAngle = angle;
+			negAngle = angle - Math.PI / 2;
+		} else {
+			negAngle = angle;
+			posAngle = angle + Math.PI / 2;
+		}
+		if (box.y > 0)
+			angle = posAngle;
+		else
+			angle = negAngle;
 		targetAngle = initialAngle + angle;
 		swerve.setTargetPosition(targetAngle);
 
 		angle *= -1;
-		double x = corner.x;
-		double y = corner.y;
-		corner.x = x * Math.cos(angle) - y * Math.sin(angle);
-		corner.y = x * Math.sin(angle) + y * Math.cos(angle);
+		double x = box.x;
+		double y = box.y;
+		box.x = x * Math.cos(angle) - y * Math.sin(angle) + 0.165;
+		box.y = x * Math.sin(angle) + y * Math.cos(angle) + 0.165 * Math.signum(angle);
+		System.out.println("Box found at " + box);
 	}
 
 	private Point getDisplacement() {
