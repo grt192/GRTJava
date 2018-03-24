@@ -60,20 +60,20 @@ public class VisionSwerve {
 			double dx = box.x - pos.x;
 			double dy = box.y - pos.y;
 			double vx = 0.0;
-			System.out.println(dx + ", " + dy);
 			double vy = Math.max(Math.min(dy * 0.4, 0.4), -0.4);
-			if (Math.abs(dy) < 0.05) {
+			if (Math.abs(dy) < 0.03) {
 				// intake.movePickupOut();
 				// intake.moveWheels(1.0);
 				vx = 0.2;
 			}
-			if (dx < 0.01) {
+			if (dx < 0.165) {
 				vx = 0.0;
 				vy = 0.0;
 				System.out.println("Got block!");
 				// intake.autonClamp();
 				// intake.moveWheels(1.0);
 			}
+			System.out.println(dx + ", " + dy + "; " + vx + ", " + vy);
 			double angle = targetAngle;
 			double trueVX = vx * Math.cos(angle) - vy * Math.sin(angle);
 			double trueVY = vx * Math.sin(angle) + vy * Math.cos(angle);
