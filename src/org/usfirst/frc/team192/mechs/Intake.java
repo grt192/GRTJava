@@ -31,8 +31,8 @@ public class Intake {
 	}
 
 	public void moveWheels(double speed) {
-		if (PowerJNI.getVinVoltage() < 11 || Robot.timeSinceLastBrownout() < 500)
-			speed = 0;
+		// if (PowerJNI.getVinVoltage() < 11 || Robot.timeSinceLastBrownout() < 500)
+		// 	speed = 0;
 		upper.set(ControlMode.PercentOutput, speed);
 		right.set(ControlMode.PercentOutput, speed);
 		left.set(ControlMode.PercentOutput, speed);
