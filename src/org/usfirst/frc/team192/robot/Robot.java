@@ -5,6 +5,7 @@ import org.usfirst.frc.team192.fieldMapping.FieldMapperEncoder;
 import org.usfirst.frc.team192.mechs.Elevator;
 import org.usfirst.frc.team192.mechs.Intake;
 import org.usfirst.frc.team192.swerve.FullSwervePID;
+import org.usfirst.frc.team192.swerve.NavXGyro;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -26,11 +27,21 @@ public class Robot extends IterativeRobot {
 
 	private FieldMapperEncoder fieldMapperEncoder;
 
+	private Gyro getGyro() {
+		switch (Config.getString("gyro")) {
+		case "cruddy":
+			return new ADXRS450_Gyro();
+		case "navx":
+		default:
+			return new NavXGyro();
+		}
+	}
+
 	@Override
 	public void robotInit() {
 		Config.start();
 		input = new XboxController(0);
-		gyro = new ADXRS450_Gyro();
+		gyro = getGyro();
 		swerve = new FullSwervePID(gyro);
 		elevator = new Elevator();
 		intake = new Intake();

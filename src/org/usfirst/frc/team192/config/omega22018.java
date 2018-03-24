@@ -45,3 +45,5 @@
 // leftsol=3
 // centersol=1
 // winchsol=2
+
+// gyro=cruddy
