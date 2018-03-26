@@ -1,13 +1,11 @@
 package org.usfirst.frc.team192.mechs;
 
 import org.usfirst.frc.team192.config.Config;
-import org.usfirst.frc.team192.robot.Robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.hal.PowerJNI;
 
 public class Intake {
 
@@ -31,8 +29,6 @@ public class Intake {
 	}
 
 	public void moveWheels(double speed) {
-		if (PowerJNI.getVinVoltage() < 11 || Robot.timeSinceLastBrownout() < 500)
-			speed = 0;
 		upper.set(ControlMode.PercentOutput, speed);
 		right.set(ControlMode.PercentOutput, speed);
 		left.set(ControlMode.PercentOutput, speed);

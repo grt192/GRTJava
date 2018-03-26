@@ -17,7 +17,7 @@ public class VisionSwerve {
 	private Point box;
 	private FieldMapper mapper;
 	private double xStart, yStart;
-	private long startTime;
+	private long startTime, endTime;
 
 	public VisionSwerve(FullSwervePID swerve, FieldMapper mapper, Intake intake) {
 		this.swerve = swerve;
@@ -30,9 +30,10 @@ public class VisionSwerve {
 	public void start() {
 		System.out.println("Starting vision");
 		startTime = System.currentTimeMillis();
+		endTime = -1;
 		vision.start();
-		swerve.setVelocity(0, 0);
-		swerve.holdAngle();
+		swerve.setWithAngularVelocity(0.0, 0.0, 0.0);
+		swerve.updateAutonomous();
 	}
 
 	public void kill() {
@@ -59,21 +60,26 @@ public class VisionSwerve {
 			Point pos = getDisplacement();
 			double dx = box.x - pos.x;
 			double dy = box.y - pos.y;
-			double vx = 0.0;
-			double vy = Math.max(Math.min(dy * 0.4, 0.4), -0.4);
-			if (Math.abs(dy) < 0.03) {
-				// intake.movePickupOut();
-				// intake.moveWheels(1.0);
-				vx = 0.2;
+			double vy = Math.max(Math.min(dy * 3, 0.5), -0.5);
+			double vx = Math.max(0.0, 1.0 - Math.abs(dy));
+			vx *= vx * 2;
+			if (vx > 0.0) {
+				intake.movePickupOut();
+				intake.moveWheels(1.0);
 			}
-			if (dx < 0.165) {
+			if (dx < 0.3) {
 				vx = 0.0;
 				vy = 0.0;
-				System.out.println("Got block!");
-				// intake.autonClamp();
-				// intake.moveWheels(1.0);
+				if (endTime == -1) {
+					System.out.println("Got block!");
+					intake.autonClamp();
+					endTime = System.currentTimeMillis() + 500;
+				} else if (endTime < System.currentTimeMillis()) {
+					intake.moveWheels(0.0);
+					return false;
+				}
+				intake.moveWheels(1.0);
 			}
-			System.out.println(dx + ", " + dy + "; " + vx + ", " + vy);
 			double angle = targetAngle;
 			double trueVX = vx * Math.cos(angle) - vy * Math.sin(angle);
 			double trueVY = vx * Math.sin(angle) + vy * Math.cos(angle);
@@ -97,7 +103,7 @@ public class VisionSwerve {
 			negAngle = angle;
 			posAngle = angle + Math.PI / 2;
 		}
-		if (box.y > 0)
+		if (posAngle < Math.PI / 4)
 			angle = posAngle;
 		else
 			angle = negAngle;
@@ -110,6 +116,7 @@ public class VisionSwerve {
 		box.x = x * Math.cos(angle) - y * Math.sin(angle) + 0.165;
 		box.y = x * Math.sin(angle) + y * Math.cos(angle) + 0.165 * Math.signum(angle);
 		System.out.println("Box found at " + box);
+		System.out.println("Rotate angle: " + Math.toDegrees((-angle)));
 	}
 
 	private Point getDisplacement() {
