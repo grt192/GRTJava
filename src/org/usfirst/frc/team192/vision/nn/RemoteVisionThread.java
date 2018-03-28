@@ -1,5 +1,7 @@
 package org.usfirst.frc.team192.vision.nn;
 
+import java.util.Arrays;
+
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -26,6 +28,8 @@ public class RemoteVisionThread implements Runnable {
 	@Override
 	public void run() {
 		running = true;
+		for (int i = 0; i < 4; i++) // because the stupid buffer thing
+			cap.grab();
 		while (running) {
 			cap.grab();
 			cap.read(image);
@@ -43,6 +47,7 @@ public class RemoteVisionThread implements Runnable {
 	}
 
 	public void recieve(double[] data) {
+		System.out.println(Arrays.toString(data));
 		if (this.data == null)
 			this.data = data;
 		running = false;

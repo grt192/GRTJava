@@ -14,7 +14,7 @@ public class NetworkServer extends Thread {
 	private int clientPort;
 
 	public NetworkServer(int port, String name) throws IOException {
-		socket = new DatagramSocket(port, InetAddress.getLocalHost());
+		socket = new DatagramSocket(port, InetAddress.getByName("roborio-192-frc.local"));
 		System.out.println(name + " server joinable at " + socket.getLocalAddress().getHostAddress() + ":"
 				+ socket.getLocalPort());
 		connected = false;

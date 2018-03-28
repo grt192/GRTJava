@@ -30,6 +30,7 @@ public class VisionSwerve {
 	public void start() {
 		System.out.println("Starting vision");
 		startTime = System.currentTimeMillis();
+		blockFound = false;
 		endTime = -1;
 		vision.start();
 		swerve.setWithAngularVelocity(0.0, 0.0, 0.0);
@@ -37,7 +38,6 @@ public class VisionSwerve {
 	}
 
 	public void kill() {
-		blockFound = false;
 		vision.kill();
 		System.out.println("Stopping vision");
 	}
@@ -51,7 +51,7 @@ public class VisionSwerve {
 				}
 				blockFound = true;
 				beginNavigation();
-			} else if (System.currentTimeMillis() - startTime > 2000) {
+			} else if (System.currentTimeMillis() - startTime > 20000) {
 				System.out.println("Vision timed out");
 				kill();
 				return false;
@@ -60,11 +60,15 @@ public class VisionSwerve {
 			Point pos = getDisplacement();
 			double dx = box.x - pos.x;
 			double dy = box.y - pos.y;
-			double vy = Math.max(Math.min(dy * 3, 0.5), -0.5);
+			double vy = Math.max(Math.min(dy * 5, 0.75), -0.75);
 			double vx = Math.max(0.0, 1.0 - Math.abs(dy));
 			vx *= vx * 2;
-			if (vx > 0.0) {
+			if (dx < 1.0)
+				vx *= Math.max(0, dx - 12 * dy);
+			if (Math.abs(dy) < 0.4) {
 				intake.movePickupOut();
+			}
+			if (Math.abs(dy) < 0.2 && dx < 0.5) {
 				intake.moveWheels(1.0);
 			}
 			if (dx < 0.3) {
