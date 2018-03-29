@@ -119,6 +119,9 @@ public class Autonomous {
 		}
 		double timeAfterDelay = timeAfterDelay();
 		
+		double xTarget;
+		double yTarget;
+		
 		switch (selectedMode) {
 		case ONLY_FORWARD_TIME:
 			if (timeAfterDelay < 3000) {
@@ -144,8 +147,8 @@ public class Autonomous {
 			}
 			break;
 		case ANGLED_AND_PLACE_SWITCH_ENCODERS:
-			double xTarget = 140 - robotHeight;
-			double yTarget = switchLeft ? 73.56 : 190.44; // kind of guesses (unsure of dimensions of switch)
+			xTarget = 140 - robotHeight;
+			yTarget = switchLeft ? 73.56 : 190.44; // kind of guesses (unsure of dimensions of switch)
 			if (moveToTargetPosition(xTarget, yTarget, 0.5) > 20) {
 				break;
 			} else {
@@ -167,12 +170,13 @@ public class Autonomous {
 			break;
 		case PLACE_SCALE:
 			xTarget = 168.0;
+			int elevatorPos = 91093;
 			if (robotPos == 'l') {
 				yTarget = 12.935;
 			} else if (robotPos == 'r') {
 				yTarget = 251.065;
 			} else {
-				yTarget = 12.935; // arbitrary; should't run from center
+				yTarget = 12.935; // arbitrary; shouldn't run from center
 			}
 			if (step < 1) {
 				if (moveToTargetPosition(xTarget, yTarget, 0.35) < 10) {
@@ -186,54 +190,27 @@ public class Autonomous {
 					step++;
 					stepTime = timeAfterDelay;
 					swerve.setVelocity(0.0, 0.0);
+					swerve.setTargetPosition(scaleLeft ? Math.PI / 2 : -Math.PI / 2);
 				}
 			} else if (step < 3) {
-				swerve.setTargetPosition(scaleLeft ? Math.PI / 2 : -Math.PI / 2);
 				xTarget = 324;
 				if (moveToTargetPosition(xTarget, yTarget, 0.35) < 10) {
 					step++;
 					swerve.setVelocity(0.0, 0.0);
+					elevator.setPosition(elevatorPos);
 				}				
-			} /* else if (step < 4) {
-				double timeSinceSwerve = timeAfterDelay - stepTime;
-				if (timeSinceSwerve < 2600) {
-					double speed = 0.8;
-					elevator.setSpeed(speed);
+			} else if (step < 4) {
+				if (Math.abs(elevator.getHeight() - elevatorPos) < 1000) {
+					step++;
+					stepTime = timeAfterDelay;
 				}
-			} */
-			
-			// else if (step < 4) {
-	//			double targetElevatorPosition = 10000;
-	//			elevator.setPosition(targetElevatorPosition);
-	//			if (elevator.getHeight() - targetElevatorPosition < 1000) {
-	//				step++;
-	//				stepTime = timeAfterDelay;
-	//			}
-			
-			
-	//		} else if (step < 5) {
-	//			double timeSinceElevator = timeAfterDelay - stepTime;
-	//			if (timeSinceElevator < 1500) {
-	//				intake.moveWheels(-1.0);
-	//			} else {
-	//				intake.moveWheels(0.0);
-	//			}
-	//		}
-	//		if (step < 1) {
-	//			double targetElevatorPosition = 1000;
-	//			elevator.setPosition(targetElevatorPosition);
-	//			System.out.println("elevator height " + elevator.getHeight());
-	//			if (elevator.getHeight() - targetElevatorPosition < 200) {
-	//				step++;
-	//				stepTime = timeAfterDelay;
-	//			}
-	//		}
-	//		if (timeAfterDelay < 3000) {
-	//			elevator.setSpeed(0.8);
-	//		} else {
-	//			elevator.setSpeed(0.0);
-	//		}
-	//		break;
+			} else if (step < 5) {
+				double timeSinceSwerve = timeAfterDelay - stepTime;
+				intake.moveWheels(-0.8);
+				if (timeSinceSwerve > 1500) {
+					step++;
+				}
+			}
 		}
 		
 		swerve.updateAutonomous();
