@@ -169,7 +169,7 @@ public class Autonomous {
 			}
 			break;
 		case PLACE_SCALE:
-			xTarget = 168.0;
+			xTarget = 234.0;
 			int elevatorPos = 91093;
 			if (robotPos == 'l') {
 				yTarget = 12.935;
