@@ -44,11 +44,11 @@ public class Elevator {
 	public void setElevatorPosition(int i) {
 		elevatorPos = ElevatorPosition.values()[i];
 	}
-	
+
 	public void setPosition(double height) {
 		elevator.set(ControlMode.Position, height);
 	}
-	
+
 	public int getHeight() {
 		return elevator.getSelectedSensorPosition(0);
 	}
@@ -97,7 +97,7 @@ public class Elevator {
 	}
 
 	public void setSpeed(double speed) {
-		speed *= Math.max(1.0, Robot.timeSinceLastBrownout() / 2000.0);
+		speed *= Math.max(1.0, Robot.timeSinceLastBrownout() / 2000.0) * 0.5;
 		elevator.set(ControlMode.PercentOutput, speed);
 	}
 
