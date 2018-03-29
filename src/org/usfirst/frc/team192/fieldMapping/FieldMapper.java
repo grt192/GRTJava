@@ -1,6 +1,6 @@
 package org.usfirst.frc.team192.fieldMapping;
 
-public interface FieldMapper {
+public interface FieldMapper extends Runnable {
 	
 	public double getX();
 	public double getY();

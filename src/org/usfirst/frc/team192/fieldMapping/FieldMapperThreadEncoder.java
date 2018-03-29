@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class FieldMapperThreadEncoder extends FieldMapperGyro implements Runnable {
+public class FieldMapperThreadEncoder extends FieldMapperGyro {
 	
 	private FullSwerve swerve;
 	private int stateSize;
@@ -21,6 +21,10 @@ public class FieldMapperThreadEncoder extends FieldMapperGyro implements Runnabl
 	double dt;
 	
 	public FieldMapperThreadEncoder(Gyro gyro, FullSwerve swerve) {
+		this(gyro, swerve, 0, 0);
+	}
+	
+	public FieldMapperThreadEncoder(Gyro gyro, FullSwerve swerve, double initX, double initY) {
 		super(gyro, 0, 0);
 		this.swerve = swerve;
 		stateSize = 4;
@@ -39,7 +43,7 @@ public class FieldMapperThreadEncoder extends FieldMapperGyro implements Runnabl
 		filter.set_measurementNoiseCov(R);
 		filter.set_processNoiseCov(Q);
 		filter.set_statePost(Mat.zeros(stateSize, 1, TYPE));
-		reset();
+		reset(initX, initY);
 	}
 	
 	public void reset(double x, double y) {

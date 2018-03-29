@@ -3,7 +3,6 @@ package org.usfirst.frc.team192.robot;
 import org.usfirst.frc.team192.config.Config;
 import org.usfirst.frc.team192.fieldMapping.FieldMapper;
 import org.usfirst.frc.team192.fieldMapping.FieldMapperEncoder;
-import org.usfirst.frc.team192.fieldMapping.FieldMapperThreadEncoder;
 import org.usfirst.frc.team192.mechs.Elevator;
 import org.usfirst.frc.team192.mechs.Intake;
 import org.usfirst.frc.team192.swerve.FullSwervePID;
@@ -37,8 +36,8 @@ public class Robot extends IterativeRobot {
 		swerve = new FullSwervePID(gyro);
 		elevator = new Elevator();
 		intake = new Intake();
-		fieldMapper = new FieldMapperThreadEncoder(gyro, swerve);
-		new Thread((Runnable) fieldMapper).start();
+		fieldMapper = new FieldMapperEncoder(gyro, swerve);
+		new Thread(fieldMapper).start();
 		auto = new Autonomous(swerve, intake, elevator, fieldMapper);
 		teleop = new Teleop(swerve, intake, elevator);
 	}
@@ -54,8 +53,8 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousPeriodic() {
 		checkForBrownout();
-		// ((FieldMapperEncoder) fieldMapper).update();
 		auto.periodic();
+		printDisplacement();
 	}
 
 	@Override
@@ -63,14 +62,18 @@ public class Robot extends IterativeRobot {
 		swerve.enable();
 		teleop.init();
 	}
-
+	
+	private void printDisplacement() {
+		SmartDashboard.putNumber("x displacement", fieldMapper.getX() * 39.31);
+		SmartDashboard.putNumber("y displacement", fieldMapper.getY() * 39.31);
+	}
+	
 	@Override
 	public void teleopPeriodic() {
 		SmartDashboard.putNumber("elevator height", elevator.getHeight());
 		checkForBrownout();
 		teleop.periodic();
-		SmartDashboard.putNumber("x displacement", fieldMapper.getX() * 39.31);
-		SmartDashboard.putNumber("y displacement", fieldMapper.getY() * 39.31);
+		printDisplacement();
 	}
 
 	@Override
