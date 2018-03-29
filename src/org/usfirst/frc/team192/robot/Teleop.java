@@ -37,7 +37,7 @@ public class Teleop {
 	}
 
 	public void periodic() {
-		if (xboxMechs.getBButtonPressed()) {
+		if (xboxSwerve.getBButtonPressed()) {
 			useVision = !useVision;
 			if (useVision)
 				vision.start();
