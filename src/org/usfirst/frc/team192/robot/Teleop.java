@@ -19,19 +19,39 @@ public class Teleop {
 	DigitalInput outerLimitSwitch;
 
 	private FullSwervePID swerve;
+	private VisionSwerve vision;
+	private boolean useVision;
 
-	public Teleop(FullSwervePID swerve, Intake intake, Elevator elevator) {
+	public Teleop(FullSwervePID swerve, Intake intake, Elevator elevator, VisionSwerve vision) {
 		xboxSwerve = new XboxController(0);
 		xboxMechs = new XboxController(1);
 		this.swerve = swerve;
 		this.intake = intake;
 		this.elevator = elevator;
+		this.vision = vision;
 	}
 
 	public void init() {
+		useVision = false;
+		vision.kill();
 	}
 
 	public void periodic() {
+		if (xboxMechs.getBButtonPressed()) {
+			useVision = !useVision;
+			if (useVision)
+				vision.start();
+			else
+				vision.kill();
+		}
+		if (useVision)
+			useVision = vision.update();
+		else {
+			manualControls();
+		}
+	}
+
+	private void manualControls() {
 		if (xboxMechs.getXButtonPressed()) {
 			intake.moveCenterPickup();
 		}

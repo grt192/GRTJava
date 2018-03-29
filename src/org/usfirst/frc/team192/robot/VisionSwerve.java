@@ -14,9 +14,10 @@ public class VisionSwerve {
 	private boolean blockFound;
 	private double targetAngle;
 
-	private Point corner;
+	private Point box;
 	private FieldMapper mapper;
 	private double xStart, yStart;
+	private long startTime, endTime;
 
 	public VisionSwerve(FullSwervePID swerve, FieldMapper mapper, Intake intake) {
 		this.swerve = swerve;
@@ -27,36 +28,63 @@ public class VisionSwerve {
 	}
 
 	public void start() {
-		new Thread(vision).start();
-		swerve.setVelocity(0, 0);
-		swerve.holdAngle();
+		System.out.println("Starting vision");
+		startTime = System.currentTimeMillis();
+		blockFound = false;
+		endTime = -1;
+		vision.start();
+		swerve.setWithAngularVelocity(0.0, 0.0, 0.0);
+		swerve.updateAutonomous();
 	}
 
 	public void kill() {
-		blockFound = false;
 		vision.kill();
+		System.out.println("Stopping vision");
 	}
 
 	public boolean update() {
 		if (!blockFound) {
 			if (vision.hasData()) {
-				if (!vision.hasTarget())
+				if (!vision.hasTarget()) {
+					System.out.println("No block detected");
 					return false;
+				}
 				blockFound = true;
 				beginNavigation();
+			} else if (System.currentTimeMillis() - startTime > 2000) {
+				System.out.println("Vision timed out");
+				kill();
+				return false;
 			}
 		} else {
 			Point pos = getDisplacement();
-			double dx = corner.x - pos.x;
-			double dy = corner.y - pos.y;
-			double vx = 0.0;
-			if (Math.abs(dy) < 0.05) {
-				// intake.movePickupOut();
-				// intake.moveWheels(1.0);
-				vx = 0.2;
+			double dx = box.x - pos.x;
+			double dy = box.y - pos.y;
+			double vy = Math.max(Math.min(dy * 3, 0.75), -0.75);
+			double vx = Math.max(0.0, 0.75 - Math.abs(dy));
+			vx *= vx * 2;
+			if (dx < 1.0)
+				vx *= Math.max(0, dx - 10 * Math.abs(dy));
+			if (Math.abs(dy) < 0.4) {
+				intake.movePickupOut();
 			}
-			double vy = Math.max(dy * 0.5, 0.4);
-			double angle = -targetAngle;
+			if (Math.abs(dy) < 0.2 && dx < 0.5) {
+				intake.moveWheels(1.0);
+			}
+			if (dx < 0.3) {
+				vx = 0.0;
+				vy = 0.0;
+				if (endTime == -1) {
+					System.out.println("Got block!");
+					intake.autonClamp();
+					endTime = System.currentTimeMillis() + 1000;
+				} else if (endTime < System.currentTimeMillis()) {
+					intake.moveWheels(0.0);
+					return false;
+				}
+				intake.moveWheels(1.0);
+			}
+			double angle = targetAngle;
 			double trueVX = vx * Math.cos(angle) - vy * Math.sin(angle);
 			double trueVY = vx * Math.sin(angle) + vy * Math.cos(angle);
 			swerve.setVelocity(trueVX, trueVY);
@@ -70,19 +98,29 @@ public class VisionSwerve {
 		xStart = mapper.getX();
 		yStart = mapper.getY();
 		double angle = vision.getAngle();
-		corner = vision.getPoint();
-		if (angle > Math.PI / 2)
-			angle -= Math.PI;
-		if (angle < -Math.PI / 2)
-			angle += Math.PI;
+		double posAngle, negAngle;
+		box = vision.getPoint();
+		if (angle > 0) {
+			posAngle = angle;
+			negAngle = angle - Math.PI / 2;
+		} else {
+			negAngle = angle;
+			posAngle = angle + Math.PI / 2;
+		}
+		if (posAngle < Math.PI / 4)
+			angle = posAngle;
+		else
+			angle = negAngle;
 		targetAngle = initialAngle + angle;
 		swerve.setTargetPosition(targetAngle);
 
 		angle *= -1;
-		double x = corner.x;
-		double y = corner.y;
-		corner.x = x * Math.cos(angle) - y * Math.sin(angle);
-		corner.y = x * Math.sin(angle) + y * Math.cos(angle);
+		double x = box.x;
+		double y = box.y;
+		box.x = x * Math.cos(angle) - y * Math.sin(angle) + 0.165;
+		box.y = x * Math.sin(angle) + y * Math.cos(angle) + 0.165 * Math.signum(angle);
+		System.out.println("Box found at " + box);
+		System.out.println("Rotate angle: " + Math.toDegrees((-angle)));
 	}
 
 	private Point getDisplacement() {

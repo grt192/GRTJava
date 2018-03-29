@@ -172,7 +172,7 @@ public class Autonomous {
 			} else if (robotPos == 'r') {
 				yTarget = 251.065;
 			} else {
-				yTarget = 12.935; // arbitrary
+				yTarget = 12.935; // arbitrary; should't run from center
 			}
 			if (step < 1) {
 				if (moveToTargetPosition(xTarget, yTarget, 0.35) < 10) {

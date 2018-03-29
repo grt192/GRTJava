@@ -57,6 +57,7 @@ class RemoteVision extends Thread {
 		while (true) {
 			try {
 				data = server.receiveDoubles(3);
+				rvt.recieve(data);
 			} catch (IOException e) {
 				e.printStackTrace();
 				continue;
