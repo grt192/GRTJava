@@ -28,11 +28,19 @@ public class Robot extends IterativeRobot {
 
 	private FieldMapper fieldMapper;
 
+	private Gyro getGyro() {
+		switch (Config.getString("gyro")) {
+		case "cruddy": return new ADXRS450_Gyro();
+		case "navx": 
+		default: return new NavXGyro();
+		}
+	}
+	
 	@Override
 	public void robotInit() {
 		Config.start();
 		input = new XboxController(0);
-		gyro = new ADXRS450_Gyro();
+		gyro = getGyro();
 		swerve = new FullSwervePID(gyro);
 		elevator = new Elevator();
 		intake = new Intake();
