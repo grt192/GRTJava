@@ -197,11 +197,12 @@ public class Autonomous {
 				if (moveToTargetPosition(xTarget, yTarget, 0.35) < 10) {
 					step++;
 					swerve.setVelocity(0.0, 0.0);
-					elevator.setPosition(elevatorPos);
+					elevator.setSpeed(0.8);
 				}				
 			} else if (step < 4) {
 				if (Math.abs(elevator.getHeight() - elevatorPos) < 1000) {
 					step++;
+					elevator.setSpeed(0.0);
 					stepTime = timeAfterDelay;
 				}
 			} else if (step < 5) {
