@@ -31,7 +31,7 @@ public class Elevator {
 		elevator = new TalonSRX(Config.getInt("winch_motor"));
 		elevator.setNeutralMode(NeutralMode.Brake);
 		follower = new TalonSRX(Config.getInt("winch_motor_follower"));
-		follower.setNeutralMode(NeutralMode.Brake);
+		follower.setNeutralMode(NeutralMode.Coast);
 		winchLock = new Solenoid(Config.getInt("winchsol"));
 		elevatorPos = ElevatorPosition.GROUND;
 		follower.set(ControlMode.Follower, elevator.getDeviceID());

@@ -50,8 +50,7 @@ public class Robot extends IterativeRobot {
 		fieldMapper = new FieldMapperEncoder(gyro, swerve);
 		new Thread(fieldMapper).start();
 		auto = new Autonomous(swerve, intake, elevator, fieldMapper);
-		VisionSwerve vision = new VisionSwerve(swerve, fieldMapper, intake);
-		teleop = new Teleop(swerve, intake, elevator, vision);
+		teleop = new Teleop(swerve, intake, elevator, null);
 	}
 
 	@Override
@@ -74,12 +73,12 @@ public class Robot extends IterativeRobot {
 		swerve.enable();
 		teleop.init();
 	}
-	
+
 	private void printDisplacement() {
 		SmartDashboard.putNumber("x displacement", fieldMapper.getX() * 39.31);
 		SmartDashboard.putNumber("y displacement", fieldMapper.getY() * 39.31);
 	}
-	
+
 	@Override
 	public void teleopPeriodic() {
 		SmartDashboard.putNumber("elevator height", elevator.getHeight());

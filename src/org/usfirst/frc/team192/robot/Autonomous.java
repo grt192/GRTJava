@@ -41,15 +41,17 @@ public class Autonomous {
 	private static double METERS_TO_INCHES = 39.37;
 
 	private enum Mode {
-		ONLY_FORWARD_TIME("drive forward for 4 seconds"),
-		ONLY_FORWARD_ENCODERS("drive forward based on drive encoders"),
-		ANGLED_AND_PLACE_SWITCH_ENCODERS("move at an angle to the correct side of the switch with drive encoder data"),
-		PLACE_SCALE("scale auton that doesn't work");
-		
+		ONLY_FORWARD_TIME("drive forward for 4 seconds"), ONLY_FORWARD_ENCODERS(
+				"drive forward based on drive encoders"), ANGLED_AND_PLACE_SWITCH_ENCODERS(
+						"move at an angle to the correct side of the switch with drive encoder data"), PLACE_SCALE(
+								"scale auton that doesn't work");
+
 		String description;
+
 		Mode(String description) {
 			this.description = description;
 		}
+
 		String getDescription() {
 			return description;
 		}
@@ -61,9 +63,9 @@ public class Autonomous {
 		this.elevator = elevator;
 		this.intake = intake;
 		this.fieldMapping = fieldMapping;
-		this.robotWidth = Config.getDouble("robot_width") * METERS_TO_INCHES;
-		this.robotHeight = Config.getDouble("robot_height") * METERS_TO_INCHES;
-		
+		this.robotWidth = Config.getDouble("robot_width") * METERS_TO_INCHES + 15;
+		this.robotHeight = Config.getDouble("robot_height") * METERS_TO_INCHES + 15;
+
 		modeChooser = new SendableChooser<>();
 		Mode[] modes = Mode.values();
 		Mode defaultMode = modes[0];
@@ -84,7 +86,7 @@ public class Autonomous {
 		// get game information
 		String fieldPositions = ds.getGameSpecificMessage();
 		selectedMode = modeChooser.getSelected();
-//		selectedMode = Mode.ONLY_FORWARD_ENCODERS;
+		// selectedMode = Mode.ONLY_FORWARD_ENCODERS;
 		System.out.println(selectedMode.toString());
 
 		delay = SmartDashboard.getNumber("autonomous_delay_ms", 0.0);
@@ -92,9 +94,9 @@ public class Autonomous {
 		scaleLeft = (fieldPositions.charAt(1) == 'L');
 		swerve.autonomousInit();
 		swerve.holdAngle();
-		
+
 		robotPos = SmartDashboard.getString("robot position", "c").charAt(0);
-		
+
 		if (robotPos == 'l') {
 			fieldMapping.reset(robotHeight / 2 / METERS_TO_INCHES, robotWidth / 2 / METERS_TO_INCHES);
 		} else if (robotPos == 'c') {
@@ -103,7 +105,7 @@ public class Autonomous {
 			fieldMapping.reset(robotHeight / 2 / METERS_TO_INCHES, (264 - robotWidth / 2) / METERS_TO_INCHES);
 		}
 		System.out.println("starting at " + robotPos + ": " + fieldMapping.getX() + ", " + fieldMapping.getY());
-		
+
 	}
 
 	public void periodic() { // ~5 times / second
@@ -118,10 +120,10 @@ public class Autonomous {
 			return;
 		}
 		double timeAfterDelay = timeAfterDelay();
-		
+
 		double xTarget;
 		double yTarget;
-		
+
 		switch (selectedMode) {
 		case ONLY_FORWARD_TIME:
 			if (timeAfterDelay < 3000) {
@@ -170,13 +172,13 @@ public class Autonomous {
 			break;
 		case PLACE_SCALE:
 			xTarget = 234.0;
-			int elevatorPos = 91093;
+			int elevatorPos = 92000; // 91093;
 			if (robotPos == 'l') {
-				yTarget = 12.935;
+				yTarget = 25;
 			} else if (robotPos == 'r') {
-				yTarget = 251.065;
+				yTarget = 239;
 			} else {
-				yTarget = 12.935; // arbitrary; shouldn't run from center
+				yTarget = 25; // arbitrary; shouldn't run from center
 			}
 			if (step < 1) {
 				if (moveToTargetPosition(xTarget, yTarget, 0.35) < 10) {
@@ -185,7 +187,7 @@ public class Autonomous {
 					swerve.setVelocity(0.0, 0.0);
 				}
 			} else if (step < 2) {
-				yTarget = scaleLeft ? 12.935 : 251.065;
+				yTarget = scaleLeft ? 25 : 239;
 				if (moveToTargetPosition(xTarget, yTarget, 0.35) < 10) {
 					step++;
 					stepTime = timeAfterDelay;
@@ -199,10 +201,13 @@ public class Autonomous {
 					stepTime = timeAfterDelay;
 					swerve.setVelocity(0.0, 0.0);
 					elevator.setSpeed(0.8);
-				}				
+				}
 			} else if (step < 4) {
 				double timeSinceSwerve = timeAfterDelay - stepTime;
-				if (Math.abs(elevator.getHeight() - elevatorPos) < 1000 || timeSinceSwerve > 4000) {
+				if (Math.abs(elevator.getHeight() - elevatorPos) < 1000 || timeSinceSwerve > 6000) {
+					if (timeSinceSwerve > 6000) {
+						System.out.println("timed out");
+					}
 					step++;
 					elevator.setSpeed(0.0);
 					stepTime = timeAfterDelay;
@@ -216,26 +221,26 @@ public class Autonomous {
 			}
 			break;
 		}
-		
+
 		swerve.updateAutonomous();
 	}
-	
+
 	public double moveToTargetPosition(double xTargetDisplacement, double yTargetDisplacement, double speed) {
 		double xDisplacement = getRobotDisplacementX();
 		double yDisplacement = getRobotDisplacementY();
-		
+
 		double xDistance = xTargetDisplacement - xDisplacement;
 		double yDistance = yTargetDisplacement - yDisplacement;
-		
-		System.out.println("pos:"+xDisplacement+","+yDisplacement);
-		
-		double magnitudeNormal = Math.sqrt(xDistance*xDistance + yDistance*yDistance);
+
+		// System.out.println("pos:" + xDisplacement + "," + yDisplacement);
+
+		double magnitudeNormal = Math.sqrt(xDistance * xDistance + yDistance * yDistance);
 		double magnitudeX = speed * xDistance / magnitudeNormal;
 		double magnitudeY = speed * yDistance / magnitudeNormal;
-		
+
 		swerve.setVelocity(magnitudeX, magnitudeY);
-		
-		System.out.println("normal "+magnitudeNormal);
+
+		// System.out.println("normal " + magnitudeNormal);
 		return magnitudeNormal;
 	}
 

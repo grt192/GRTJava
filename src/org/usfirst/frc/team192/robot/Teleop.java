@@ -32,23 +32,10 @@ public class Teleop {
 	}
 
 	public void init() {
-		useVision = false;
-		vision.kill();
 	}
 
 	public void periodic() {
-		if (xboxSwerve.getBButtonPressed()) {
-			useVision = !useVision;
-			if (useVision)
-				vision.start();
-			else
-				vision.kill();
-		}
-		if (useVision)
-			useVision = vision.update();
-		else {
-			manualControls();
-		}
+		manualControls();
 	}
 
 	private void manualControls() {
@@ -62,11 +49,11 @@ public class Teleop {
 			elevator.breakElevator();
 		}
 		if (xboxMechs.getYButtonPressed()) {
-			
+
 		}
 
 		intake.moveWheels(xboxMechs.getY(Hand.kLeft));
-		double elevatorSpeed = SwerveBase.clip(-xboxMechs.getY(Hand.kRight));
+		double elevatorSpeed = SwerveBase.clip(-xboxMechs.getY(Hand.kRight)) * 0.2;
 		elevator.setSpeed(elevatorSpeed);
 		if (elevatorSpeed != 0.0) {
 			intake.movePickupOut();
