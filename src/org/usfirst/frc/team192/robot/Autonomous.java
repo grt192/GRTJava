@@ -149,8 +149,8 @@ public class Autonomous {
 			}
 			break;
 		case ANGLED_AND_PLACE_SWITCH_ENCODERS:
-			xTarget = 140 - robotHeight;
-			yTarget = switchLeft ? 73.56 : 190.44; // kind of guesses (unsure of dimensions of switch)
+			xTarget = 140 - robotHeight / 2;
+			yTarget = switchLeft ? 81.56 : 198.44; // kind of guesses (unsure of dimensions of switch)
 			if (moveToTargetPosition(xTarget, yTarget, 0.5) > 20) {
 				break;
 			} else {
