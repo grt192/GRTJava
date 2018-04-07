@@ -85,7 +85,8 @@ public class Autonomous {
 
 		// get game information
 		String fieldPositions = ds.getGameSpecificMessage();
-		selectedMode = modeChooser.getSelected();
+		// selectedMode = modeChooser.getSelected();
+		selectedMode = Mode.ANGLED_AND_PLACE_SWITCH_ENCODERS;
 		// selectedMode = Mode.ONLY_FORWARD_ENCODERS;
 		System.out.println(selectedMode.toString());
 
@@ -150,8 +151,8 @@ public class Autonomous {
 			break;
 		case ANGLED_AND_PLACE_SWITCH_ENCODERS:
 			xTarget = 140 - robotHeight / 2;
-			yTarget = switchLeft ? 81.56 : 198.44; // kind of guesses (unsure of dimensions of switch)
-			if (moveToTargetPosition(xTarget, yTarget, 0.5) > 20) {
+			yTarget = switchLeft ? 78 : 186;
+			if (moveToTargetPosition(xTarget, yTarget, 0.5) > 5) {
 				break;
 			} else {
 				swerve.setVelocity(0.0, 0.0);

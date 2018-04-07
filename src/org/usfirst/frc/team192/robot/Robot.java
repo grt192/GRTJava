@@ -98,6 +98,9 @@ public class Robot extends IterativeRobot {
 	public void testInit() {
 		// index = 0;
 		// System.out.println(index + 1);
+		start = System.currentTimeMillis();
+		speed = SmartDashboard.getNumber("elevator speed", 1);
+		SmartDashboard.putNumber("elevator speed", speed);
 	}
 
 	private static long lastBrownout;
@@ -111,6 +114,9 @@ public class Robot extends IterativeRobot {
 		return System.currentTimeMillis() - lastBrownout;
 	}
 
+	long start;
+	double speed;
+
 	@Override
 	public void testPeriodic() {
 		checkForBrownout();
@@ -118,6 +124,16 @@ public class Robot extends IterativeRobot {
 		if (input.getYButtonPressed()) {
 			fieldMapper.reset();
 		}
+
+		/*
+		 * double speed = (System.currentTimeMillis() - start) / 30000.0; if (speed <
+		 * 0.1) { elevator.setSpeed(speed); SmartDashboard.putNumber("power output",
+		 * speed); SmartDashboard.putNumber("speed", elevator.getSpeed()); }
+		 */
+
+		elevator.setSpeed(speed / 10000);
+		System.out.println(speed / 10000);
+
 		// if (input.getAButtonPressed()) {
 		// index++;
 		// index %= 16;

@@ -80,7 +80,7 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 
 	private void updateMovement(double vx, double vy, double rv) {
 		updatePID();
-		logPID();
+		// logPID();
 		double rotate = usePID ? rotateInput : rv;
 		changeMotors(rotate, vx, vy);
 	}
@@ -100,8 +100,8 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 			pid.setSetpoint((Math.toDegrees(Math.atan2(y, x)) + 360.0) % 360.0);
 		}
 		double rotate = 0.0;
-		double lTrigger = input.getTriggerAxis(Hand.kLeft);
-		double rTrigger = input.getTriggerAxis(Hand.kRight);
+		double lTrigger = input.getTriggerAxis(Hand.kLeft) * 0.75;
+		double rTrigger = input.getTriggerAxis(Hand.kRight) * 0.75;
 		if (lTrigger + rTrigger > 0.05) {
 			rotate += rTrigger * rTrigger;
 			rotate -= lTrigger * lTrigger;
@@ -163,9 +163,9 @@ public class FullSwervePID extends FullSwerve implements PIDOutput {
 	}
 
 	private void logPID() {
-		// SmartDashboard.putNumber("PID Setpoint", pid.getSetpoint());
-		// SmartDashboard.putNumber("PID Error", pid.getError());
-		// SmartDashboard.putNumber("PID Output", pid.get());
+		SmartDashboard.putNumber("PID Setpoint", pid.getSetpoint());
+		SmartDashboard.putNumber("PID Error", pid.getError());
+		SmartDashboard.putNumber("PID Output", pid.get());
 
 	}
 

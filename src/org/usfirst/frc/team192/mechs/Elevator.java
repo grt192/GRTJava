@@ -97,7 +97,7 @@ public class Elevator {
 	}
 
 	public void setSpeed(double speed) {
-		speed *= Math.max(1.0, Robot.timeSinceLastBrownout() / 2000.0) * 0.5;
+		speed *= Math.min(1.0, Robot.timeSinceLastBrownout() / 2000.0);
 		elevator.set(ControlMode.PercentOutput, speed);
 	}
 
@@ -107,6 +107,10 @@ public class Elevator {
 
 	public void autonSetSpeed(double speed) {
 		elevator.set(ControlMode.PercentOutput, speed);
+	}
+
+	public double getSpeed() {
+		return elevator.getSelectedSensorVelocity(0);
 	}
 
 }

@@ -21,7 +21,7 @@ public class FullSwerve extends SwerveBase {
 		this.gyro = gyro;
 		RADIUS = Math.sqrt(robotWidth * robotWidth + robotHeight * robotHeight) / 2;
 		WHEEL_ANGLE = Math.atan2(robotWidth, robotHeight);
-		ROTATE_SCALE = 0.5 / RADIUS;
+		ROTATE_SCALE = 0.75 / RADIUS;
 		zero();
 	}
 
@@ -68,7 +68,7 @@ public class FullSwerve extends SwerveBase {
 		if (maxSpeed > 0.1) {
 			double speedCap = getMaxSpeed();
 			double scale = SPEED_SCALE * speedCap / Math.max(speedCap, maxSpeed);
-			scale *= Math.max(1.0, Robot.timeSinceLastBrownout() / 2000.0);
+			scale *= Math.min(1.0, Robot.timeSinceLastBrownout() / 2000.0);
 			for (int i = 0; i < 4; i++) {
 				wheels[i].setDriveSpeed(scale * wheelSpeeds[i]);
 				// SmartDashboard.putNumber("drive speed " + i, scale * wheelSpeeds[i]);

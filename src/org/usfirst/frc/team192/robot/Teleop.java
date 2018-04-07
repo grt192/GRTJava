@@ -53,7 +53,7 @@ public class Teleop {
 		}
 
 		intake.moveWheels(xboxMechs.getY(Hand.kLeft));
-		double elevatorSpeed = SwerveBase.clip(-xboxMechs.getY(Hand.kRight)) * 0.2;
+		double elevatorSpeed = SwerveBase.clip(-xboxMechs.getY(Hand.kRight));
 		elevator.setSpeed(elevatorSpeed);
 		if (elevatorSpeed != 0.0) {
 			intake.movePickupOut();
