@@ -19,8 +19,8 @@ public class FullSwerve extends SwerveBase {
 	public FullSwerve(Gyro gyro) {
 		super();
 		this.gyro = gyro;
-		RADIUS = Math.sqrt(robotWidth * robotWidth + robotHeight * robotHeight) / 2;
-		WHEEL_ANGLE = Math.atan2(robotWidth, robotHeight);
+		RADIUS = Math.sqrt(ROBOT_WIDTH * ROBOT_WIDTH + ROBOT_HEIGHT * ROBOT_HEIGHT) / 2;
+		WHEEL_ANGLE = Math.atan2(ROBOT_WIDTH, ROBOT_HEIGHT);
 		ROTATE_SCALE = 0.75 / RADIUS;
 		zero();
 	}

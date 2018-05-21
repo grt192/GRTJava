@@ -46,9 +46,6 @@ public class TankSwerve extends SwerveBase {
 			}
 		}
 
-		leftMotorOutput /= 2;
-		rightMotorOutput /= 2;
-
 		wheels[0].setDriveSpeed(leftMotorOutput);
 		wheels[2].setDriveSpeed(leftMotorOutput);
 		wheels[1].setDriveSpeed(rightMotorOutput);

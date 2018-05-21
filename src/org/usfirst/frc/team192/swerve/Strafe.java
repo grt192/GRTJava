@@ -30,7 +30,7 @@ public class Strafe extends SwerveBase {
 		}
 
 		if (lastMode != currentMode && currentMode == Mode.ROTATE) {
-			double robotAngle = Math.atan2(robotHeight, robotWidth);
+			double robotAngle = Math.atan2(ROBOT_HEIGHT, ROBOT_WIDTH);
 			wheels[0].setTargetPosition(robotAngle);
 			wheels[1].setTargetPosition(Math.PI - robotAngle);
 			wheels[2].setTargetPosition(-robotAngle);

@@ -11,8 +11,8 @@ public abstract class SwerveBase {
 
 	protected Wheel[] wheels;
 
-	protected final double robotWidth;
-	protected final double robotHeight;
+	protected final double ROBOT_WIDTH;
+	protected final double ROBOT_HEIGHT;
 
 	protected double SPEED_SCALE = 1.0;
 
@@ -23,8 +23,8 @@ public abstract class SwerveBase {
 		wheels[2] = new Wheel("bl");
 		wheels[3] = new Wheel("br");
 
-		this.robotWidth = Config.getDouble("robot_width");
-		this.robotHeight = Config.getDouble("robot_height");
+		this.ROBOT_WIDTH = Config.getDouble("robot_width");
+		this.ROBOT_HEIGHT = Config.getDouble("robot_height");
 
 	}
 
