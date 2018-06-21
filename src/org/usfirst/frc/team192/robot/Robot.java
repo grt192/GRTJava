@@ -5,6 +5,7 @@ import org.usfirst.frc.team192.fieldMapping.FieldMapper;
 import org.usfirst.frc.team192.fieldMapping.FieldMapperEncoder;
 import org.usfirst.frc.team192.mechs.Elevator;
 import org.usfirst.frc.team192.mechs.Intake;
+import org.usfirst.frc.team192.power.TestLoggerThread;
 import org.usfirst.frc.team192.swerve.FullSwervePID;
 import org.usfirst.frc.team192.swerve.NavXGyro;
 
@@ -49,6 +50,7 @@ public class Robot extends IterativeRobot {
 		intake = new Intake();
 		fieldMapper = new FieldMapperEncoder(gyro, swerve);
 		new Thread(fieldMapper).start();
+		new TestLoggerThread().start();
 		auto = new Autonomous(swerve, intake, elevator, fieldMapper);
 		teleop = new Teleop(swerve, intake, elevator, null);
 	}

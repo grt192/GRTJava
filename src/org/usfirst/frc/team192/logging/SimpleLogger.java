@@ -8,14 +8,14 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-public class Logger {
+public class SimpleLogger {
 
 	private static String dir = "/home/lvuser/";
 
 	private String[] titles;
 	private LinkedList<double[]> data;
 
-	public Logger(String... titles) {
+	public SimpleLogger(String... titles) {
 		this.titles = titles;
 		data = new LinkedList<>();
 	}
