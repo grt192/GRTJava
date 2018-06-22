@@ -30,6 +30,8 @@ public class Robot extends IterativeRobot {
 
 	private FieldMapper fieldMapper;
 
+	private TestLoggerThread test;
+
 	private Gyro getGyro() {
 		switch (Config.getString("gyro")) {
 		case "cruddy":
@@ -50,7 +52,8 @@ public class Robot extends IterativeRobot {
 		intake = new Intake();
 		fieldMapper = new FieldMapperEncoder(gyro, swerve);
 		new Thread(fieldMapper).start();
-		new TestLoggerThread().start();
+		test = new TestLoggerThread();
+		test.start();
 		auto = new Autonomous(swerve, intake, elevator, fieldMapper);
 		teleop = new Teleop(swerve, intake, elevator, null);
 	}
@@ -92,6 +95,8 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void disabledInit() {
 		swerve.disable();
+		if (test != null)
+			test.write();
 	}
 
 	// private int index;
