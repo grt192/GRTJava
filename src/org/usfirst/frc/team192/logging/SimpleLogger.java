@@ -15,6 +15,8 @@ public class SimpleLogger {
 	private String[] titles;
 	private LinkedList<double[]> data;
 
+	private File oldLog;
+
 	public SimpleLogger(String... titles) {
 		this.titles = titles;
 		data = new LinkedList<>();
@@ -26,7 +28,8 @@ public class SimpleLogger {
 
 	public void write(String fileName) {
 		try {
-			PrintWriter pw = new PrintWriter(new File(dir + fileName + ".csv"));
+			oldLog = new File(dir + fileName + ".csv");
+			PrintWriter pw = new PrintWriter(oldLog);
 			pw.println(titlesToString());
 			Iterator<double[]> iter = data.iterator();
 			while (iter.hasNext())
@@ -37,14 +40,16 @@ public class SimpleLogger {
 		}
 	}
 
-	public void write(String fileName, boolean addDate, boolean addLength) {
+	public void write(String fileName, boolean addDate, boolean addLength, boolean deleteOldLog) {
 		if (addDate) {
 			fileName += " " + DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(new Date());
 		}
 		if (addLength) {
 			fileName += " " + data.size();
 		}
+		File log = oldLog;
 		write(fileName);
+		log.delete();
 	}
 
 	private String titlesToString() {

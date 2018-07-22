@@ -39,7 +39,7 @@ public class TestLoggerThread extends Thread {
 				pdpSum += pdp.getCurrent(i);
 			everythingLogger.add(pdp.getVoltage(), pdp.getTotalCurrent(), pdpSum, PowerJNI.getVinVoltage(),
 					PowerJNI.getVinCurrent(), compressor.getCompressorCurrent());
-			Timer.delay(0.5);
+			Timer.delay(0.05);
 		}
 	}
 
@@ -48,8 +48,8 @@ public class TestLoggerThread extends Thread {
 	}
 
 	private void writeLoggers() {
-		batteryLogger.write("Battery Output", true, true);
-		everythingLogger.write("Other Power Stats", true, true);
+		batteryLogger.write("Battery Output", true, true, true);
+		everythingLogger.write("Other Power Stats", true, true, true);
 		write = false;
 	}
 }
