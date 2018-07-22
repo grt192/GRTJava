@@ -49,7 +49,8 @@ public class SimpleLogger {
 		}
 		File log = oldLog;
 		write(fileName);
-		log.delete();
+		if (log != null)
+			log.delete();
 	}
 
 	private String titlesToString() {
