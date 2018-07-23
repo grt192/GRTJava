@@ -36,7 +36,7 @@ public class TestLoggerThread extends Thread {
 				"Speed");
 		pdp = new PowerDistributionPanel();
 		compressor = new Compressor();
-		batteryRegression = new BufferedLinearRegressor(5);
+		batteryRegression = new BufferedLinearRegressor(50);
 		batteryRegression.add(pdp.getVoltage(), pdp.getTotalCurrent());
 	}
 
