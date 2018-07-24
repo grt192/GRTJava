@@ -10,20 +10,29 @@ import java.util.LinkedList;
 
 public class SimpleLogger {
 
+	private static int DEFAULT_MAX_SIZE = 3000;
+
 	private static String dir = "/home/lvuser/";
 
 	private String[] titles;
 	private LinkedList<double[]> data;
+	private int maxSize;
 
 	private File oldLog;
 
 	public SimpleLogger(String... titles) {
+		this(DEFAULT_MAX_SIZE, titles);
+	}
+
+	public SimpleLogger(int maxSize, String... titles) {
 		this.titles = titles;
 		data = new LinkedList<>();
+		this.maxSize = maxSize;
 	}
 
 	public void add(double... data) {
-		this.data.add(data);
+		if (maxSize <= 0 || this.data.size() < maxSize)
+			this.data.add(data);
 	}
 
 	public void write(String fileName) {

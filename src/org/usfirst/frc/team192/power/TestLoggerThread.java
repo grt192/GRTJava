@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.hal.PowerJNI;
 
 public class TestLoggerThread extends Thread {
@@ -22,6 +23,7 @@ public class TestLoggerThread extends Thread {
 
 	private TalonSRX pickupMotor;
 	private TalonSRX driveMotor;
+	private XboxController xbox;
 
 	private volatile boolean write = false;
 
@@ -31,6 +33,7 @@ public class TestLoggerThread extends Thread {
 				"PowerJNI Current", "Compressor Current");
 		pickupMotor = new TalonSRX(Config.getInt("upper_flywheel"));
 		driveMotor = new TalonSRX(Config.getInt("fl_drive_port"));
+		xbox = new XboxController(1);
 		pickupMotorLogger = new SimpleLogger("Input Voltage", "Output Voltage", "Percent Out", "Output Current");
 		driveMotorLogger = new SimpleLogger("Input Voltage", "Output Voltage", "Percent Out", "Output Current",
 				"Speed");
@@ -40,23 +43,32 @@ public class TestLoggerThread extends Thread {
 		batteryRegression.add(pdp.getVoltage(), pdp.getTotalCurrent());
 	}
 
+	private long lastUpdate;
+
 	@Override
 	public void run() {
+		lastUpdate = System.currentTimeMillis();
 		while (true) {
 			if (write)
 				writeLoggers();
 			batteryRegression.add(pdp.getVoltage(), pdp.getTotalCurrent());
-			batteryLogger.add(batteryRegression.getB(), -batteryRegression.getM());
-			pickupMotorLogger.add(pickupMotor.getBusVoltage(), pickupMotor.getMotorOutputVoltage(),
-					pickupMotor.getMotorOutputPercent(), pickupMotor.getOutputCurrent());
-			driveMotorLogger.add(driveMotor.getBusVoltage(), driveMotor.getMotorOutputVoltage(),
-					driveMotor.getMotorOutputPercent(), driveMotor.getOutputCurrent(),
-					driveMotor.getSensorCollection().getQuadratureVelocity());
-			double pdpSum = 0;
-			for (int i = 0; i < 16; i++)
-				pdpSum += pdp.getCurrent(i);
-			everythingLogger.add(pdp.getVoltage(), pdp.getTotalCurrent(), pdpSum, PowerJNI.getVinVoltage(),
-					PowerJNI.getVinCurrent(), compressor.getCompressorCurrent());
+			if (xbox.getAButton()) {
+				pickupMotorLogger.add(pickupMotor.getBusVoltage(), pickupMotor.getMotorOutputVoltage(),
+						pickupMotor.getMotorOutputPercent(), pickupMotor.getOutputCurrent());
+				driveMotorLogger.add(driveMotor.getBusVoltage(), driveMotor.getMotorOutputVoltage(),
+						driveMotor.getMotorOutputPercent(), driveMotor.getOutputCurrent(),
+						driveMotor.getSensorCollection().getQuadratureVelocity());
+			}
+			long currentTime = System.currentTimeMillis();
+			if (currentTime - lastUpdate > 500) {
+				double pdpSum = 0;
+				for (int i = 0; i < 16; i++)
+					pdpSum += pdp.getCurrent(i);
+				everythingLogger.add(pdp.getVoltage(), pdp.getTotalCurrent(), pdpSum, PowerJNI.getVinVoltage(),
+						PowerJNI.getVinCurrent(), compressor.getCompressorCurrent());
+				batteryLogger.add(batteryRegression.getB(), -batteryRegression.getM());
+				lastUpdate = currentTime;
+			}
 			Timer.delay(0.05);
 		}
 	}
