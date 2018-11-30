@@ -5,69 +5,49 @@ import edu.wpi.first.wpilibj.XboxController;
 
 public class BetterTankSwerve extends SwerveBase {
 
-	@Override
-	public void updateWithJoystick(XboxController input) {
-		double xSpeed = -input.getY(Hand.kLeft);
-		double zRotation = input.getX(Hand.kLeft);
-		drive(xSpeed, zRotation);
+	public BetterTankSwerve() {
+		super();
 	}
 
-	public void drive(double xSpeed, double zRotation) {
-		xSpeed = Math.copySign(xSpeed * xSpeed, xSpeed);
-		zRotation = Math.copySign(zRotation * zRotation, zRotation);
+	@Override
+	public void updateWithJoystick(XboxController input) {
+		double left = clip(-input.getY(Hand.kLeft));
+		double right = clip(-input.getY(Hand.kRight));
+		set(left, right);
+	}
 
-		double leftMotorOutput;
-		double rightMotorOutput;
-
-		double maxInput = Math.copySign(Math.max(Math.abs(xSpeed), Math.abs(zRotation)), xSpeed);
-
-		if (xSpeed >= 0.0) {
-			// First quadrant, else second quadrant
-			if (zRotation >= 0.0) {
-				leftMotorOutput = maxInput;
-				rightMotorOutput = xSpeed - zRotation;
-			} else {
-				leftMotorOutput = xSpeed + zRotation;
-				rightMotorOutput = maxInput;
-			}
-		} else {
-			// Third quadrant, else fourth quadrant
-			if (zRotation >= 0.0) {
-				leftMotorOutput = xSpeed + zRotation;
-				rightMotorOutput = maxInput;
-			} else {
-				leftMotorOutput = maxInput;
-				rightMotorOutput = xSpeed - zRotation;
-			}
-		}
-
-		if (leftMotorOutput == 0.0 && rightMotorOutput == 0.0)
+	public void set(double left, double right) {
+		if (left == 0.0 && right == 0.0) {
 			for (Wheel wheel : wheels)
 				wheel.setDriveSpeed(0.0);
-
-		double ratio = rightMotorOutput / leftMotorOutput;
-
-		if (ratio > 0 && Math.max(ratio, 1.0 / ratio) < 1.00001) {
-			for (Wheel wheel : wheels)
-				wheel.setTargetPosition(0.0);
-			wheels[0].setDriveSpeed(leftMotorOutput);
-			wheels[2].setDriveSpeed(leftMotorOutput);
-			wheels[1].setDriveSpeed(rightMotorOutput);
-			wheels[3].setDriveSpeed(rightMotorOutput);
-		} else {
-			double yCenter = (ROBOT_WIDTH / 2) * ((ratio + 1) / (1 - ratio));
-			double leftAngle = Math.atan2(ROBOT_HEIGHT / 2, yCenter + ROBOT_WIDTH / 2);
-			wheels[0].setTargetPosition(leftAngle);
-			wheels[0].setDriveSpeed(leftMotorOutput);
-			wheels[2].setTargetPosition(-leftAngle);
-			wheels[2].setDriveSpeed(leftMotorOutput);
-
-			double rightAngle = Math.atan2(ROBOT_HEIGHT / 2, yCenter - ROBOT_WIDTH / 2);
-			wheels[0].setTargetPosition(rightAngle);
-			wheels[0].setDriveSpeed(rightMotorOutput);
-			wheels[2].setTargetPosition(-rightAngle);
-			wheels[2].setDriveSpeed(rightMotorOutput);
+			return;
 		}
+		double x = (ROBOT_HEIGHT / 2);
+		double y = (ROBOT_WIDTH / 2);
+
+		double yCenter = y * ((left + right) / (left - right));
+		double leftDist = (yCenter + y);
+		double rightDist = (yCenter - y);
+		double omega = 1.0;
+		if (left == 0.0) {
+			omega = right / rightDist;
+		} else {
+			omega = left / rightDist;
+		}
+		double leftAngle = Math.atan(x / leftDist);
+		double actualLeft = omega * Math.sqrt(x * x + leftDist * leftDist);
+		wheels[0].setTargetPosition(leftAngle);
+		wheels[0].setDriveSpeed(actualLeft);
+		wheels[2].setTargetPosition(-leftAngle);
+		wheels[2].setDriveSpeed(actualLeft);
+
+		double rightAngle = Math.atan(x / rightDist);
+		double actualRight = omega * Math.sqrt(x * x + rightDist * rightDist);
+		wheels[1].setTargetPosition(rightAngle);
+		wheels[1].setDriveSpeed(actualRight);
+		wheels[3].setTargetPosition(-rightAngle);
+		wheels[3].setDriveSpeed(actualRight);
+
 	}
 
 }

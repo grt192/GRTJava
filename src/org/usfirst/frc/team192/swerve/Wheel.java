@@ -74,7 +74,7 @@ class Wheel {
 		rotateMotor.config_kP(1, 0.0, 0);
 		rotateMotor.config_kI(1, 0.0, 0);
 		rotateMotor.config_kD(1, 0.0, 0);
-		zero();
+		// zero();
 	}
 
 	public void enable() {
@@ -86,7 +86,7 @@ class Wheel {
 	}
 
 	public void zero() {
-		System.out.println("Zeroing "+name+"module");
+		System.out.println("Zeroing " + name + "module");
 		OFFSET = rotateMotor.getSelectedSensorPosition(0);
 	}
 
