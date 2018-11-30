@@ -28,21 +28,28 @@ public class BetterTankSwerve extends SwerveBase {
 		double yCenter = y * ((left + right) / (left - right));
 		double leftDist = (yCenter + y);
 		double rightDist = (yCenter - y);
-		double omega = 1.0;
-		if (left == 0.0) {
-			omega = right / rightDist;
-		} else {
-			omega = left / rightDist;
-		}
+
 		double leftAngle = Math.atan(x / leftDist);
-		double actualLeft = omega * Math.sqrt(x * x + leftDist * leftDist);
+		double rightAngle = Math.atan(x / rightDist);
+
+		double actualLeft = left;
+		double actualRight = right;
+		if (Double.isFinite(yCenter)) {
+			double omega = 1.0;
+			if (left == 0.0) {
+				omega = right / rightDist;
+			} else {
+				omega = left / rightDist;
+			}
+			actualLeft = omega * Math.sqrt(x * x + leftDist * leftDist);
+			actualRight = omega * Math.sqrt(x * x + rightDist * rightDist);
+		}
+
 		wheels[0].setTargetPosition(leftAngle);
 		wheels[0].setDriveSpeed(actualLeft);
 		wheels[2].setTargetPosition(-leftAngle);
 		wheels[2].setDriveSpeed(actualLeft);
 
-		double rightAngle = Math.atan(x / rightDist);
-		double actualRight = omega * Math.sqrt(x * x + rightDist * rightDist);
 		wheels[1].setTargetPosition(rightAngle);
 		wheels[1].setDriveSpeed(actualRight);
 		wheels[3].setTargetPosition(-rightAngle);
