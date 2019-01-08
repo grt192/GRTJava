@@ -26,6 +26,7 @@ public class BetterTankSwerve extends SwerveBase {
 		double y = (ROBOT_WIDTH / 2);
 
 		double yCenter = y * ((left + right) / (left - right));
+		System.out.println(yCenter);
 		double leftDist = (yCenter + y);
 		double rightDist = (yCenter - y);
 
@@ -39,11 +40,15 @@ public class BetterTankSwerve extends SwerveBase {
 			if (left == 0.0) {
 				omega = right / rightDist;
 			} else {
-				omega = left / rightDist;
+				omega = left / leftDist;
 			}
-			actualLeft = omega * Math.sqrt(x * x + leftDist * leftDist);
-			actualRight = omega * Math.sqrt(x * x + rightDist * rightDist);
+			omega = Math.abs(omega);
+			actualLeft = omega * Math.sqrt(x * x + leftDist * leftDist) * Math.signum(left);
+			actualRight = omega * Math.sqrt(x * x + rightDist * rightDist) * Math.signum(right);
 		}
+		double scale = Math.min(1, 1 / Math.max(Math.abs(actualLeft), Math.abs(actualRight)));
+		actualLeft *= scale;
+		actualRight *= scale;
 
 		wheels[0].setTargetPosition(leftAngle);
 		wheels[0].setDriveSpeed(actualLeft);
